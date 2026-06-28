@@ -18,7 +18,7 @@
     if (document.querySelector('.process-timeline')) {
       initProcessPage();
     }
-    if (document.querySelector('.materials__grid')) {
+    if (document.querySelector('.materials-hero') || document.querySelector('.materials__grid')) {
       initMaterialsPage();
     }
     if (document.querySelector('.gallery__masonry')) {
@@ -439,68 +439,85 @@
   }
 
   // ══════════════════════════════════════════════════════════════
-  // MATERIALS PAGE
+  // MATERIALS PAGE REDESIGN
   // ══════════════════════════════════════════════════════════════
   function initMaterialsPage() {
-    const cards = document.querySelectorAll('.material-card');
-    if (!cards.length) return;
-
-    // GSAP stagger entrance
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      cards.forEach((card, i) => {
-        gsap.fromTo(card, {
-          opacity: 0,
-          y: 40,
-          scale: 0.95
-        }, {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          delay: i * 0.08,
-          ease: 'power2.out',
+    // 1. Statistics Counter Animation
+    const statNumbers = document.querySelectorAll('.stat-number');
+    if (statNumbers.length && typeof gsap !== 'undefined') {
+      statNumbers.forEach(stat => {
+        const targetValue = parseInt(stat.getAttribute('data-count'), 10) || parseInt(stat.textContent, 10);
+        stat.textContent = '0';
+        
+        gsap.to(stat, {
+          textContent: targetValue,
+          duration: 2.5,
+          ease: 'power3.out',
+          snap: { textContent: 1 },
           scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
+            trigger: '.materials-stats',
+            start: 'top 85%',
             toggleActions: 'play none none none'
           }
         });
       });
     }
 
-    // Animate rating bars
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const fill = entry.target.querySelector('.material-card__rating-fill');
-          if (fill) {
-            const width = fill.getAttribute('data-width');
-            fill.style.width = width + '%';
-          }
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.3 });
+    // 2. 3D Tilt effect for brand cards
+    const brandCards = document.querySelectorAll('.brand-card');
+    if (brandCards.length && window.innerWidth > 768) {
+      brandCards.forEach(card => {
+        const inner = card.querySelector('.brand-card__inner');
+        if (!inner) return;
 
-    cards.forEach(card => observer.observe(card));
-
-    // 3D tilt effect
-    if (window.innerWidth > 768) {
-      cards.forEach(card => {
         card.addEventListener('mousemove', (e) => {
           const rect = card.getBoundingClientRect();
           const x = (e.clientX - rect.left) / rect.width;
           const y = (e.clientY - rect.top) / rect.height;
-          const tiltX = (y - 0.5) * 6;
-          const tiltY = (x - 0.5) * -6;
-          card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px)`;
+          // Stronger tilt for luxury feel
+          const tiltX = (y - 0.5) * 15;
+          const tiltY = (x - 0.5) * -15;
+          
+          inner.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-8px)`;
         });
 
         card.addEventListener('mouseleave', () => {
-          card.style.transform = '';
-          card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-          setTimeout(() => { card.style.transition = ''; }, 600);
+          inner.style.transform = '';
+          inner.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+          setTimeout(() => { inner.style.transition = ''; }, 600);
         });
+      });
+    }
+
+    // 3. Stagger animation for brand cards
+    if (brandCards.length && typeof gsap !== 'undefined') {
+      gsap.fromTo(brandCards, {
+        opacity: 0,
+        y: 40,
+        scale: 0.95
+      }, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'back.out(1.5)',
+        scrollTrigger: {
+          trigger: '.brands-showcase',
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        }
+      });
+    }
+
+    // 4. Mobile infinite carousel duplication
+    const track = document.querySelector('.brands-track');
+    if (track && window.innerWidth <= 768) {
+      // Clone cards for infinite scroll seamless looping
+      const cards = track.querySelectorAll('.brand-card');
+      cards.forEach(card => {
+        const clone = card.cloneNode(true);
+        track.appendChild(clone);
       });
     }
   }
