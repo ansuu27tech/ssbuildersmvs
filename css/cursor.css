@@ -1,0 +1,116 @@
+/* ═══════════════════════════════════════════════════════════════
+   SS BUILDERS MVS — Premium Custom Cursor
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Hide default cursor on desktop */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* ── Cursor Elements ───────────────────────────────────────────── */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 100000;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor__ring {
+  position: fixed;
+  width: 36px;
+  height: 36px;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100001;
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.3s ease,
+              background-color 0.3s ease,
+              opacity 0.3s ease;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.custom-cursor__dot {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100002;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  box-shadow: 0 0 10px rgba(245, 143, 124, 0.6),
+              0 0 20px rgba(245, 143, 124, 0.3);
+}
+
+/* ── Hover States ──────────────────────────────────────────────── */
+
+/* On buttons and links */
+.custom-cursor__ring.hovering {
+  width: 56px;
+  height: 56px;
+  border-color: rgba(245, 143, 124, 0.8);
+  background-color: rgba(245, 143, 124, 0.08);
+}
+
+.custom-cursor__dot.hovering {
+  width: 4px;
+  height: 4px;
+  opacity: 0.5;
+}
+
+/* On 3D canvases */
+.custom-cursor__ring.on-3d {
+  width: 48px;
+  height: 48px;
+  border-color: rgba(99, 179, 237, 0.6);
+  animation: cursor-ripple 1.5s ease-out infinite;
+}
+
+.custom-cursor__dot.on-3d {
+  background: rgba(99, 179, 237, 0.9);
+  box-shadow: 0 0 12px rgba(99, 179, 237, 0.6),
+              0 0 24px rgba(99, 179, 237, 0.3);
+}
+
+/* Click state */
+.custom-cursor__ring.clicking {
+  width: 28px;
+  height: 28px;
+  border-color: rgba(245, 143, 124, 1);
+}
+
+.custom-cursor__dot.clicking {
+  width: 10px;
+  height: 10px;
+}
+
+/* ── Animations ────────────────────────────────────────────────── */
+@keyframes cursor-ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 179, 237, 0.3);
+  }
+  70% {
+    box-shadow: 0 0 0 16px rgba(99, 179, 237, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 179, 237, 0);
+  }
+}
+
+/* ── Hide on touch devices ─────────────────────────────────────── */
+@media (hover: none), (pointer: coarse) {
+  .custom-cursor,
+  .custom-cursor__ring,
+  .custom-cursor__dot {
+    display: none !important;
+  }
+}
