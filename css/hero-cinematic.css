@@ -59,10 +59,10 @@
   position: absolute;
   top: 50%;
   left: 55%;
-  transform: translate(-40%, -52%);
-  width: 60%;
-  max-width: 850px;
-  height: 70%;
+  transform: translate(-35%, -50%);
+  width: 72%;
+  max-width: 1050px;
+  height: 85%;
   z-index: 2;
   pointer-events: none;
   image-rendering: auto;
@@ -233,8 +233,8 @@
 /* ── Content Block ─────────────────────────────────────────── */
 .ch-content {
   position: absolute;
-  top: 50%;
-  left: 5%;
+  top: 55%;
+  left: 8%;
   transform: translateY(-50%);
   max-width: 580px;
   z-index: 15;
@@ -270,9 +270,9 @@
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: clamp(2.8rem, 5.5vw, 5rem);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 0.95;
   color: #fff;
-  margin: 0 0 28px 0;
+  margin: 0 0 16px 0;
 }
 .ch-title__line {
   display: block;
@@ -305,7 +305,7 @@
   font-size: 1rem;
   line-height: 1.7;
   color: rgba(255,255,255,0.5);
-  margin: 0 0 36px 0;
+  margin: 0 0 24px 0;
   opacity: 0;
   transform: translateY(30px);
 }
@@ -497,7 +497,7 @@
 
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .ch-canvas { left: 50%; transform: translate(-50%, -52%); width: 75%; }
+  .ch-canvas { left: 50%; transform: translate(-50%, -52%); width: 90%; }
   .ch-content { left: 5%; max-width: 480px; }
   .ch-phase { top: 85px; right: 20px; }
   .ch-stats { padding: 16px 32px; }
