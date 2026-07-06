@@ -148,6 +148,28 @@ svg {
   max-width: 100%;
 }
 
+/* ── Accessibility ────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--electric-blue);
+  outline-offset: 4px;
+}
+
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--electric-blue);
+  color: var(--white);
+  padding: 8px 16px;
+  z-index: 9999;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -426,7 +448,7 @@ p {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
+  padding: 0.875rem 1.5rem;
   background: var(--electric-blue);
   color: var(--white);
   font-weight: 600;
@@ -448,6 +470,10 @@ p {
   flex-direction: column;
   gap: 6px;
   padding: 4px;
+  width: 44px;
+  height: 44px;
+  justify-content: center;
+  align-items: center;
   z-index: var(--z-nav);
   cursor: pointer;
 }

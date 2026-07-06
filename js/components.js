@@ -194,7 +194,7 @@ function initComponents() {
   // ══════════════════════════════════════════════════════════════
   document.querySelectorAll('a[href^="tel:"], a[href^="https://wa.me"]').forEach(link => {
     link.addEventListener('click', () => {
-      console.log('Contact interaction:', link.href);
+      // TODO: Add Google Analytics / GTM tracking event here for contact interactions
     });
   });
 }

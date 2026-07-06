@@ -60,9 +60,9 @@
   top: 50%;
   left: 55%;
   transform: translate(-35%, -50%);
-  width: 72%;
-  max-width: 1050px;
-  height: 85%;
+  width: 85%;
+  max-width: 1250px;
+  height: 95%;
   z-index: 2;
   pointer-events: none;
   image-rendering: auto;
@@ -233,7 +233,7 @@
 /* ── Content Block ─────────────────────────────────────────── */
 .ch-content {
   position: absolute;
-  top: 55%;
+  top: 58%;
   left: 8%;
   transform: translateY(-50%);
   max-width: 580px;
@@ -270,9 +270,9 @@
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: clamp(2.8rem, 5.5vw, 5rem);
   font-weight: 800;
-  line-height: 1;
+  line-height: 0.9;
   color: #fff;
-  margin: 0 0 16px 0;
+  margin: 0 0 20px 0;
 }
 .ch-title__line {
   display: block;

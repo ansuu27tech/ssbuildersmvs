@@ -39,37 +39,55 @@ function initGSAPAnimations() {
     const heroTl = gsap.timeline({ delay: 0.3 });
 
     heroTl
-      .from('.hero__overline', {
-        y: 30, opacity: 0, duration: 0.8, ease: 'power3.out'
+      .fromTo('.hero__overline', {
+        y: 30, opacity: 0
+      }, {
+        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
       })
-      .from('.hero__title .char', {
+      .fromTo('.hero__title .char', {
         transformPerspective: 500,
         rotateX: -90,
         y: 40,
-        opacity: 0,
+        opacity: 0
+      }, {
+        rotateX: 0,
+        y: 0,
+        opacity: 1,
         duration: 0.8,
         ease: 'back.out(1.7)',
         stagger: 0.03
       }, '-=0.4')
-      .from('.hero__subtitle', {
-        y: 30, opacity: 0, duration: 0.8, ease: 'power3.out'
+      .fromTo('.hero__subtitle', {
+        y: 30, opacity: 0
+      }, {
+        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
       }, '-=0.5')
-      .from('.hero__actions .btn', {
-        y: 20, opacity: 0, duration: 0.6, ease: 'power3.out',
+      .fromTo('.hero__actions .btn', {
+        y: 20, opacity: 0
+      }, {
+        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
         stagger: 0.1
       }, '-=0.4')
-      .from('.hero__price-tag', {
-        y: 20, opacity: 0, duration: 0.6, ease: 'power3.out'
+      .fromTo('.hero__price-tag', {
+        y: 20, opacity: 0
+      }, {
+        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out'
       }, '-=0.3')
-      .from('.hero__stats', {
-        x: 60, opacity: 0, duration: 1, ease: 'power3.out'
+      .fromTo('.hero__stats', {
+        x: 60, opacity: 0
+      }, {
+        x: 0, opacity: 1, duration: 1, ease: 'power3.out'
       }, '-=0.8')
-      .from('.hero__stat', {
-        y: 30, opacity: 0, duration: 0.6, ease: 'power3.out',
+      .fromTo('.hero__stat', {
+        y: 30, opacity: 0
+      }, {
+        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
         stagger: 0.1
       }, '-=0.5')
-      .from('.hero__scroll', {
-        y: 20, opacity: 0, duration: 0.6, ease: 'power3.out'
+      .fromTo('.hero__scroll', {
+        y: 20, opacity: 0
+      }, {
+        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out'
       }, '-=0.3');
   }
 
@@ -112,29 +130,29 @@ function initGSAPAnimations() {
     const p = header.querySelector('p');
     const divider = header.querySelector('.divider');
 
-    if (overline) tl.from(overline, { y: 20, opacity: 0, duration: 0.6 });
-    if (h2) tl.from(h2, { y: 40, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.3');
-    if (divider) tl.from(divider, { scaleX: 0, duration: 0.6, ease: 'power3.out' }, '-=0.4');
-    if (p) tl.from(p, { y: 20, opacity: 0, duration: 0.6 }, '-=0.3');
+    if (overline) tl.fromTo(overline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 });
+    if (h2) tl.fromTo(h2, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+    if (divider) tl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.out' }, '-=0.4');
+    if (p) tl.fromTo(p, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, '-=0.3');
   });
 
   // ── Story Section ──────────────────────────────────────────
   const storyIntro = document.querySelector('.story__intro');
   if (storyIntro) {
-    gsap.from('.story__intro-content', {
+    gsap.fromTo('.story__intro-content', { x: -60, opacity: 0 }, {
       scrollTrigger: {
         trigger: storyIntro,
         start: 'top 75%'
       },
-      x: -60, opacity: 0, duration: 1, ease: 'power3.out'
+      x: 0, opacity: 1, duration: 1, ease: 'power3.out'
     });
 
-    gsap.from('.story__vision-cards', {
+    gsap.fromTo('.story__vision-cards', { x: 60, opacity: 0 }, {
       scrollTrigger: {
         trigger: storyIntro,
         start: 'top 75%'
       },
-      x: 60, opacity: 0, duration: 1, ease: 'power3.out', delay: 0.2
+      x: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.2
     });
   }
 
@@ -153,21 +171,21 @@ function initGSAPAnimations() {
       }
     });
 
-    if (dot) tl.from(dot, { scale: 0, duration: 0.4, ease: 'back.out(2)' });
-    if (year) tl.from(year, { x: direction * 40, opacity: 0, duration: 0.6 }, '-=0.2');
-    if (content) tl.from(content, { x: direction * -40, opacity: 0, duration: 0.6 }, '-=0.4');
+    if (dot) tl.fromTo(dot, { scale: 0 }, { scale: 1, duration: 0.4, ease: 'back.out(2)' });
+    if (year) tl.fromTo(year, { x: direction * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, '-=0.2');
+    if (content) tl.fromTo(content, { x: direction * -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, '-=0.4');
   });
 
   // ── Services Cards ─────────────────────────────────────────
   gsap.utils.toArray('.service-card').forEach((card, i) => {
-    gsap.from(card, {
+    gsap.fromTo(card, { y: 60, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
         start: 'top 85%',
         toggleActions: 'play none none none'
       },
-      y: 60,
-      opacity: 0,
+      y: 0,
+      opacity: 1,
       duration: 0.8,
       delay: i % 4 * 0.1,
       ease: 'power3.out'
@@ -177,67 +195,67 @@ function initGSAPAnimations() {
   // ── Coverage Section ───────────────────────────────────────
   const coverageMap = document.querySelector('.coverage__map-container');
   if (coverageMap) {
-    gsap.from(coverageMap, {
+    gsap.fromTo(coverageMap, { scale: 0.9, opacity: 0 }, {
       scrollTrigger: {
         trigger: coverageMap,
         start: 'top 80%'
       },
-      scale: 0.9, opacity: 0, duration: 1, ease: 'power3.out'
+      scale: 1, opacity: 1, duration: 1, ease: 'power3.out'
     });
   }
 
   gsap.utils.toArray('.coverage__city-tag').forEach((tag, i) => {
-    gsap.from(tag, {
+    gsap.fromTo(tag, { y: 20, opacity: 0 }, {
       scrollTrigger: {
         trigger: tag,
         start: 'top 90%'
       },
-      y: 20, opacity: 0, duration: 0.5, delay: i * 0.05, ease: 'power3.out'
+      y: 0, opacity: 1, duration: 0.5, delay: i * 0.05, ease: 'power3.out'
     });
   });
 
   // ── Project Cards ──────────────────────────────────────────
   gsap.utils.toArray('.project-card').forEach((card, i) => {
-    gsap.from(card, {
+    gsap.fromTo(card, { y: 50, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
         start: 'top 85%'
       },
-      y: 50, opacity: 0, duration: 0.8, delay: i * 0.1, ease: 'power3.out'
+      y: 0, opacity: 1, duration: 0.8, delay: i * 0.1, ease: 'power3.out'
     });
   });
 
   // ── Leadership Cards ───────────────────────────────────────
   gsap.utils.toArray('.leader-card').forEach((card, i) => {
-    gsap.from(card, {
+    gsap.fromTo(card, { y: 50, scale: 0.95, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
         start: 'top 85%'
       },
-      y: 50, scale: 0.95, opacity: 0, duration: 0.8, delay: i * 0.15, ease: 'power3.out'
+      y: 0, scale: 1, opacity: 1, duration: 0.8, delay: i * 0.15, ease: 'power3.out'
     });
   });
 
   // ── Feature Cards ──────────────────────────────────────────
   gsap.utils.toArray('.feature-card').forEach((card, i) => {
-    gsap.from(card, {
+    gsap.fromTo(card, { y: 40, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
         start: 'top 90%'
       },
-      y: 40, opacity: 0, duration: 0.6, delay: i * 0.06, ease: 'power3.out'
+      y: 0, opacity: 1, duration: 0.6, delay: i * 0.06, ease: 'power3.out'
     });
   });
 
   // ── Testimonial ────────────────────────────────────────────
   const testimonialSection = document.querySelector('.testimonials');
   if (testimonialSection) {
-    gsap.from('.testimonials__carousel', {
+    gsap.fromTo('.testimonials__carousel', { y: 40, opacity: 0 }, {
       scrollTrigger: {
         trigger: testimonialSection,
         start: 'top 75%'
       },
-      y: 40, opacity: 0, duration: 0.8, ease: 'power3.out'
+      y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
     });
   }
 

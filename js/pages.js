@@ -37,11 +37,18 @@
     const oldBackToTop = document.querySelector('.back-to-top');
     if (oldBackToTop) oldBackToTop.style.display = 'none';
 
+    let isQuickActionsScrolling = false;
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 600) {
-        quickActions.classList.add('visible');
-      } else {
-        quickActions.classList.remove('visible');
+      if (!isQuickActionsScrolling) {
+        window.requestAnimationFrame(() => {
+          if (window.scrollY > 600) {
+            quickActions.classList.add('visible');
+          } else {
+            quickActions.classList.remove('visible');
+          }
+          isQuickActionsScrolling = false;
+        });
+        isQuickActionsScrolling = true;
       }
     }, { passive: true });
 
@@ -409,16 +416,18 @@
       });
     }
 
-    // Progress bar follows scroll
-    if (progressBar) {
-      window.addEventListener('scroll', () => {
-        const timelineRect = timeline.getBoundingClientRect();
-        const timelineTop = timeline.offsetTop;
-        const timelineHeight = timeline.offsetHeight;
-        const scrollPos = window.scrollY - timelineTop + window.innerHeight * 0.5;
-        const progress = Math.max(0, Math.min(1, scrollPos / timelineHeight));
-        progressBar.style.height = (progress * 100) + '%';
-      }, { passive: true });
+    // Progress bar follows scroll via GSAP ScrollTrigger
+    if (progressBar && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.to(progressBar, {
+        height: '100%',
+        ease: 'none',
+        scrollTrigger: {
+          trigger: timeline,
+          start: 'top center',
+          end: 'bottom center',
+          scrub: true
+        }
+      });
     }
 
     // Expand on click (mobile-friendly)

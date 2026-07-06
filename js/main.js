@@ -65,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
       navbar.classList.remove('scrolled');
     }
   }
-  window.addEventListener('scroll', handleNavScroll, { passive: true });
   handleNavScroll();
 
   // Active section highlighting
@@ -86,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-  window.addEventListener('scroll', highlightNav, { passive: true });
 
   // Smooth scroll to section
   function scrollToSection(e) {
@@ -134,28 +132,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Scroll Progress Bar ──────────────────────────────────────
   const scrollProgress = document.querySelector('.scroll-progress');
-  if (scrollProgress) {
-    window.addEventListener('scroll', () => {
-      const scrolled = window.scrollY;
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = scrolled / maxScroll;
-      scrollProgress.style.transform = `scaleX(${progress})`;
-    }, { passive: true });
+  function updateScrollProgress() {
+    if (!scrollProgress) return;
+    const scrolled = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrolled / maxScroll;
+    scrollProgress.style.transform = `scaleX(${progress})`;
   }
 
   // ── Back to Top ──────────────────────────────────────────────
   const backToTop = document.querySelector('.back-to-top');
-  if (backToTop) {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 600) {
-        backToTop.classList.add('visible');
-      } else {
-        backToTop.classList.remove('visible');
-      }
-    }, { passive: true });
+  function updateBackToTop() {
+    if (!backToTop) return;
+    if (window.scrollY > 600) {
+      backToTop.classList.add('visible');
+    } else {
+      backToTop.classList.remove('visible');
+    }
+  }
 
+  // ── Centralized Scroll Listener (rAF) ────────────────────────
+  let isScrolling = false;
+  window.addEventListener('scroll', () => {
+    if (!isScrolling) {
+      window.requestAnimationFrame(() => {
+        handleNavScroll();
+        highlightNav();
+        updateScrollProgress();
+        updateBackToTop();
+        isScrolling = false;
+      });
+      isScrolling = true;
+    }
+  }, { passive: true });
+
+  if (backToTop) {
     backToTop.addEventListener('click', () => {
       if (lenis) {
         lenis.scrollTo(0, { duration: 2 });
