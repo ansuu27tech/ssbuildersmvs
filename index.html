@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css?v=2">
   <link rel="stylesheet" href="css/sections-v2.css">
+  <link rel="stylesheet" href="css/hero-cinematic.css">
   <link rel="stylesheet" href="css/pages.css">
   <link rel="stylesheet" href="css/cursor.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@23.0.4/build/css/intlTelInput.css">
@@ -139,121 +140,128 @@
   </nav>
 
   <!-- ═══════════════════════════════════════════════════════════
-       HERO SECTION
+       CINEMATIC HERO — Awwwards-caliber immersive experience
        ═══════════════════════════════════════════════════════════ -->
-  <section class="hero" id="hero">
-    <!-- Background Layers -->
-    <div class="hero__bg">
-      <div class="hero__bg-gradient"></div>
+  <section class="ch" id="hero">
+
+    <!-- Layer 0: Absolute black base -->
+    <div class="ch-base"></div>
+
+    <!-- Layer 1: Cinematic fog depth -->
+    <div class="ch-fog">
+      <div class="ch-fog__near"></div>
+      <div class="ch-fog__mid"></div>
+      <div class="ch-fog__far"></div>
     </div>
 
-    <!-- Blueprint Grid Overlay -->
-    <div class="hero__blueprint"></div>
+    <!-- Layer 2: Main building canvas (frame crossfade renderer) -->
+    <canvas class="ch-canvas" id="chCanvas"></canvas>
 
-    <!-- Floating Geometric Shapes -->
-    <div class="hero__shapes">
-      <div class="hero__shape"></div>
-      <div class="hero__shape"></div>
-      <div class="hero__shape"></div>
-      <div class="hero__shape"></div>
-    </div>
+    <!-- Layer 3: Energy trails + particles canvas -->
+    <canvas class="ch-energy" id="chEnergy"></canvas>
 
-    <!-- Floating Particles -->
-    <div class="hero__particles">
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-      <div class="hero__particle"></div>
-    </div>
+    <!-- Layer 4: Volumetric light rays -->
+    <div class="ch-rays" id="chRays"></div>
 
-    <!-- Scan Line -->
-    <div class="hero__scanline"></div>
+    <!-- Layer 5: Bloom + lens flare -->
+    <div class="ch-bloom" id="chBloom"></div>
+    <div class="ch-flare" id="chFlare"></div>
 
-    <!-- Hero Content -->
-    <div class="hero__content">
-      <!-- Left Side (60%) -->
-      <div class="hero__content-left">
-        <div class="hero__text">
-        <div class="hero__overline">
-          <span class="hero__overline-line"></span>
-          <span class="hero__overline-text">Premium Construction Since 2007</span>
+    <!-- Layer 6: Glossy floor reflection -->
+    <div class="ch-reflection" id="chReflection"></div>
+
+    <!-- Layer 7: Floating dust particles (CSS) -->
+    <div class="ch-dust" id="chDust"></div>
+
+    <!-- Layer 8: Camera wrapper — all content moves with cinematic float -->
+    <div class="ch-camera" id="chCamera">
+
+      <!-- Construction phase badge -->
+      <div class="ch-phase" id="chPhase">
+        <span class="ch-phase__dot"></span>
+        <span class="ch-phase__text">Initializing</span>
+      </div>
+
+      <!-- Hero text content -->
+      <div class="ch-content" id="chContent">
+        <div class="ch-overline" data-ch-reveal>
+          <span class="ch-overline__bar"></span>
+          <span class="ch-overline__text">Premium Construction Since 2007</span>
         </div>
 
-        <h1 class="hero__title">
-          <span class="hero__title-line">
-            <span class="hero__title-word">BUILDING</span>
-            <span class="hero__title-word"> </span>
-            <span class="hero__title-word highlight">DREAMS</span>
+        <h1 class="ch-title" data-ch-reveal>
+          <span class="ch-title__line">
+            <span class="ch-title__word">BUILDING</span>
+            <span class="ch-title__word ch-title__accent">DREAMS</span>
           </span>
-          <span class="hero__title-line">
-            <span class="hero__title-word">SINCE </span>
-            <span class="hero__title-word">2007</span>
+          <span class="ch-title__line">
+            <span class="ch-title__word">SINCE</span>
+            <span class="ch-title__word">2007</span>
           </span>
         </h1>
 
-        <p class="hero__subtitle">
-          SS BUILDERS MVS delivers premium residential, commercial, luxury interiors, 
-          renovations, and turnkey construction projects across South India with 
-          engineering excellence, transparency, and timeless design.
+        <p class="ch-sub" data-ch-reveal>
+          Premium Residential &amp; Commercial Construction.<br>
+          Crafting timeless spaces with precision, innovation,<br>
+          and uncompromising quality.
         </p>
 
-        <div class="hero__actions">
-          <div class="magnetic-wrap">
-            <a href="#contact" class="btn btn--primary btn--lg">
-              Start Your Dream Project
-              <span class="btn__icon">→</span>
-            </a>
-          </div>
-          <a href="#projects" class="btn btn--outline">Explore Portfolio</a>
-          <a href="#contact" class="btn btn--glass">Book Free Consultation</a>
-          <a href="#story" class="btn btn--glass">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Watch Company Profile
+        <div class="ch-actions" data-ch-reveal>
+          <a href="#projects" class="ch-btn ch-btn--primary" id="chBtnPrimary">
+            <span class="ch-btn__text">View Our Projects</span>
+            <span class="ch-btn__arrow">→</span>
+            <span class="ch-btn__glow"></span>
+          </a>
+          <a href="#contact" class="ch-btn ch-btn--glass" id="chBtnGlass">
+            <span class="ch-btn__text">Free Consultation</span>
+            <span class="ch-btn__shimmer"></span>
           </a>
         </div>
 
-        <div class="hero__price-tag">
-          🏗️ Construction Starting From <strong>₹1550* per sq.ft.</strong>
-        </div>
-      </div> <!-- /.hero__text -->
-      </div> <!-- /.hero__content-left -->
-
-      <!-- Stats Panel -->
-      <div class="hero__stats glass">
-        <div class="hero__stats-grid">
-          <div class="hero__stat">
-            <div class="hero__stat-number" data-target="17" data-suffix="+">0</div>
-            <div class="hero__stat-label">Years of Excellence</div>
-          </div>
-          <div class="hero__stat">
-            <div class="hero__stat-number" data-target="70" data-suffix="+">0</div>
-            <div class="hero__stat-label">Projects Delivered</div>
-          </div>
-          <div class="hero__stat">
-            <div class="hero__stat-number" data-target="100" data-suffix="+">0</div>
-            <div class="hero__stat-label">Happy Clients</div>
-          </div>
-          <div class="hero__stat">
-            <div class="hero__stat-number" data-target="9" data-suffix="">0</div>
-            <div class="hero__stat-label">Cities Served</div>
-          </div>
+        <div class="ch-price" data-ch-reveal>
+          <span class="ch-price__icon">◆</span>
+          Starting from <strong>₹1,550/sq.ft</strong>
         </div>
       </div>
-      <!-- Right Side (40%) - 3D Villa + Glass Cards -->
-      <div class="hero__content-right">
-        <!-- 3D Villa Canvas -->
-        <div id="hero-3d" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;"></div>
+
+      <!-- Stats bar (glassmorphism) -->
+      <div class="ch-stats" id="chStats">
+        <div class="ch-stat">
+          <span class="ch-stat__num" data-count="19">0</span>
+          <span class="ch-stat__unit">+</span>
+          <span class="ch-stat__label">Years</span>
+        </div>
+        <div class="ch-stat__divider"></div>
+        <div class="ch-stat">
+          <span class="ch-stat__num" data-count="60">0</span>
+          <span class="ch-stat__unit">+</span>
+          <span class="ch-stat__label">Projects</span>
+        </div>
+        <div class="ch-stat__divider"></div>
+        <div class="ch-stat">
+          <span class="ch-stat__num" data-count="150">0</span>
+          <span class="ch-stat__unit">+</span>
+          <span class="ch-stat__label">Clients</span>
+        </div>
+        <div class="ch-stat__divider"></div>
+        <div class="ch-stat">
+          <span class="ch-stat__num" data-count="4.8">0</span>
+          <span class="ch-stat__unit">★</span>
+          <span class="ch-stat__label">Rating</span>
+        </div>
       </div>
     </div>
 
-    <!-- Scroll Indicator -->
-    <div class="hero__scroll">
-      <span class="hero__scroll-text">Scroll to Explore</span>
-      <div class="hero__scroll-line"></div>
+    <!-- Construction progress bar -->
+    <div class="ch-progress" id="chProgress">
+      <div class="ch-progress__fill"></div>
+      <div class="ch-progress__glow"></div>
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="ch-scroll" id="chScroll">
+      <span class="ch-scroll__text">Scroll to explore</span>
+      <div class="ch-scroll__line"></div>
     </div>
   </section>
 
@@ -1751,7 +1759,7 @@
   <script src="js/pages.js"></script>
 
   <!-- 3D Enhancements -->
-  <script src="js/hero3d.js" defer></script>
+  <script src="js/hero-cinematic.js" defer></script>
   <script src="js/about3d.js" defer></script>
 
   <script src="js/map3d.js" defer></script>

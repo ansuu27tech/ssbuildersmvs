@@ -1,0 +1,702 @@
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * SS BUILDERS MVS — SCROLL-DRIVEN CINEMATIC HERO ENGINE
+ *
+ * Nothing auto-plays. The visitor's scroll position controls
+ * EVERYTHING: frame progression, camera movement, lighting,
+ * particles, text reveals, and section transitions.
+ *
+ * Scroll Phases (within pinned hero):
+ *   Phase 1  (0–12%)   Hero intro → camera approaches, text fades out
+ *   Phase 2  (12–78%)  Construction sequence: scroll drives frames 1→175
+ *   Phase 3  (78–92%)  Villa complete: warm light, reflections, landscape
+ *   Phase 4  (92–100%) Villa recedes, next section fades in
+ *
+ * Tech: GSAP ScrollTrigger (scrub), HTML Canvas, rAF, GPU transforms
+ * ═══════════════════════════════════════════════════════════════
+ */
+(function () {
+  'use strict';
+
+  /* ── CONFIG ─────────────────────────────────────────────── */
+  const CFG = {
+    framePath: 'assets/hero-frames/frame_',
+    frameExt: '.jpg',
+    frameNumbers: [],
+    totalFrames: 0,
+    pinDuration: '500%',   // 5× viewport height of scroll runway
+    dpr: Math.min(window.devicePixelRatio || 1, 2),
+    particleCount: 28,
+    sparkCount: 12,
+    dustMoteCount: 20,
+  };
+
+  // Build frame number list (1–145 + 182–202 + sparse)
+  for (let i = 1; i <= 145; i++) CFG.frameNumbers.push(i);
+  for (let i = 182; i <= 202; i++) CFG.frameNumbers.push(i);
+  [216, 223, 231, 232, 234, 235, 236, 237, 238].forEach(n => CFG.frameNumbers.push(n));
+  CFG.totalFrames = CFG.frameNumbers.length; // 175
+
+  const PHASES = [
+    { at: 0.00, label: 'RAW FOUNDATION' },
+    { at: 0.08, label: 'CONCRETE STRUCTURE' },
+    { at: 0.20, label: 'WALL CONSTRUCTION' },
+    { at: 0.35, label: 'ELECTRICAL & PLUMBING' },
+    { at: 0.48, label: 'GLASS INSTALLATION' },
+    { at: 0.60, label: 'EXTERIOR FINISHING' },
+    { at: 0.72, label: 'INTERIOR FIT-OUT' },
+    { at: 0.82, label: 'LANDSCAPE & LIGHTING' },
+    { at: 0.92, label: 'LUXURY COMPLETION' },
+  ];
+
+  /* ── STATE ──────────────────────────────────────────────── */
+  const state = {
+    frames: [],
+    ready: false,
+    progress: 0,       // master 0→1 from ScrollTrigger
+    frameProgress: 0,  // sub-progress for construction sequence
+    currentPhase: -1,
+    isVisible: true,
+    mouseX: 0.5,
+    mouseY: 0.5,
+    countersStarted: false,
+  };
+
+  /* ── DOM ─────────────────────────────────────────────────── */
+  const $ = sel => document.querySelector(sel);
+  const hero         = $('#hero');
+  const mainCanvas   = $('#chCanvas');
+  const energyCanvas = $('#chEnergy');
+  const phaseEl      = $('#chPhase');
+  const phaseText    = phaseEl?.querySelector('.ch-phase__text');
+  const progressFill = $('.ch-progress__fill');
+  const progressGlow = $('.ch-progress__glow');
+  const bloomEl      = $('#chBloom');
+  const flareEl      = $('#chFlare');
+  const reflectionEl = $('#chReflection');
+  const raysEl       = $('#chRays');
+  const statsEl      = $('#chStats');
+  const dustEl       = $('#chDust');
+  const cameraEl     = $('#chCamera');
+  const scrollCue    = $('#chScroll');
+  const contentEl    = $('#chContent');
+
+  if (!mainCanvas || !hero) return;
+
+  const ctx  = mainCanvas.getContext('2d', { alpha: false });
+  const ectx = energyCanvas.getContext('2d', { alpha: true });
+
+  /* ═══════════════════════════════════════════════════════════
+     1. FRAME PRELOADER
+     ═══════════════════════════════════════════════════════════ */
+  function preloadFrames() {
+    return new Promise(resolve => {
+      let loaded = 0;
+      state.frames = new Array(CFG.totalFrames);
+
+      CFG.frameNumbers.forEach((num, idx) => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = `${CFG.framePath}${String(num).padStart(3, '0')}${CFG.frameExt}`;
+        img.onload = img.onerror = () => {
+          state.frames[idx] = img.naturalWidth ? img : null;
+          loaded++;
+          if (loaded >= CFG.totalFrames) {
+            for (let i = 0; i < state.frames.length; i++) {
+              if (!state.frames[i]) state.frames[i] = state.frames[i - 1] || state.frames[i + 1];
+            }
+            state.ready = true;
+            resolve();
+          }
+        };
+      });
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     2. CANVAS SIZING
+     ═══════════════════════════════════════════════════════════ */
+  function sizeCanvases() {
+    const w = hero.offsetWidth;
+    const h = hero.offsetHeight;
+
+    energyCanvas.width  = w * CFG.dpr;
+    energyCanvas.height = h * CFG.dpr;
+    energyCanvas.style.width  = w + 'px';
+    energyCanvas.style.height = h + 'px';
+
+    const first = state.frames.find(f => f?.naturalWidth);
+    if (first) {
+      const aspect = first.naturalWidth / first.naturalHeight;
+      const rect = mainCanvas.getBoundingClientRect();
+      const cw = rect.width || w * 0.6;
+      const ch = rect.height || h * 0.7;
+      let rw, rh;
+      if (cw / ch > aspect) { rh = ch; rw = rh * aspect; }
+      else { rw = cw; rh = rw / aspect; }
+      mainCanvas.width  = rw * CFG.dpr;
+      mainCanvas.height = rh * CFG.dpr;
+    } else {
+      mainCanvas.width  = 800 * CFG.dpr;
+      mainCanvas.height = 600 * CFG.dpr;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     3. CANVAS RENDERER — crossfade between adjacent frames
+     ═══════════════════════════════════════════════════════════ */
+  function drawFrame() {
+    if (!state.ready) return;
+
+    // Map scroll progress to frame index
+    // Phase 1 (0–0.12): stay on frame 0
+    // Phase 2 (0.12–0.78): frame 0→174
+    // Phase 3+4 (0.78–1): stay on last frame
+    let frameIdx;
+    const p = state.progress;
+    if (p <= 0.12) {
+      frameIdx = 0;
+    } else if (p >= 0.78) {
+      frameIdx = CFG.totalFrames - 1;
+    } else {
+      const sequenceProgress = (p - 0.12) / (0.78 - 0.12);
+      frameIdx = sequenceProgress * (CFG.totalFrames - 1);
+    }
+
+    state.frameProgress = frameIdx / (CFG.totalFrames - 1);
+
+    const floor = Math.floor(frameIdx);
+    const ceil  = Math.min(floor + 1, CFG.totalFrames - 1);
+    const blend = frameIdx - floor;
+    const frameA = state.frames[floor];
+    const frameB = state.frames[ceil];
+    if (!frameA) return;
+
+    const w = mainCanvas.width;
+    const h = mainCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    // Base frame
+    ctx.globalAlpha = 1;
+    drawCover(ctx, frameA, w, h);
+
+    // Crossfade next
+    if (blend > 0.01 && frameB && frameB !== frameA) {
+      ctx.globalAlpha = blend;
+      drawCover(ctx, frameB, w, h);
+      ctx.globalAlpha = 1;
+    }
+
+    // Warm color grade that intensifies with construction progress
+    const warmth = state.frameProgress * 0.14;
+    if (warmth > 0.01) {
+      ctx.globalCompositeOperation = 'soft-light';
+      ctx.fillStyle = `rgba(212, 175, 85, ${warmth})`;
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  }
+
+  function drawCover(c, img, cw, ch) {
+    if (!img?.naturalWidth) return;
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const ia = iw / ih, ca = cw / ch;
+    let sx, sy, sw, sh;
+    if (ca > ia) { sw = iw; sh = iw / ca; sx = 0; sy = (ih - sh) / 2; }
+    else { sh = ih; sw = ih * ca; sx = (iw - sw) / 2; sy = 0; }
+    c.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     4. CAMERA SIMULATOR — scroll-driven dolly/orbit/sway
+     ═══════════════════════════════════════════════════════════ */
+  function updateCamera(time) {
+    if (!cameraEl) return;
+    const t = time * 0.001;
+    const p = state.progress;
+
+    // Micro handheld sway (always active, very subtle)
+    const swayX = Math.sin(t * 0.5) * 2 + Math.sin(t * 0.8) * 1.2;
+    const swayY = Math.cos(t * 0.4) * 1.8 + Math.cos(t * 0.9) * 0.8;
+
+    // Scroll-driven dolly zoom (camera approaches villa)
+    const dolly = 1 + p * 0.06;
+
+    // Slow orbit driven by scroll
+    const rotY = Math.sin(p * Math.PI * 0.8) * 1.2;
+    const rotX = Math.cos(p * Math.PI * 0.5) * 0.4;
+
+    // Mouse parallax
+    const mx = (state.mouseX - 0.5) * 8;
+    const my = (state.mouseY - 0.5) * 5;
+
+    cameraEl.style.transform =
+      `translate3d(${swayX + mx}px, ${swayY + my}px, 0)
+       scale(${dolly})
+       rotateY(${rotY}deg)
+       rotateX(${rotX}deg)`;
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     5. SCROLL-DRIVEN LIGHTING
+     ═══════════════════════════════════════════════════════════ */
+  function updateLighting() {
+    const p = state.progress;
+    const fp = state.frameProgress;
+
+    // Volumetric rays — appear during construction, peak at completion
+    if (raysEl) {
+      const raysOpacity = p < 0.1 ? 0 : Math.min((p - 0.1) * 1.2, 0.7);
+      raysEl.style.opacity = raysOpacity;
+      raysEl.style.transform = `scale(${1 + p * 0.1}) rotate(${p * 3}deg)`;
+    }
+
+    // Bloom — grows with construction
+    if (bloomEl) {
+      bloomEl.style.opacity = (fp * 0.6).toFixed(3);
+      bloomEl.style.transform = `scale(${1 + fp * 0.2})`;
+    }
+
+    // Lens flare — appears only when villa is mostly complete
+    if (flareEl) {
+      flareEl.style.opacity = (fp > 0.7 ? (fp - 0.7) * 3 : 0).toFixed(3);
+    }
+
+    // Floor reflection — strengthens with completion
+    if (reflectionEl) {
+      reflectionEl.style.opacity = (fp * 0.7).toFixed(3);
+    }
+
+    // Progress bar
+    if (progressFill) progressFill.style.width = (p * 100) + '%';
+    if (progressGlow) progressGlow.style.left = `calc(${p * 100}% - 30px)`;
+
+    // Background brightness shift
+    const base = hero.querySelector('.ch-base');
+    if (base) {
+      const brightness = Math.min(0.05 + p * 0.08, 0.15);
+      base.style.background = `radial-gradient(ellipse 80% 60% at 50% 40%,
+        rgba(${Math.round(25 + fp * 30)}, ${Math.round(20 + fp * 22)}, ${Math.round(10 + fp * 12)}, 1) 0%,
+        #030303 100%)`;
+    }
+
+    // Fog movement
+    const fogFar = hero.querySelector('.ch-fog__far');
+    const fogMid = hero.querySelector('.ch-fog__mid');
+    if (fogFar) {
+      fogFar.style.transform = `translate(${Math.sin(p * 3) * 20}px, ${-p * 15}px) scale(${1 + p * 0.05})`;
+      fogFar.style.opacity = (0.5 + p * 0.3).toFixed(2);
+    }
+    if (fogMid) {
+      fogMid.style.transform = `translate(${Math.cos(p * 2.5) * 15}px, ${-p * 10}px)`;
+      fogMid.style.opacity = (0.3 + fp * 0.4).toFixed(2);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     6. PHASE LABELS — synced to scroll
+     ═══════════════════════════════════════════════════════════ */
+  function updatePhase() {
+    const fp = state.frameProgress;
+    let idx = 0;
+    for (let i = PHASES.length - 1; i >= 0; i--) {
+      if (fp >= PHASES[i].at) { idx = i; break; }
+    }
+    if (idx !== state.currentPhase) {
+      state.currentPhase = idx;
+      if (phaseText) {
+        phaseText.style.opacity = '0';
+        setTimeout(() => {
+          phaseText.textContent = PHASES[idx].label;
+          phaseText.style.opacity = '1';
+        }, 250);
+      }
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     7. ENERGY PARTICLE SYSTEM — intensity driven by scroll
+     ═══════════════════════════════════════════════════════════ */
+  const particles = [];
+
+  class Particle {
+    constructor(type) {
+      this.type = type;
+      this.reset();
+    }
+    reset() {
+      const w = energyCanvas.width / CFG.dpr;
+      const h = energyCanvas.height / CFG.dpr;
+      if (this.type === 'orb') {
+        this.cx = w * 0.55;
+        this.cy = h * 0.42;
+        this.angle = Math.random() * Math.PI * 2;
+        this.radius = 80 + Math.random() * 220;
+        this.speed = 0.003 + Math.random() * 0.005;
+        this.size = 2 + Math.random() * 4;
+      } else if (this.type === 'spark') {
+        this.x = w * (0.35 + Math.random() * 0.4);
+        this.y = h * (0.15 + Math.random() * 0.55);
+        this.vx = (Math.random() - 0.5) * 1.2;
+        this.vy = -0.5 - Math.random() * 1.5;
+        this.size = 0.8 + Math.random() * 1.8;
+        this.life = 1;
+        this.decay = 0.008 + Math.random() * 0.012;
+      } else {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.vx = (Math.random() - 0.5) * 0.2;
+        this.vy = -0.05 - Math.random() * 0.2;
+        this.size = 0.5 + Math.random() * 1.5;
+        this.life = 1;
+        this.decay = 0.0008 + Math.random() * 0.002;
+      }
+    }
+    update(time) {
+      const fp = state.frameProgress;
+      if (this.type === 'orb') {
+        this.angle += this.speed;
+        this.x = this.cx + Math.cos(this.angle) * this.radius;
+        this.y = this.cy + Math.sin(this.angle) * this.radius * 0.45;
+        this.alpha = fp * 0.5 * (0.4 + 0.6 * Math.abs(Math.sin(this.angle * 2)));
+      } else if (this.type === 'spark') {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.015;
+        this.life -= this.decay;
+        this.alpha = this.life * fp * 0.7;
+        if (this.life <= 0) this.reset();
+      } else {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= this.decay;
+        this.alpha = this.life * 0.15;
+        if (this.life <= 0 || this.y < 0) this.reset();
+      }
+    }
+    draw(c) {
+      if (!this.alpha || this.alpha < 0.005) return;
+      c.save();
+      c.globalAlpha = this.alpha;
+      if (this.type === 'orb') {
+        const g = c.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
+        g.addColorStop(0, 'rgba(212,175,85,0.8)');
+        g.addColorStop(0.5, 'rgba(212,175,85,0.15)');
+        g.addColorStop(1, 'transparent');
+        c.fillStyle = g;
+        c.beginPath();
+        c.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        c.fill();
+      } else {
+        c.fillStyle = this.type === 'spark'
+          ? `rgba(255,220,120,${this.alpha})`
+          : `rgba(255,255,255,${this.alpha})`;
+        c.beginPath();
+        c.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        c.fill();
+      }
+      c.restore();
+    }
+  }
+
+  function initParticles() {
+    for (let i = 0; i < CFG.particleCount; i++) particles.push(new Particle('orb'));
+    for (let i = 0; i < CFG.sparkCount; i++) particles.push(new Particle('spark'));
+    for (let i = 0; i < CFG.dustMoteCount; i++) particles.push(new Particle('dust'));
+  }
+
+  function drawParticles(time) {
+    const w = energyCanvas.width, h = energyCanvas.height;
+    ectx.clearRect(0, 0, w, h);
+    ectx.save();
+    ectx.scale(CFG.dpr, CFG.dpr);
+    particles.forEach(p => { p.update(time); p.draw(ectx); });
+
+    // Energy streaks between orbs
+    const orbs = particles.filter(p => p.type === 'orb');
+    ectx.lineWidth = 0.5;
+    for (let i = 0; i < orbs.length; i++) {
+      for (let j = i + 1; j < orbs.length; j++) {
+        const dx = orbs[i].x - orbs[j].x;
+        const dy = orbs[i].y - orbs[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 140) {
+          ectx.globalAlpha = (1 - dist / 140) * 0.12 * state.frameProgress;
+          ectx.strokeStyle = 'rgba(212,175,85,0.08)';
+          ectx.beginPath();
+          ectx.moveTo(orbs[i].x, orbs[i].y);
+          ectx.lineTo(orbs[j].x, orbs[j].y);
+          ectx.stroke();
+        }
+      }
+    }
+    ectx.restore();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     8. DUST MOTES (CSS)
+     ═══════════════════════════════════════════════════════════ */
+  function createDust() {
+    if (!dustEl) return;
+    const style = document.createElement('style');
+    style.id = 'ch-dust-kf';
+    style.textContent = `
+      @keyframes dustFloat {
+        0%   { transform: translateY(0) translateX(0); opacity: 0; }
+        10%  { opacity: 1; }
+        90%  { opacity: 1; }
+        100% { transform: translateY(-100vh) translateX(40px); opacity: 0; }
+      }`;
+    document.head.appendChild(style);
+
+    for (let i = 0; i < 18; i++) {
+      const m = document.createElement('div');
+      const sz = 1 + Math.random() * 2.5;
+      m.style.cssText = `
+        position:absolute;
+        width:${sz}px; height:${sz}px;
+        border-radius:50%;
+        background:rgba(255,255,255,${0.04 + Math.random() * 0.08});
+        left:${Math.random() * 100}%;
+        bottom:-10px;
+        animation:dustFloat ${14 + Math.random() * 20}s linear ${Math.random() * 15}s infinite;
+        will-change:transform;`;
+      dustEl.appendChild(m);
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     9. GSAP — INITIAL TEXT REVEAL + SCROLLTRIGGER PIN
+     ═══════════════════════════════════════════════════════════ */
+  function initGSAP() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      console.warn('GSAP or ScrollTrigger not loaded');
+      return;
+    }
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Split text into characters for premium letter-by-letter reveal
+    document.querySelectorAll('.ch-title__word').forEach(word => {
+      const text = word.textContent.trim();
+      word.textContent = '';
+      word.style.opacity = '1';
+      word.style.transform = 'none';
+      
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
+        span.style.display = 'inline-block';
+        span.classList.add('ch-char');
+        // Initial state for GSAP
+        span.style.opacity = '0';
+        span.style.transform = 'translateY(100%)';
+        word.appendChild(span);
+      }
+    });
+
+    /* ── Initial entrance animation (non-scroll) ── */
+    const intro = gsap.timeline({ delay: 0.3 });
+
+    intro.to('.ch-char', {
+      y: 0, opacity: 1,
+      duration: 1.0, ease: 'power4.out', stagger: 0.03,
+    }, 0);
+
+    intro.to('.ch-overline', {
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+    }, 0.2);
+
+    intro.to('.ch-sub', {
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+    }, 0.5);
+
+    intro.to('.ch-actions', {
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+    }, 0.7);
+
+    intro.to('.ch-price', {
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+    }, 0.9);
+
+    intro.add(() => {
+      if (phaseEl) phaseEl.classList.add('visible');
+      if (statsEl) statsEl.classList.add('visible');
+      if (scrollCue) scrollCue.classList.add('visible');
+    }, 1.2);
+
+    intro.add(() => startCounters(), 1.4);
+
+    /* ── Master ScrollTrigger — pins the hero ── */
+    ScrollTrigger.create({
+      trigger: hero,
+      start: 'top top',
+      end: CFG.pinDuration,
+      pin: true,
+      scrub: 0.8,          // smooth scrub with slight lag
+      anticipatePin: 1,
+      onUpdate: (self) => {
+        state.progress = self.progress;  // 0→1
+      },
+    });
+
+    /* ── Phase 1: Scroll-driven text fade-out (0% → 15%) ── */
+    gsap.to('.ch-content', {
+      y: -80,
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: '15% top',
+        endTrigger: hero,
+        scrub: 0.5,
+      }
+    });
+
+    // Scroll cue disappears quickly
+    gsap.to('.ch-scroll', {
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: '5% top',
+        endTrigger: hero,
+        scrub: true,
+      }
+    });
+
+    // Stats bar fades during phase 1
+    gsap.to('.ch-stats', {
+      y: 40,
+      opacity: 0,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: '12% top',
+        endTrigger: hero,
+        scrub: 0.5,
+      }
+    });
+
+    // Canvas zooms in during construction
+    gsap.to('.ch-canvas', {
+      scale: 1.15,
+      y: '-5%',
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top top',
+        end: CFG.pinDuration,
+        scrub: 0.8,
+      }
+    });
+
+    // Ensures that triggers below the pin adjust their start/end positions based on the 500vh pin padding.
+    ScrollTrigger.sort();
+    ScrollTrigger.refresh();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     10. STATS COUNTERS
+     ═══════════════════════════════════════════════════════════ */
+  function startCounters() {
+    if (state.countersStarted) return;
+    state.countersStarted = true;
+
+    document.querySelectorAll('.ch-stat__num').forEach(el => {
+      const target = parseFloat(el.dataset.count);
+      const isFloat = target % 1 !== 0;
+      const dur = 2000;
+      const start = performance.now();
+      const tick = now => {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 4);
+        el.textContent = isFloat ? (target * eased).toFixed(1) : Math.round(target * eased);
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     11. MOUSE + VISIBILITY
+     ═══════════════════════════════════════════════════════════ */
+  function initMouse() {
+    hero.addEventListener('mousemove', e => {
+      const r = hero.getBoundingClientRect();
+      state.mouseX = (e.clientX - r.left) / r.width;
+      state.mouseY = (e.clientY - r.top) / r.height;
+
+      const btn = document.getElementById('chBtnPrimary');
+      if (btn) {
+        const br = btn.getBoundingClientRect();
+        btn.style.setProperty('--x', ((e.clientX - br.left) / br.width * 100) + '%');
+        btn.style.setProperty('--y', ((e.clientY - br.top) / br.height * 100) + '%');
+      }
+    });
+  }
+
+  function initVisibility() {
+    const obs = new IntersectionObserver(
+      ([e]) => { state.isVisible = e.isIntersecting; },
+      { threshold: 0.05 }
+    );
+    obs.observe(hero);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) state.isVisible = false;
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     12. MAIN RENDER LOOP (rAF)
+     ═══════════════════════════════════════════════════════════ */
+  function render(time) {
+    requestAnimationFrame(render);
+    if (!state.isVisible || !state.ready) return;
+
+    drawFrame();
+    drawParticles(time);
+    updateCamera(time);
+    updateLighting();
+    updatePhase();
+  }
+
+  /* ═══════════════════════════════════════════════════════════
+     13. RESIZE
+     ═══════════════════════════════════════════════════════════ */
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(sizeCanvases, 200);
+  });
+
+  /* ═══════════════════════════════════════════════════════════
+     14. INIT
+     ═══════════════════════════════════════════════════════════ */
+  async function init() {
+    await preloadFrames();
+    sizeCanvases();
+    initParticles();
+    createDust();
+    initMouse();
+    initVisibility();
+
+    // Draw first frame immediately
+    drawFrame();
+
+    // Start render loop
+    requestAnimationFrame(render);
+
+    // GSAP after a tick
+    requestAnimationFrame(() => initGSAP());
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
