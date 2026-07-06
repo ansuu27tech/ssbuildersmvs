@@ -270,13 +270,13 @@
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: clamp(2.8rem, 5.5vw, 5rem);
   font-weight: 800;
-  line-height: 0.95;
+  line-height: 1;
   color: #fff;
   margin: 0 0 16px 0;
 }
 .ch-title__line {
   display: block;
-  overflow: hidden;
+  /* overflow: hidden removed to prevent clipping of DREAMS word */
 }
 .ch-title__word {
   display: inline-block;
@@ -285,6 +285,11 @@
   margin-right: 0.2em;
 }
 .ch-title__accent {
+  color: #d4af55; /* Solid fallback, no clipping bug */
+}
+
+/* Apply gradient only to the GSAP-generated chars to prevent transform WebKit bugs */
+.ch-title__accent .ch-char {
   background: linear-gradient(135deg, #d4af55 0%, #f7e8a0 40%, #d4af55 60%, #c9a84c 100%);
   background-size: 200% 200%;
   -webkit-background-clip: text;
