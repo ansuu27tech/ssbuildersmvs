@@ -212,29 +212,12 @@
      ═══════════════════════════════════════════════════════════ */
   function updateCamera(time) {
     if (!cameraEl) return;
-    const t = time * 0.001;
-    const p = state.progress;
+    
+    // Mouse parallax (extremely subtle, just for life)
+    const mx = (state.mouseX - 0.5) * 6;
+    const my = (state.mouseY - 0.5) * 4;
 
-    // Micro handheld sway (always active, very subtle)
-    const swayX = Math.sin(t * 0.5) * 2 + Math.sin(t * 0.8) * 1.2;
-    const swayY = Math.cos(t * 0.4) * 1.8 + Math.cos(t * 0.9) * 0.8;
-
-    // Scroll-driven dolly zoom (camera approaches villa)
-    const dolly = 1 + p * 0.06;
-
-    // Slow orbit driven by scroll
-    const rotY = Math.sin(p * Math.PI * 0.8) * 1.2;
-    const rotX = Math.cos(p * Math.PI * 0.5) * 0.4;
-
-    // Mouse parallax
-    const mx = (state.mouseX - 0.5) * 8;
-    const my = (state.mouseY - 0.5) * 5;
-
-    cameraEl.style.transform =
-      `translate3d(${swayX + mx}px, ${swayY + my}px, 0)
-       scale(${dolly})
-       rotateY(${rotY}deg)
-       rotateX(${rotX}deg)`;
+    cameraEl.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
   }
 
   /* ═══════════════════════════════════════════════════════════
@@ -573,9 +556,8 @@
       ease: 'power1.inOut',
       scrollTrigger: {
         trigger: hero,
-        start: '15% top', // Start fading only after 15% scroll
-        end: '35% top',   // Finish fading at 35%
-        endTrigger: hero,
+        start: 'top -10%', // Start fading after 10vh of scroll
+        end: 'top -80%',   // Finish fading at 80vh of scroll (keeps text visible longer)
         scrub: 0.5,
       }
     });
@@ -587,23 +569,33 @@
       scrollTrigger: {
         trigger: hero,
         start: 'top top',
-        end: '5% top',
-        endTrigger: hero,
+        end: 'top -20%',
         scrub: true,
       }
     });
 
-    // Stats bar fades during phase 1 (delayed)
+    // Stats bar fades out slightly after the text
     gsap.to('.ch-stats', {
       y: 20,
       opacity: 0,
       ease: 'power1.inOut',
       scrollTrigger: {
         trigger: hero,
-        start: '10% top',
-        end: '25% top',
-        endTrigger: hero,
+        start: 'top -30%',
+        end: 'top -100%',
         scrub: 0.5,
+      }
+    });
+
+    // Phase 4: Smooth transition out. Fade the entire camera wrapper to black at the very end of the pin
+    gsap.to('.ch-camera', {
+      opacity: 0,
+      ease: 'power2.inOut',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top -400%', // Start fading at 400vh (which is after construction finishes at 78%)
+        end: 'top -480%',   // Completely black just before the 500vh pin ends
+        scrub: 1,
       }
     });
 
