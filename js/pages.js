@@ -324,7 +324,7 @@
         scrollTrigger: {
           trigger: step,
           start: 'top 85%',
-          toggleActions: 'play none none none'
+          once: true
         }
       });
     });
@@ -340,20 +340,20 @@
 
     gsap.fromTo(cards[0], { opacity: 0, x: -60 }, {
       opacity: 1, x: 0, duration: 0.8, ease: 'power2.out',
-      scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%' }
+      scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%', once: true }
     });
 
     if (vsBadge) {
       gsap.fromTo(vsBadge, { opacity: 0, scale: 0 }, {
         opacity: 1, scale: 1, duration: 0.5, delay: 0.3, ease: 'back.out(1.7)',
-        scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%' }
+        scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%', once: true }
       });
     }
 
     if (cards[1]) {
       gsap.fromTo(cards[1], { opacity: 0, x: 60 }, {
         opacity: 1, x: 0, duration: 0.8, delay: 0.2, ease: 'power2.out',
-        scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%' }
+        scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%', once: true }
       });
     }
   }
@@ -380,7 +380,7 @@
         scrollTrigger: {
           trigger: card,
           start: 'top 90%',
-          toggleActions: 'play none none none'
+          once: true
         }
       });
     });
@@ -410,7 +410,7 @@
           scrollTrigger: {
             trigger: step,
             start: 'top 85%',
-            toggleActions: 'play none none none'
+            once: true
           }
         });
       });
@@ -466,7 +466,7 @@
           scrollTrigger: {
             trigger: '.materials-stats',
             start: 'top 85%',
-            toggleActions: 'play none none none'
+            once: true
           }
         });
       });
@@ -514,7 +514,7 @@
         scrollTrigger: {
           trigger: '.brands-showcase',
           start: 'top 85%',
-          toggleActions: 'play none none none'
+          once: true
         }
       });
     }
@@ -607,7 +607,7 @@
           scrollTrigger: {
             trigger: item,
             start: 'top 90%',
-            toggleActions: 'play none none none'
+            once: true
           }
         });
       });

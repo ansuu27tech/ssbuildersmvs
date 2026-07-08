@@ -121,7 +121,7 @@ function initGSAPAnimations() {
       scrollTrigger: {
         trigger: header,
         start: 'top 85%',
-        toggleActions: 'play none none none'
+        once: true
       }
     });
 
@@ -142,7 +142,8 @@ function initGSAPAnimations() {
     gsap.fromTo('.story__intro-content', { x: -60, opacity: 0 }, {
       scrollTrigger: {
         trigger: storyIntro,
-        start: 'top 75%'
+        start: 'top 75%',
+        once: true
       },
       x: 0, opacity: 1, duration: 1, ease: 'power3.out'
     });
@@ -150,7 +151,8 @@ function initGSAPAnimations() {
     gsap.fromTo('.story__vision-cards', { x: 60, opacity: 0 }, {
       scrollTrigger: {
         trigger: storyIntro,
-        start: 'top 75%'
+        start: 'top 75%',
+        once: true
       },
       x: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.2
     });
@@ -167,7 +169,7 @@ function initGSAPAnimations() {
       scrollTrigger: {
         trigger: milestone,
         start: 'top 80%',
-        toggleActions: 'play none none none'
+        once: true
       }
     });
 
@@ -182,7 +184,7 @@ function initGSAPAnimations() {
       scrollTrigger: {
         trigger: card,
         start: 'top 85%',
-        toggleActions: 'play none none none'
+        once: true
       },
       y: 0,
       opacity: 1,
@@ -198,7 +200,8 @@ function initGSAPAnimations() {
     gsap.fromTo(coverageMap, { scale: 0.9, opacity: 0 }, {
       scrollTrigger: {
         trigger: coverageMap,
-        start: 'top 80%'
+        start: 'top 80%',
+        once: true
       },
       scale: 1, opacity: 1, duration: 1, ease: 'power3.out'
     });
@@ -208,7 +211,8 @@ function initGSAPAnimations() {
     gsap.fromTo(tag, { y: 20, opacity: 0 }, {
       scrollTrigger: {
         trigger: tag,
-        start: 'top 90%'
+        start: 'top 90%',
+        once: true
       },
       y: 0, opacity: 1, duration: 0.5, delay: i * 0.05, ease: 'power3.out'
     });
@@ -219,7 +223,8 @@ function initGSAPAnimations() {
     gsap.fromTo(card, { y: 50, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
-        start: 'top 85%'
+        start: 'top 85%',
+        once: true
       },
       y: 0, opacity: 1, duration: 0.8, delay: i * 0.1, ease: 'power3.out'
     });
@@ -230,7 +235,8 @@ function initGSAPAnimations() {
     gsap.fromTo(card, { y: 50, scale: 0.95, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
-        start: 'top 85%'
+        start: 'top 85%',
+        once: true
       },
       y: 0, scale: 1, opacity: 1, duration: 0.8, delay: i * 0.15, ease: 'power3.out'
     });
@@ -241,7 +247,8 @@ function initGSAPAnimations() {
     gsap.fromTo(card, { y: 40, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
-        start: 'top 90%'
+        start: 'top 90%',
+        once: true
       },
       y: 0, opacity: 1, duration: 0.6, delay: i * 0.06, ease: 'power3.out'
     });
@@ -253,7 +260,8 @@ function initGSAPAnimations() {
     gsap.fromTo('.testimonials__carousel', { y: 40, opacity: 0 }, {
       scrollTrigger: {
         trigger: testimonialSection,
-        start: 'top 75%'
+        start: 'top 75%',
+        once: true
       },
       y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
     });
@@ -265,7 +273,8 @@ function initGSAPAnimations() {
     gsap.from('.contact__form-wrapper, .luxury-contact__panel', {
       scrollTrigger: {
         trigger: contactSection,
-        start: 'top 75%'
+        start: 'top 75%',
+        once: true
       },
       x: -50, opacity: 0, duration: 0.8, ease: 'power3.out'
     });
@@ -273,7 +282,8 @@ function initGSAPAnimations() {
     gsap.from('.contact__info, .luxury-contact__info-grid > div', {
       scrollTrigger: {
         trigger: contactSection,
-        start: 'top 75%'
+        start: 'top 75%',
+        once: true
       },
       x: 50, opacity: 0, duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
     });
@@ -305,7 +315,8 @@ function initGSAPAnimations() {
       gsap.from(step.querySelector('.timeline-content'), {
         scrollTrigger: {
           trigger: step,
-          start: 'top 85%'
+          start: 'top 85%',
+          once: true
         },
         y: 40,
         opacity: 0,
@@ -317,6 +328,7 @@ function initGSAPAnimations() {
       ScrollTrigger.create({
         trigger: step,
         start: 'top 75%',
+        once: true,
         onEnter: () => {
           step.classList.add('is-active');
           if (i < timelineSteps.length - 1) {
@@ -333,7 +345,8 @@ function initGSAPAnimations() {
     gsap.from('.luxury-footer__top > *', {
       scrollTrigger: {
         trigger: footer,
-        start: 'top 85%'
+        start: 'top 85%',
+        once: true
       },
       y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out'
     });
