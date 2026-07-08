@@ -607,18 +607,7 @@
       }
     });
 
-    // Canvas scale — restrained so villa never overwhelms the interface
-    gsap.to('.ch-canvas', {
-      scale: 0.97,
-      y: '-3%',
-      ease: 'none',
-      scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
-        end: CFG.pinDuration,
-        scrub: 0.8,
-      }
-    });
+    // Canvas remains fixed in place as the stable centerpiece of the cinematic experience
 
     // Ensures that triggers below the pin adjust their start/end positions based on the 500vh pin padding.
     ScrollTrigger.sort();
