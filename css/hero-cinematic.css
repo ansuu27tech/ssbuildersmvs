@@ -21,9 +21,19 @@
 .ch-base {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 40%, #0a0a0a 0%, #030303 100%);
+  background: radial-gradient(ellipse 80% 60% at 55% 40%, #0a0a0a 0%, #020202 100%);
   z-index: 0;
   transition: background 0.6s ease;
+}
+
+/* Cinematic vignette — adds photographic depth framing */
+.ch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 60% at 50% 48%, transparent 40%, rgba(2,2,2,0.6) 100%);
 }
 
 /* ── Layer 1: Cinematic Fog ────────────────────────────────── */
@@ -36,13 +46,13 @@
 .ch-fog__far {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 120% 80% at 60% 80%, rgba(180,150,80,0.04) 0%, transparent 60%);
+  background: radial-gradient(ellipse 120% 80% at 60% 80%, rgba(180,150,80,0.06) 0%, transparent 55%);
   will-change: transform, opacity;
 }
 .ch-fog__mid {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 100% 60% at 40% 70%, rgba(200,170,100,0.03) 0%, transparent 50%);
+  background: radial-gradient(ellipse 100% 60% at 40% 70%, rgba(200,170,100,0.05) 0%, transparent 45%);
   will-change: transform, opacity;
 }
 .ch-fog__near {
@@ -50,24 +60,24 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 40%;
-  background: linear-gradient(to top, rgba(5,5,5,0.9) 0%, transparent 100%);
+  height: 45%;
+  background: linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.4) 40%, transparent 100%);
 }
 
 /* ── Layer 2: Main Building Canvas ─────────────────────────── */
 .ch-canvas {
   position: absolute;
   top: 50%;
-  left: 55%;
+  left: 58%;
   transform: translate(-35%, -50%);
-  width: 85%;
-  max-width: 1250px;
-  height: 95%;
+  width: 78%;
+  max-width: 1100px;
+  height: 90%;
   z-index: 2;
   pointer-events: none;
   image-rendering: auto;
   will-change: transform, opacity, filter;
-  filter: contrast(1.08) saturate(1.1);
+  filter: contrast(1.06) saturate(1.12) brightness(1.02);
 }
 
 /* ── Layer 3: Energy Canvas ────────────────────────────────── */
@@ -147,21 +157,22 @@
 .ch-reflection {
   position: absolute;
   bottom: 0;
-  left: 25%;
-  width: 55%;
-  height: 22%;
+  left: 28%;
+  width: 50%;
+  height: 25%;
   z-index: 4;
   pointer-events: none;
   background: linear-gradient(to top,
-    rgba(212,175,85,0.07) 0%,
-    rgba(212,175,85,0.02) 30%,
+    rgba(212,175,85,0.1) 0%,
+    rgba(212,175,85,0.04) 25%,
+    rgba(200,180,120,0.02) 50%,
     transparent 100%
   );
-  filter: blur(8px);
+  filter: blur(10px);
   opacity: 0;
   will-change: opacity;
-  mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+  mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
 }
 
 /* ── Layer 7: Floating Dust ────────────────────────────────── */
@@ -183,23 +194,23 @@
   will-change: transform;
 }
 
-/* ── Phase Badge ───────────────────────────────────────────── */
+/* ── Phase Indicator — Refined Glass Panel ─────────────────── */
 .ch-phase {
   position: absolute;
-  top: 100px;
+  top: 96px;
   right: 40px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 20px;
-  background: rgba(212,175,85,0.08);
-  border: 1px solid rgba(212,175,85,0.2);
-  border-radius: 40px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  gap: 12px;
+  padding: 10px 24px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   z-index: 20;
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   will-change: opacity, transform;
 }
 .ch-phase.visible {
@@ -208,35 +219,35 @@
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 .ch-phase__dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: #d4af55;
-  box-shadow: 0 0 12px rgba(212,175,85,0.6);
-  animation: phasePulse 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(212,175,85,0.5);
+  animation: phasePulse 2.5s ease-in-out infinite;
 }
 .ch-phase__text {
   font-family: 'Inter', 'Outfit', sans-serif;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(212,175,85,0.9);
+  color: rgba(255,255,255,0.5);
   transition: opacity 0.3s ease;
 }
 
 @keyframes phasePulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50%      { transform: scale(1.4); opacity: 0.5; }
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50%      { transform: scale(1.3); opacity: 0.4; }
 }
 
-/* ── Content Block ─────────────────────────────────────────── */
+/* ── Content Block (Foreground Layer) ─────────────────────── */
 .ch-content {
   position: absolute;
-  top: 58%;
-  left: 8%;
+  top: 56%;
+  left: 6%;
   transform: translateY(-50%);
-  max-width: 580px;
+  max-width: 520px;
   z-index: 15;
   will-change: transform, opacity;
 }
@@ -246,46 +257,47 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(24px);
 }
 .ch-overline__bar {
-  width: 40px;
-  height: 2px;
+  width: 32px;
+  height: 1px;
   background: linear-gradient(90deg, #d4af55, #f0d78c);
   flex-shrink: 0;
 }
 .ch-overline__text {
   font-family: 'Inter', 'Outfit', sans-serif;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(212,175,85,0.8);
+  color: rgba(212,175,85,0.65);
 }
 
-/* Title */
+/* Title — villa is hero, type supports it */
 .ch-title {
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  font-size: clamp(2.4rem, 4.8vw, 4.2rem);
   font-weight: 800;
-  line-height: 0.9;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
   color: #fff;
-  margin: 0 0 20px 0;
+  margin: 0 0 16px 0;
 }
 .ch-title__line {
   display: block;
-  /* overflow: hidden removed to prevent clipping of DREAMS word */
+  margin-bottom: 4px;
 }
 .ch-title__word {
   display: inline-block;
   opacity: 0;
   transform: translateY(100%);
-  margin-right: 0.2em;
+  margin-right: 0.15em;
 }
 .ch-title__accent {
-  color: #d4af55; /* Solid fallback, no clipping bug */
+  color: #d4af55;
 }
 
 /* Apply gradient only to the GSAP-generated chars to prevent transform WebKit bugs */
@@ -307,21 +319,21 @@
 /* Subtitle */
 .ch-sub {
   font-family: 'Inter', sans-serif;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.45);
   margin: 0 0 24px 0;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(24px);
 }
 
 /* Actions */
 .ch-actions {
   display: flex;
   gap: 16px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(24px);
 }
 
 /* Buttons */
@@ -389,27 +401,27 @@
 .ch-price {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-family: 'Inter', sans-serif;
-  font-size: 0.8rem;
-  color: rgba(255,255,255,0.4);
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.35);
   opacity: 0;
-  transform: translateY(30px);
+  transform: translateY(24px);
 }
-.ch-price__icon { color: #d4af55; font-size: 0.6rem; }
-.ch-price strong { color: rgba(212,175,85,0.9); font-weight: 600; }
+.ch-price__icon { color: #d4af55; font-size: 0.5rem; }
+.ch-price strong { color: rgba(212,175,85,0.8); font-weight: 600; }
 
 /* ── Stats Bar ─────────────────────────────────────────────── */
 .ch-stats {
   position: absolute;
-  bottom: 80px;
+  bottom: 72px;
   left: 50%;
-  transform: translateX(-50%) translateY(30px);
+  transform: translateX(-50%) translateY(24px);
   display: flex;
   align-items: center;
-  padding: 20px 48px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
+  padding: 16px 40px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
   border-radius: 80px;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -423,27 +435,27 @@
   transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ch-stat { text-align: center; padding: 0 28px; }
+.ch-stat { text-align: center; padding: 0 24px; }
 .ch-stat__num {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.8rem; font-weight: 700;
+  font-size: 1.6rem; font-weight: 700;
   color: #fff; line-height: 1;
 }
 .ch-stat__unit {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.2rem; font-weight: 600;
+  font-size: 1.1rem; font-weight: 600;
   color: #d4af55; margin-left: 2px;
 }
 .ch-stat__label {
   display: block;
   font-family: 'Inter', sans-serif;
-  font-size: 0.65rem; font-weight: 400;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: rgba(255,255,255,0.35); margin-top: 4px;
+  font-size: 0.6rem; font-weight: 400;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); margin-top: 4px;
 }
 .ch-stat__divider {
-  width: 1px; height: 36px;
-  background: rgba(255,255,255,0.08);
+  width: 1px; height: 32px;
+  background: rgba(255,255,255,0.06);
   flex-shrink: 0;
 }
 
@@ -502,12 +514,12 @@
 
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .ch-canvas { left: 50%; transform: translate(-50%, -52%); width: 90%; }
-  .ch-content { left: 5%; max-width: 480px; }
-  .ch-phase { top: 85px; right: 20px; }
-  .ch-stats { padding: 16px 32px; }
-  .ch-stat { padding: 0 20px; }
-  .ch-stat__num { font-size: 1.5rem; }
+  .ch-canvas { left: 55%; transform: translate(-45%, -52%); width: 82%; }
+  .ch-content { left: 5%; max-width: 440px; }
+  .ch-phase { top: 88px; right: 24px; }
+  .ch-stats { padding: 14px 32px; }
+  .ch-stat { padding: 0 18px; }
+  .ch-stat__num { font-size: 1.4rem; }
 }
 
 @media (max-width: 768px) {

@@ -244,52 +244,58 @@
     const p = state.progress;
     const fp = state.frameProgress;
 
-    // Volumetric rays — appear during construction, peak at completion
+    // Volumetric rays — gradual appearance, subtle peak
     if (raysEl) {
-      const raysOpacity = p < 0.1 ? 0 : Math.min((p - 0.1) * 1.2, 0.7);
+      const raysOpacity = p < 0.12 ? 0 : Math.min((p - 0.12) * 0.9, 0.5);
       raysEl.style.opacity = raysOpacity;
-      raysEl.style.transform = `scale(${1 + p * 0.1}) rotate(${p * 3}deg)`;
+      raysEl.style.transform = `scale(${1 + p * 0.08}) rotate(${p * 2}deg)`;
     }
 
-    // Bloom — grows with construction
+    // Bloom — grows with construction, richer at completion
     if (bloomEl) {
-      bloomEl.style.opacity = (fp * 0.6).toFixed(3);
-      bloomEl.style.transform = `scale(${1 + fp * 0.2})`;
+      const bloomIntensity = fp < 0.2 ? fp * 0.5 : 0.1 + (fp - 0.2) * 0.75;
+      bloomEl.style.opacity = Math.min(bloomIntensity, 0.55).toFixed(3);
+      bloomEl.style.transform = `scale(${1 + fp * 0.25})`;
     }
 
-    // Lens flare — appears only when villa is mostly complete
+    // Lens flare — appears only when villa is mostly complete, with warmth
     if (flareEl) {
-      flareEl.style.opacity = (fp > 0.7 ? (fp - 0.7) * 3 : 0).toFixed(3);
+      const flareVal = fp > 0.75 ? (fp - 0.75) * 2.8 : 0;
+      flareEl.style.opacity = Math.min(flareVal, 0.7).toFixed(3);
     }
 
-    // Floor reflection — strengthens with completion
+    // Floor reflection — strengthens progressively, warmer at end
     if (reflectionEl) {
-      reflectionEl.style.opacity = (fp * 0.7).toFixed(3);
+      const refIntensity = fp < 0.3 ? fp * 0.4 : 0.12 + (fp - 0.3) * 0.85;
+      reflectionEl.style.opacity = Math.min(refIntensity, 0.75).toFixed(3);
     }
 
     // Progress bar
     if (progressFill) progressFill.style.width = (p * 100) + '%';
     if (progressGlow) progressGlow.style.left = `calc(${p * 100}% - 30px)`;
 
-    // Background brightness shift
+    // Background warmth shift — cool to warm as construction progresses
     const base = hero.querySelector('.ch-base');
     if (base) {
-      const brightness = Math.min(0.05 + p * 0.08, 0.15);
-      base.style.background = `radial-gradient(ellipse 80% 60% at 50% 40%,
-        rgba(${Math.round(25 + fp * 30)}, ${Math.round(20 + fp * 22)}, ${Math.round(10 + fp * 12)}, 1) 0%,
-        #030303 100%)`;
+      // Gradually shift from cold dark to warm undertone
+      const r = Math.round(20 + fp * 35);
+      const g = Math.round(16 + fp * 26);
+      const b = Math.round(10 + fp * 14);
+      base.style.background = `radial-gradient(ellipse 80% 60% at 55% 40%,
+        rgba(${r}, ${g}, ${b}, 1) 0%,
+        #020202 100%)`;
     }
 
-    // Fog movement
+    // Fog movement — deeper, more cinematic
     const fogFar = hero.querySelector('.ch-fog__far');
     const fogMid = hero.querySelector('.ch-fog__mid');
     if (fogFar) {
-      fogFar.style.transform = `translate(${Math.sin(p * 3) * 20}px, ${-p * 15}px) scale(${1 + p * 0.05})`;
-      fogFar.style.opacity = (0.5 + p * 0.3).toFixed(2);
+      fogFar.style.transform = `translate(${Math.sin(p * 2.5) * 15}px, ${-p * 12}px) scale(${1 + p * 0.06})`;
+      fogFar.style.opacity = (0.5 + p * 0.35).toFixed(2);
     }
     if (fogMid) {
-      fogMid.style.transform = `translate(${Math.cos(p * 2.5) * 15}px, ${-p * 10}px)`;
-      fogMid.style.opacity = (0.3 + fp * 0.4).toFixed(2);
+      fogMid.style.transform = `translate(${Math.cos(p * 2) * 12}px, ${-p * 8}px)`;
+      fogMid.style.opacity = (0.3 + fp * 0.45).toFixed(2);
     }
   }
 
@@ -540,15 +546,15 @@
       },
     });
 
-    /* ── Phase 1: Scroll-driven text fade-out (0% → 15%) ── */
+    /* ── Phase 1: Scroll-driven text fade-out (delayed for readability) ── */
     gsap.to('.ch-content', {
-      y: -80,
+      y: -40, // Less vertical movement, more elegant fade
       opacity: 0,
-      ease: 'none',
+      ease: 'power1.inOut',
       scrollTrigger: {
         trigger: hero,
-        start: 'top top',
-        end: '15% top',
+        start: '15% top', // Start fading only after 15% scroll
+        end: '35% top',   // Finish fading at 35%
         endTrigger: hero,
         scrub: 0.5,
       }
@@ -567,24 +573,24 @@
       }
     });
 
-    // Stats bar fades during phase 1
+    // Stats bar fades during phase 1 (delayed)
     gsap.to('.ch-stats', {
-      y: 40,
+      y: 20,
       opacity: 0,
-      ease: 'none',
+      ease: 'power1.inOut',
       scrollTrigger: {
         trigger: hero,
-        start: 'top top',
-        end: '12% top',
+        start: '10% top',
+        end: '25% top',
         endTrigger: hero,
         scrub: 0.5,
       }
     });
 
-    // Canvas zooms in during construction
+    // Canvas scale — restrained so villa never overwhelms the interface
     gsap.to('.ch-canvas', {
-      scale: 1.15,
-      y: '-5%',
+      scale: 0.97,
+      y: '-3%',
       ease: 'none',
       scrollTrigger: {
         trigger: hero,

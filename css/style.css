@@ -342,14 +342,15 @@ p {
   transition: all var(--duration) var(--ease-out);
   display: flex;
   align-items: center;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.6) 0%, transparent 100%); /* Natural top blend */
 }
 
 .navbar.scrolled {
-  background: rgba(44, 43, 48, 0.75);
+  background: rgba(10, 10, 12, 0.75); /* Darker to match cinematic theme */
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Softer border */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
 .navbar__inner {
