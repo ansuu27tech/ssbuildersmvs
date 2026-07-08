@@ -26,6 +26,20 @@
   transition: background 0.6s ease;
 }
 
+/* Subtle architectural grid texture to give grounding */
+.ch-base::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 /* Cinematic vignette — adds photographic depth framing */
 .ch::after {
   content: '';
@@ -153,7 +167,21 @@
   will-change: opacity, transform;
 }
 
-/* ── Layer 6: Floor Reflection ─────────────────────────────── */
+/* ── Layer 6: Floor Reflection & Shadow ─────────────────────────────── */
+/* Deep grounding shadow directly under the villa */
+.ch-shadow {
+  position: absolute;
+  bottom: 15%;
+  left: 45%;
+  width: 40%;
+  height: 40px;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 40%, transparent 70%);
+  filter: blur(12px);
+  opacity: 0.8;
+}
+
 .ch-reflection {
   position: absolute;
   bottom: 0;
@@ -163,9 +191,9 @@
   z-index: 4;
   pointer-events: none;
   background: linear-gradient(to top,
-    rgba(212,175,85,0.1) 0%,
-    rgba(212,175,85,0.04) 25%,
-    rgba(200,180,120,0.02) 50%,
+    rgba(212,175,85,0.12) 0%,
+    rgba(212,175,85,0.05) 20%,
+    rgba(200,180,120,0.02) 40%,
     transparent 100%
   );
   filter: blur(10px);
@@ -245,9 +273,9 @@
 .ch-content {
   position: absolute;
   top: 56%;
-  left: 6%;
+  left: 4%;
   transform: translateY(-50%);
-  max-width: 520px;
+  max-width: 480px;
   z-index: 15;
   will-change: transform, opacity;
 }
@@ -279,10 +307,10 @@
 /* Title — villa is hero, type supports it */
 .ch-title {
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
   font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
+  line-height: 1.05;
+  letter-spacing: 0em;
   color: #fff;
   margin: 0 0 16px 0;
 }
@@ -515,7 +543,7 @@
 /* ── Responsive ────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .ch-canvas { left: 55%; transform: translate(-45%, -52%); width: 82%; }
-  .ch-content { left: 5%; max-width: 440px; }
+  .ch-content { left: 4%; max-width: 420px; }
   .ch-phase { top: 88px; right: 24px; }
   .ch-stats { padding: 14px 32px; }
   .ch-stat { padding: 0 18px; }

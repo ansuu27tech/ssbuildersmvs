@@ -41,7 +41,8 @@
     window.addEventListener('scroll', () => {
       if (!isQuickActionsScrolling) {
         window.requestAnimationFrame(() => {
-          if (window.scrollY > 600) {
+          // Hero is pinned for ~500vh. Quick actions should only appear after the cinematic sequence.
+          if (window.scrollY > window.innerHeight * 5.5) {
             quickActions.classList.add('visible');
           } else {
             quickActions.classList.remove('visible');

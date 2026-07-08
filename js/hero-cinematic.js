@@ -243,6 +243,8 @@
   function updateLighting() {
     const p = state.progress;
     const fp = state.frameProgress;
+    
+    const shadowEl = document.getElementById('chShadow');
 
     // Volumetric rays — gradual appearance, subtle peak
     if (raysEl) {
@@ -264,10 +266,28 @@
       flareEl.style.opacity = Math.min(flareVal, 0.7).toFixed(3);
     }
 
+    // Shadow — grounds the structure more heavily as it builds
+    if (shadowEl) {
+      shadowEl.style.opacity = (0.3 + fp * 0.6).toFixed(3);
+      shadowEl.style.transform = `scale(${0.9 + fp * 0.1})`;
+    }
+
     // Floor reflection — strengthens progressively, warmer at end
     if (reflectionEl) {
       const refIntensity = fp < 0.3 ? fp * 0.4 : 0.12 + (fp - 0.3) * 0.85;
-      reflectionEl.style.opacity = Math.min(refIntensity, 0.75).toFixed(3);
+      reflectionEl.style.opacity = Math.min(refIntensity, 0.85).toFixed(3);
+    }
+
+    // Canvas filter warmth — gradually brightens and warms the interior
+    const canvas = document.querySelector('.ch-canvas');
+    if (canvas) {
+      // Base: contrast(1.06) saturate(1.12) brightness(1.02)
+      // End: contrast(1.1) saturate(1.25) brightness(1.1) sepia(0.1)
+      const b = 1.02 + fp * 0.08;
+      const s = 1.12 + fp * 0.13;
+      const c = 1.06 + fp * 0.04;
+      const sep = fp * 0.1;
+      canvas.style.filter = `contrast(${c.toFixed(2)}) saturate(${s.toFixed(2)}) brightness(${b.toFixed(2)}) sepia(${sep.toFixed(2)})`;
     }
 
     // Progress bar
