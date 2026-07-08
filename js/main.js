@@ -177,26 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ── Mouse Glow Effect ────────────────────────────────────────
-  const mouseGlow = document.querySelector('.mouse-glow');
-  if (mouseGlow && window.innerWidth > 768) {
-    let mouseX = 0, mouseY = 0;
-    let glowX = 0, glowY = 0;
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-    });
-
-    function animateGlow() {
-      glowX += (mouseX - glowX) * 0.08;
-      glowY += (mouseY - glowY) * 0.08;
-      mouseGlow.style.left = glowX + 'px';
-      mouseGlow.style.top = glowY + 'px';
-      requestAnimationFrame(animateGlow);
-    }
-    animateGlow();
-  }
+  // (Mouse glow effect removed)
 
   // ── Magnetic Buttons ─────────────────────────────────────────
   const magneticBtns = document.querySelectorAll('.magnetic-wrap');
@@ -302,5 +283,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof initComponents === 'function') {
       initComponents();
     }
+
+    // Safety net: guarantee all sections are visible after 5s
+    // in case any GSAP animation fails to trigger
+    setTimeout(() => {
+      document.querySelectorAll('section.section').forEach(s => {
+        if (parseFloat(getComputedStyle(s).opacity) < 0.5) {
+          s.style.opacity = '1';
+          s.style.transform = 'none';
+        }
+      });
+    }, 5000);
   }
 });

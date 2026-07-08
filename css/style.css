@@ -286,7 +286,7 @@ p {
 .section {
   position: relative;
   padding: var(--space-section) 0;
-  overflow: hidden;
+  overflow: clip;
 }
 
 .section--dark {

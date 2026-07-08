@@ -1,40 +1,38 @@
 /**
- * SS BUILDERS MVS — Cinematic Page Transitions
- * Fade + blur + scale + depth section entrances
+ * SS BUILDERS MVS — Section Entrance Animations
+ * Safe reveal pattern: uses fromTo with once:true to guarantee
+ * sections always end at opacity:1 and y:0, even on fast scroll.
  */
 
 (function() {
   'use strict';
 
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-  
+
   gsap.registerPlugin(ScrollTrigger);
 
   // ─── SECTION ENTRANCE ANIMATIONS ───────────────────────────────
-  const sections = document.querySelectorAll('section.section, section.hero');
+  // Use fromTo instead of gsap.set + onEnter to prevent sections
+  // from staying invisible if the trigger never fires.
+  const sections = document.querySelectorAll('section.section');
   
-  sections.forEach((section, i) => {
-    // Skip hero — it has its own animations
-    if (section.classList.contains('hero')) return;
+  sections.forEach((section) => {
+    // Skip the cinematic hero — it has its own GSAP pin system
+    if (section.id === 'hero' || section.classList.contains('ch')) return;
 
-    gsap.set(section, {
+    gsap.fromTo(section, {
       opacity: 0,
       y: 30
-    });
-
-    ScrollTrigger.create({
-      trigger: section,
-      start: 'top 85%',
-      end: 'top 40%',
-      onEnter: () => {
-        gsap.to(section, {
-          opacity: 1,
-          y: 0,
-          duration: 1.2,
-          ease: 'power3.out'
-        });
-      },
-      once: true
+    }, {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 85%',
+        once: true
+      }
     });
   });
 
@@ -51,27 +49,5 @@
       }
     });
   });
-
-  // Why-us cards
-  const whyCards = document.querySelectorAll('.why-us__card');
-  if (whyCards.length) {
-    gsap.set(whyCards, { opacity: 0, x: (i) => i === 0 ? -60 : 60 });
-    
-    ScrollTrigger.create({
-      trigger: '.why-us__versus',
-      start: 'top 75%',
-      onEnter: () => {
-        gsap.to(whyCards, {
-          opacity: 1, x: 0,
-          duration: 1,
-          stagger: 0.2,
-          ease: 'power3.out'
-        });
-      },
-      once: true
-    });
-  }
-
-
 
 })();

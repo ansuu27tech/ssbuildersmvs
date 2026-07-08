@@ -270,22 +270,26 @@ function initGSAPAnimations() {
   // ── Contact Section ────────────────────────────────────────
   const contactSection = document.querySelector('.contact, .luxury-contact');
   if (contactSection) {
-    gsap.from('.contact__form-wrapper, .luxury-contact__panel', {
+    gsap.fromTo('.contact__form-wrapper, .luxury-contact__panel', {
+      x: -50, opacity: 0
+    }, {
       scrollTrigger: {
         trigger: contactSection,
         start: 'top 75%',
         once: true
       },
-      x: -50, opacity: 0, duration: 0.8, ease: 'power3.out'
+      x: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
     });
 
-    gsap.from('.contact__info, .luxury-contact__info-grid > div', {
+    gsap.fromTo('.contact__info, .luxury-contact__info-grid > div', {
+      x: 50, opacity: 0
+    }, {
       scrollTrigger: {
         trigger: contactSection,
         start: 'top 75%',
         once: true
       },
-      x: 50, opacity: 0, duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
+      x: 0, opacity: 1, duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
     });
   }
 
@@ -312,14 +316,15 @@ function initGSAPAnimations() {
   if (timelineSteps.length > 0) {
     timelineSteps.forEach((step, i) => {
       // 1. Fade up the step content
-      gsap.from(step.querySelector('.timeline-content'), {
+      gsap.fromTo(step.querySelector('.timeline-content'), {
+        y: 40, opacity: 0
+      }, {
         scrollTrigger: {
           trigger: step,
           start: 'top 85%',
           once: true
         },
-        y: 40,
-        opacity: 0,
+        y: 0, opacity: 1,
         duration: 0.8,
         ease: 'power3.out'
       });
@@ -342,13 +347,15 @@ function initGSAPAnimations() {
   // ── Footer Animation ───────────────────────────────────────
   const footer = document.querySelector('.luxury-footer');
   if (footer) {
-    gsap.from('.luxury-footer__top > *', {
+    gsap.fromTo('.luxury-footer__top > *', {
+      y: 30, opacity: 0
+    }, {
       scrollTrigger: {
         trigger: footer,
         start: 'top 85%',
         once: true
       },
-      y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out'
+      y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power3.out'
     });
   }
 }
