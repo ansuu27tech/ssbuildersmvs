@@ -97,10 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const target = document.querySelector(href);
     if (target) {
       const offset = navbar.offsetHeight;
-      const top = target.getBoundingClientRect().top + window.scrollY - offset;
       if (lenis) {
-        lenis.scrollTo(top, { duration: 1.5 });
+        lenis.scrollTo(target, { offset: -offset, duration: 1.5 });
       } else {
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({ top, behavior: 'smooth' });
       }
     }
