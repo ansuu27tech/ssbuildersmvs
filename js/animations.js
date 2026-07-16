@@ -92,7 +92,7 @@ function initGSAPAnimations() {
   }
 
   // ── Counter Animation ──────────────────────────────────────
-  const counters = document.querySelectorAll('.hero__stat-number, .counter-val');
+  const counters = document.querySelectorAll('.hero__stat-number, .counter-val, .ch-stat__num');
   counters.forEach(counter => {
     const target = parseFloat(counter.getAttribute('data-target'));
     const suffix = counter.getAttribute('data-suffix') || '';
@@ -102,13 +102,13 @@ function initGSAPAnimations() {
       start: 'top 90%',
       once: true,
       onEnter: () => {
-        gsap.to(counter, {
+        const counterObj = { val: 0 };
+        gsap.to(counterObj, {
+          val: target,
           duration: 2,
           ease: 'power2.out',
           onUpdate: function() {
-            const progress = this.progress();
-            const current = target * progress;
-            counter.textContent = (target % 1 !== 0 ? current.toFixed(1) : Math.floor(current)) + suffix;
+            counter.textContent = (target % 1 !== 0 ? counterObj.val.toFixed(1) : Math.floor(counterObj.val)) + suffix;
           }
         });
       }
@@ -126,12 +126,12 @@ function initGSAPAnimations() {
     });
 
     const overline = header.querySelector('.text-overline');
-    const h2 = header.querySelector('h2');
+    const heading = header.querySelector('h1, h2, h3, h4');
     const p = header.querySelector('p');
     const divider = header.querySelector('.divider');
 
     if (overline) tl.fromTo(overline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 });
-    if (h2) tl.fromTo(h2, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.3');
+    if (heading) tl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.3');
     if (divider) tl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.out' }, '-=0.4');
     if (p) tl.fromTo(p, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, '-=0.3');
   });
@@ -256,8 +256,9 @@ function initGSAPAnimations() {
 
   // ── Testimonial ────────────────────────────────────────────
   const testimonialSection = document.querySelector('.testimonials');
-  if (testimonialSection) {
-    gsap.fromTo('.testimonials__carousel', { y: 40, opacity: 0 }, {
+  const carousel = document.querySelector('.testimonials__carousel');
+  if (testimonialSection && carousel) {
+    gsap.fromTo(carousel, { y: 40, opacity: 0 }, {
       scrollTrigger: {
         trigger: testimonialSection,
         start: 'top 75%',
@@ -269,28 +270,34 @@ function initGSAPAnimations() {
 
   // ── Contact Section ────────────────────────────────────────
   const contactSection = document.querySelector('.contact, .luxury-contact');
+  const formWrapper = document.querySelector('.contact__form-wrapper, .luxury-contact__panel');
+  const infoGrid = document.querySelector('.contact__info, .luxury-contact__info-grid > div');
   if (contactSection) {
-    gsap.fromTo('.contact__form-wrapper, .luxury-contact__panel', {
-      x: -50, opacity: 0
-    }, {
-      scrollTrigger: {
-        trigger: contactSection,
-        start: 'top 75%',
-        once: true
-      },
-      x: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
-    });
+    if (formWrapper) {
+      gsap.fromTo(formWrapper, {
+        x: -50, opacity: 0
+      }, {
+        scrollTrigger: {
+          trigger: contactSection,
+          start: 'top 75%',
+          once: true
+        },
+        x: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
+      });
+    }
 
-    gsap.fromTo('.contact__info, .luxury-contact__info-grid > div', {
-      x: 50, opacity: 0
-    }, {
-      scrollTrigger: {
-        trigger: contactSection,
-        start: 'top 75%',
-        once: true
-      },
-      x: 0, opacity: 1, duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
-    });
+    if (infoGrid) {
+      gsap.fromTo(infoGrid, {
+        x: 50, opacity: 0
+      }, {
+        scrollTrigger: {
+          trigger: contactSection,
+          start: 'top 75%',
+          once: true
+        },
+        x: 0, opacity: 1, duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
+      });
+    }
   }
 
   // ── Parallax Effects ───────────────────────────────────────

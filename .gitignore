@@ -1,7 +1,11 @@
 node_modules/
 .vercel/
+.vercel
+.netlify/
 .DS_Store
 Thumbs.db
 *.log
-
-.vercel
+*.py
+reconstructed/
+recovered_files/
+1000205568_frames/

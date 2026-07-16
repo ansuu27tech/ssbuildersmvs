@@ -3,51 +3,83 @@
    ═══════════════════════════════════════════════════════════════ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Declare lenis early so all closures can reference it safely
+  let lenis;
+
+  function handleHashNavigation() {
+    if (window.location.hash) {
+      try {
+        const target = document.querySelector(window.location.hash);
+        if (target) {
+          setTimeout(() => {
+            const navbar = document.querySelector('.navbar');
+            const offset = navbar ? navbar.offsetHeight : 80;
+            if (typeof lenis !== 'undefined' && lenis) {
+              lenis.scrollTo(target, { offset: -offset, duration: 1.5 });
+            } else {
+              const top = target.getBoundingClientRect().top + window.scrollY - offset;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
+          }, 100);
+        }
+      } catch (e) {}
+    }
+  }
+
   // ── Page Loader ──────────────────────────────────────────────
   const loader = document.querySelector('.loader');
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      loader.classList.add('hidden');
-      document.body.style.overflow = '';
-      initAnimations();
-    }, 2200);
-  });
+  if (loader) {
+    const hideLoader = () => {
+      if (!loader.classList.contains('hidden')) {
+        loader.classList.add('hidden');
+        document.body.style.overflow = '';
+        try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+        try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
+      }
+    };
 
-  // Safety fallback
-  setTimeout(() => {
-    if (!loader.classList.contains('hidden')) {
-      loader.classList.add('hidden');
-      document.body.style.overflow = '';
-      initAnimations();
-    }
-  }, 4000);
-
-  // ── Lenis Smooth Scroll ──────────────────────────────────────
-  let lenis;
-  try {
-    lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      smoothWheel: true,
-    });
-
-    // Sync Lenis with GSAP ScrollTrigger
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time) => {
-        lenis.raf(time * 1000);
-      });
-      gsap.ticker.lagSmoothing(0, 0);
+    if (document.readyState === 'complete') {
+      setTimeout(hideLoader, 100);
     } else {
-      function raf(time) {
-        lenis.raf(time);
+      window.addEventListener('load', () => setTimeout(hideLoader, 800));
+    }
+
+    // Safety fallback
+    setTimeout(hideLoader, 2500);
+  } else {
+    // If no loader, still handle hash navigation and initialize animations safely
+    try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+    try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
+  }
+
+  // ── Lenis Smooth Scroll (disabled on mobile to prevent touch conflicts) ──
+  const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
+  if (!isMobile) {
+    try {
+      lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        orientation: 'vertical',
+        smoothWheel: true,
+      });
+
+      // Sync Lenis with GSAP ScrollTrigger
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+          lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0, 0);
+      } else {
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
         requestAnimationFrame(raf);
       }
-      requestAnimationFrame(raf);
+    } catch(e) {
+      console.warn('Lenis not loaded, using native scroll');
     }
-  } catch(e) {
-    console.warn('Lenis not loaded, using native scroll');
   }
 
   // ── Navigation ───────────────────────────────────────────────
@@ -86,13 +118,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Smooth scroll to section
+  // Smooth scroll to section (handles both anchor links and page links)
   function scrollToSection(e) {
     const href = this.getAttribute('href');
-    
-    // Only smooth scroll if it's an anchor link
-    if (!href || !href.startsWith('#')) return;
+    if (!href) return;
 
+    // Close mobile menu first if open
+    if (mobileMenu && mobileMenu.classList.contains('open')) {
+      closeMobileMenu();
+    }
+
+    // External page links (e.g., process.html, gallery.html) — let browser navigate
+    if (!href.startsWith('#')) {
+      // Clear any stuck overflow before navigating
+      document.body.style.overflow = '';
+      return; // Don't preventDefault — allow normal navigation
+    }
+
+    // Anchor links — smooth scroll
     e.preventDefault();
     const target = document.querySelector(href);
     if (target) {
@@ -103,10 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const top = target.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({ top, behavior: 'smooth' });
       }
-    }
-    // Close mobile menu if open
-    if (mobileMenu && mobileMenu.classList.contains('open')) {
-      closeMobileMenu();
     }
   }
 
@@ -119,8 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mobile menu toggle
   function closeMobileMenu() {
-    navToggle.classList.remove('active');
-    mobileMenu.classList.remove('open');
+    if (navToggle) navToggle.classList.remove('active');
+    if (mobileMenu) mobileMenu.classList.remove('open');
     document.body.style.overflow = '';
   }
 
@@ -277,22 +316,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof initGSAPAnimations === 'function') {
       initGSAPAnimations();
     }
-    if (typeof initMap === 'function') {
-      initMap();
-    }
     if (typeof initComponents === 'function') {
       initComponents();
     }
+    if (typeof initPagesAnimations === 'function') {
+      initPagesAnimations();
+    }
 
-    // Safety net: guarantee all sections are visible after 5s
-    // in case any GSAP animation fails to trigger
-    setTimeout(() => {
-      document.querySelectorAll('section.section').forEach(s => {
-        if (parseFloat(getComputedStyle(s).opacity) < 0.5) {
-          s.style.opacity = '1';
-          s.style.transform = 'none';
-        }
-      });
-    }, 5000);
+    // (Safety net removed because it conflicts with GSAP ScrollTrigger, causing elements to blink)
   }
 });

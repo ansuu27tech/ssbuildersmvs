@@ -8,8 +8,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     initQuickActions();
     initConstructionCalculator();
-    initSiteVisitForm();
     initProjectModals();
+  });
+
+  window.initPagesAnimations = function() {
     initWorkflowAnimations();
     initWhyUsAnimations();
     initBrandsAnimations();
@@ -24,7 +26,7 @@
     if (document.querySelector('.gallery__masonry')) {
       initGalleryPage();
     }
-  });
+  };
 
   // ══════════════════════════════════════════════════════════════
   // FLOATING QUICK ACTIONS
@@ -38,11 +40,21 @@
     if (oldBackToTop) oldBackToTop.style.display = 'none';
 
     let isQuickActionsScrolling = false;
+    // On sub-pages without the pinned cinematic hero, use a low threshold
+    const hasHero = !!document.querySelector('#hero .ch-canvas, .ch');
     window.addEventListener('scroll', () => {
       if (!isQuickActionsScrolling) {
         window.requestAnimationFrame(() => {
-          // Hero is pinned for ~500vh. Quick actions should only appear after the cinematic sequence.
-          if (window.scrollY > window.innerHeight * 5.5) {
+          let threshold;
+          if (hasHero) {
+            // Hero is pinned for 500%/250% on desktop/mobile. Quick actions appear after.
+            const heroMultiplier = window.innerWidth <= 768 ? 2.8 : 5.5;
+            threshold = window.innerHeight * heroMultiplier;
+          } else {
+            // Sub-pages: show after scrolling 300px
+            threshold = 300;
+          }
+          if (window.scrollY > threshold) {
             quickActions.classList.add('visible');
           } else {
             quickActions.classList.remove('visible');
@@ -148,45 +160,6 @@
   }
 
   // ══════════════════════════════════════════════════════════════
-  // BOOK A SITE VISIT FORM
-  // ══════════════════════════════════════════════════════════════
-  function initSiteVisitForm() {
-    const form = document.querySelector('#siteVisitForm');
-    if (!form) return;
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const formWrapper = form.closest('.site-visit__form');
-      const success = formWrapper?.querySelector('.site-visit__success');
-
-      // Basic validation
-      let valid = true;
-      form.querySelectorAll('[required]').forEach(field => {
-        if (!field.value.trim()) {
-          field.style.borderColor = '#ef4444';
-          valid = false;
-          setTimeout(() => { field.style.borderColor = ''; }, 3000);
-        }
-      });
-
-      if (!valid) return;
-
-      // Show success
-      if (success) {
-        form.style.display = 'none';
-        success.classList.add('show');
-
-        setTimeout(() => {
-          form.style.display = '';
-          success.classList.remove('show');
-          form.reset();
-        }, 4000);
-      }
-    });
-  }
-
-  // ══════════════════════════════════════════════════════════════
   // PROJECT DETAIL MODALS
   // ══════════════════════════════════════════════════════════════
   function initProjectModals() {
@@ -281,10 +254,21 @@
       document.body.style.overflow = '';
     }
 
-    // Bind detail buttons
-    document.querySelectorAll('.project-card__detail-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.getAttribute('data-project');
+    // Bind click on project cards (the cards themselves, not detail buttons)
+    document.querySelectorAll('.project-card[data-modal-target]').forEach(card => {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        const typeEl = card.querySelector('.project-card__type');
+        if (!typeEl) return;
+        const typeText = typeEl.textContent.trim().toLowerCase();
+        // Map display text to data key
+        const keyMap = {
+          'luxury villa': 'luxury-villa',
+          'commercial': 'commercial',
+          'interior design': 'interior',
+          'exterior design': 'exterior'
+        };
+        const key = keyMap[typeText] || typeText.replace(/\s+/g, '-');
         if (key) openModal(key);
       });
     });
@@ -337,24 +321,25 @@
   function initWhyUsAnimations() {
     const cards = document.querySelectorAll('.why-us__card');
     const vsBadge = document.querySelector('.why-us__vs-badge');
-    if (!cards.length || typeof gsap === 'undefined') return;
+    const triggerEl = document.querySelector('.why-us__versus');
+    if (!cards.length || typeof gsap === 'undefined' || !triggerEl) return;
 
     gsap.fromTo(cards[0], { opacity: 0, x: -60 }, {
       opacity: 1, x: 0, duration: 0.8, ease: 'power2.out',
-      scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%', once: true }
+      scrollTrigger: { trigger: triggerEl, start: 'top 80%', once: true }
     });
 
     if (vsBadge) {
       gsap.fromTo(vsBadge, { opacity: 0, scale: 0 }, {
         opacity: 1, scale: 1, duration: 0.5, delay: 0.3, ease: 'back.out(1.7)',
-        scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%', once: true }
+        scrollTrigger: { trigger: triggerEl, start: 'top 80%', once: true }
       });
     }
 
     if (cards[1]) {
       gsap.fromTo(cards[1], { opacity: 0, x: 60 }, {
         opacity: 1, x: 0, duration: 0.8, delay: 0.2, ease: 'power2.out',
-        scrollTrigger: { trigger: '.why-us__versus', start: 'top 80%', once: true }
+        scrollTrigger: { trigger: triggerEl, start: 'top 80%', once: true }
       });
     }
   }
@@ -456,20 +441,23 @@
     const statNumbers = document.querySelectorAll('.stat-number');
     if (statNumbers.length && typeof gsap !== 'undefined') {
       statNumbers.forEach(stat => {
-        const targetValue = parseInt(stat.getAttribute('data-count'), 10) || parseInt(stat.textContent, 10);
+        const targetValue = parseInt(stat.getAttribute('data-target'), 10) || parseInt(stat.getAttribute('data-count'), 10) || parseInt(stat.textContent, 10);
         stat.textContent = '0';
         
-        gsap.to(stat, {
-          textContent: targetValue,
-          duration: 2.5,
-          ease: 'power3.out',
-          snap: { textContent: 1 },
-          scrollTrigger: {
-            trigger: '.materials-stats',
-            start: 'top 85%',
-            once: true
+          const statsTrigger = document.querySelector('.materials-stats');
+          if (statsTrigger) {
+            gsap.to(stat, {
+              textContent: targetValue,
+              duration: 2.5,
+              ease: 'power3.out',
+              snap: { textContent: 1 },
+              scrollTrigger: {
+                trigger: statsTrigger,
+                start: 'top 85%',
+                once: true
+              }
+            });
           }
-        });
       });
     }
 
@@ -500,7 +488,8 @@
     }
 
     // 3. Stagger animation for brand cards
-    if (brandCards.length && typeof gsap !== 'undefined') {
+    const brandsTrigger = document.querySelector('.brands-showcase');
+    if (brandCards.length && typeof gsap !== 'undefined' && brandsTrigger) {
       gsap.fromTo(brandCards, {
         opacity: 0,
         y: 40,
@@ -513,7 +502,7 @@
         stagger: 0.1,
         ease: 'back.out(1.5)',
         scrollTrigger: {
-          trigger: '.brands-showcase',
+          trigger: brandsTrigger,
           start: 'top 85%',
           once: true
         }
@@ -538,6 +527,7 @@
   function initGalleryPage() {
     const filters = document.querySelectorAll('.gallery__filter');
     const items = document.querySelectorAll('.gallery__item');
+    const masonry = document.querySelector('.gallery__masonry');
     const lightboxOverlay = document.querySelector('.lightbox-overlay');
 
     // Filtering
@@ -548,13 +538,19 @@
         filters.forEach(f => f.classList.remove('active'));
         filter.classList.add('active');
 
-        items.forEach(item => {
-          if (category === 'all' || item.getAttribute('data-category') === category) {
-            item.classList.remove('hidden');
-          } else {
-            item.classList.add('hidden');
-          }
-        });
+        if (masonry) masonry.classList.add('filtering');
+        
+        setTimeout(() => {
+          items.forEach(item => {
+            if (category === 'all' || item.getAttribute('data-category') === category) {
+              item.classList.remove('hidden');
+            } else {
+              item.classList.add('hidden');
+            }
+          });
+          
+          if (masonry) masonry.classList.remove('filtering');
+        }, 300);
       });
     });
 
@@ -563,14 +559,39 @@
       const lightboxTitle = lightboxOverlay.querySelector('.lightbox__title');
       const lightboxCategory = lightboxOverlay.querySelector('.lightbox__category');
       const lightboxClose = lightboxOverlay.querySelector('.lightbox__close');
+      const lightboxPlaceholder = lightboxOverlay.querySelector('.lightbox__placeholder-large');
+      const lightboxImg = lightboxOverlay.querySelector('.lightbox__img');
+      const lightboxLocation = lightboxOverlay.querySelector('.lightbox__location');
+      const lightboxLocationText = lightboxOverlay.querySelector('.lightbox__location-text');
 
       items.forEach(item => {
         item.addEventListener('click', () => {
-          const title = item.querySelector('.gallery__placeholder-text')?.textContent || '';
+          const title = item.querySelector('.gallery__placeholder-text, .gallery__img-title')?.textContent || '';
           const category = item.querySelector('.gallery__category-badge')?.textContent || '';
+          const location = item.getAttribute('data-location') || '';
+          const imgElement = item.querySelector('img.gallery__img');
 
           if (lightboxTitle) lightboxTitle.textContent = title;
           if (lightboxCategory) lightboxCategory.textContent = category;
+          
+          if (lightboxLocation && lightboxLocationText) {
+            if (location) {
+              lightboxLocationText.textContent = location;
+              lightboxLocation.style.display = 'block';
+            } else {
+              lightboxLocation.style.display = 'none';
+            }
+          }
+
+          if (imgElement && lightboxImg && lightboxPlaceholder) {
+            lightboxImg.src = imgElement.src;
+            lightboxImg.style.display = 'block';
+            lightboxPlaceholder.style.display = 'none';
+          } else if (lightboxImg && lightboxPlaceholder) {
+            lightboxImg.style.display = 'none';
+            lightboxImg.src = '';
+            lightboxPlaceholder.style.display = 'flex';
+          }
 
           lightboxOverlay.classList.add('open');
           document.body.style.overflow = 'hidden';

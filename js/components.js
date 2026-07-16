@@ -163,12 +163,17 @@ function initComponents() {
   const navCTA = document.querySelector('.navbar__cta');
   if (navCTA) {
     navCTA.addEventListener('click', (e) => {
-      e.preventDefault();
       const target = document.querySelector('#contact');
       if (target) {
+        // #contact exists on this page — smooth scroll to it
+        e.preventDefault();
         const offset = document.querySelector('.navbar').offsetHeight;
         const top = target.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({ top, behavior: 'smooth' });
+      } else {
+        // #contact doesn't exist (sub-page) — navigate to index.html#contact
+        e.preventDefault();
+        window.location.href = 'index.html#contact';
       }
     });
   }
@@ -176,7 +181,7 @@ function initComponents() {
   // ══════════════════════════════════════════════════════════════
   // INTERSECTION OBSERVER FOR REVEALS
   // ══════════════════════════════════════════════════════════════
-  if (typeof IntersectionObserver !== 'undefined') {
+  if (typeof IntersectionObserver !== 'undefined' && typeof gsap === 'undefined') {
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
