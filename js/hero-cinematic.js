@@ -136,8 +136,6 @@
       mainCanvas.width  = 800 * CFG.dpr;
       mainCanvas.height = 600 * CFG.dpr;
     }
-      mainCanvas.height = 600 * CFG.dpr;
-    }
   }
 
   /* ═══════════════════════════════════════════════════════════
