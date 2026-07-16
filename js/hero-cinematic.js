@@ -25,7 +25,7 @@
     frameNumbers: [],
     totalFrames: 0,
     pinDuration: window.innerWidth <= 768 ? '250%' : '500%',
-    dpr: window.innerWidth < 768 ? 1 : Math.min(window.devicePixelRatio || 1, 2),
+    dpr: Math.min(window.devicePixelRatio || 1, 2.5),
     particleCount: window.innerWidth <= 768 ? 12 : 28,
     sparkCount: window.innerWidth <= 768 ? 6 : 12,
     dustMoteCount: window.innerWidth <= 768 ? 8 : 20,
@@ -127,17 +127,15 @@
 
     const first = state.frames.find(f => f?.naturalWidth);
     if (first) {
-      const aspect = first.naturalWidth / first.naturalHeight;
       const rect = mainCanvas.getBoundingClientRect();
       const cw = rect.width || w * 0.6;
       const ch = rect.height || h * 0.7;
-      let rw, rh;
-      if (cw / ch > aspect) { rh = ch; rw = rh * aspect; }
-      else { rw = cw; rh = rw / aspect; }
-      mainCanvas.width  = rw * CFG.dpr;
-      mainCanvas.height = rh * CFG.dpr;
+      mainCanvas.width  = cw * CFG.dpr;
+      mainCanvas.height = ch * CFG.dpr;
     } else {
       mainCanvas.width  = 800 * CFG.dpr;
+      mainCanvas.height = 600 * CFG.dpr;
+    }
       mainCanvas.height = 600 * CFG.dpr;
     }
   }
