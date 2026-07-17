@@ -1465,12 +1465,14 @@
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group" style="position: relative;">
                 <select id="city" name="city" class="form-select" required>
                   <option value="" disabled selected></option>
                   <option value="chennai">Chennai</option>
                   <option value="vellore">Vellore</option>
                   <option value="ranipet">Ranipet</option>
+                  <option value="walajah">Walajah</option>
+                  <option value="arcot">Arcot</option>
                   <option value="bengaluru">Bengaluru</option>
                   <option value="other">Other</option>
                 </select>
@@ -1479,7 +1481,29 @@
                 <div class="select-chevron">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
+                <div id="city-price-hint" class="city-price-hint" style="display: none; font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem; text-align: right; width: 100%; position: absolute; bottom: -20px; right: 0;"></div>
               </div>
+              
+              <script>
+                document.getElementById('city').addEventListener('change', function(e) {
+                  const prices = {
+                    'chennai': '₹2000/sq.ft.',
+                    'vellore': '₹1750/sq.ft.',
+                    'ranipet': '₹1650/sq.ft.',
+                    'walajah': '₹1650/sq.ft.',
+                    'arcot': '₹1650/sq.ft.',
+                    'bengaluru': '₹2100/sq.ft.'
+                  };
+                  const hint = document.getElementById('city-price-hint');
+                  const selected = e.target.value;
+                  if (prices[selected]) {
+                    hint.innerHTML = `Construction Starts @ <strong>${prices[selected]}</strong>`;
+                    hint.style.display = 'block';
+                  } else {
+                    hint.style.display = 'none';
+                  }
+                });
+              </script>
             </div>
 
             <div class="form-group">
