@@ -120,7 +120,7 @@ function initGSAPAnimations() {
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: header,
-        start: 'top 85%',
+        start: 'top 90%',
         once: true
       }
     });
@@ -130,10 +130,10 @@ function initGSAPAnimations() {
     const p = header.querySelector('p');
     const divider = header.querySelector('.divider');
 
-    if (overline) tl.fromTo(overline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 });
-    if (heading) tl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }, '-=0.3');
-    if (divider) tl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.out' }, '-=0.4');
-    if (p) tl.fromTo(p, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, '-=0.3');
+    if (overline) tl.fromTo(overline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, clearProps: 'all' });
+    if (heading) tl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' }, tl.recent() ? '-=0.3' : 0);
+    if (divider) tl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.out', clearProps: 'all' }, tl.recent() ? '-=0.4' : 0);
+    if (p) tl.fromTo(p, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, clearProps: 'all' }, tl.recent() ? '-=0.3' : 0);
   });
 
   // ── Story Section ──────────────────────────────────────────
@@ -174,8 +174,8 @@ function initGSAPAnimations() {
     });
 
     if (dot) tl.fromTo(dot, { scale: 0 }, { scale: 1, duration: 0.4, ease: 'back.out(2)' });
-    if (year) tl.fromTo(year, { x: direction * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, '-=0.2');
-    if (content) tl.fromTo(content, { x: direction * -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, '-=0.4');
+    if (year) tl.fromTo(year, { x: direction * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, tl.recent() ? '-=0.2' : 0);
+    if (content) tl.fromTo(content, { x: direction * -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, tl.recent() ? '-=0.4' : 0);
   });
 
   // ── Services Cards ─────────────────────────────────────────
