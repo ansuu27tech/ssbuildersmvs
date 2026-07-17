@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Discover the premium materials used by SS BUILDERS MVS — from UltraTech cement to Kajaria tiles. Quality brands, superior durability, and expert craftsmanship.">
-  <meta name="keywords" content="construction materials, premium cement, high-strength steel, luxury tiles, SS Builders MVS, quality construction">
+  <meta name="description" content="Experience SS BUILDERS MVS premium modular kitchen design — an immersive cinematic walkthrough of luxury marble, sage cabinetry, and bespoke craftsmanship.">
+  <meta name="keywords" content="modular kitchen, luxury kitchen design, marble kitchen island, SS Builders MVS, premium interiors, kitchen visualization">
   <meta name="author" content="SS BUILDERS MVS">
   <meta name="robots" content="index, follow">
 
-  <title>Materials & Quality — Premium Construction | SS BUILDERS MVS</title>
+  <title>Modular Kitchen Experience | SS BUILDERS MVS</title>
   <link rel="icon" type="image/jpeg" href="SS BUILDERS LOGO.jpeg">
 
   <!-- Stylesheets -->
@@ -16,12 +16,12 @@
   <link rel="stylesheet" href="css/animations.css?v=2">
   <link rel="stylesheet" href="css/sections-v2.css">
   <link rel="stylesheet" href="css/pages.css">
-  <!-- cursor.css removed -->
+  <link rel="stylesheet" href="css/kitchen-experience.css">
 
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -35,17 +35,15 @@
   <!-- Scroll Progress -->
   <div class="scroll-progress"></div>
 
-
   <!-- ═══════════════════════════════════════════════════════════
        NAVIGATION
        ═══════════════════════════════════════════════════════════ -->
-    <nav class="navbar" id="navbar">
+  <nav class="navbar" id="navbar">
     <div class="navbar__inner">
-      <a href="index.html#hero" class="navbar__logo">
-        <img loading="eager" fetchpriority="high" src="SS BUILDERS LOGO.jpeg" alt="SS BUILDERS MVS Logo" class="navbar__logo-img">
+      <a class="navbar__logo" href="index.html#hero">
+        <img alt="SS BUILDERS MVS Logo" class="navbar__logo-img" src="SS BUILDERS LOGO.jpeg">
         <span class="navbar__logo-text">SS BUILDERS <span>MVS</span></span>
       </a>
-
       <div class="navbar__links">
         <a href="index.html#hero" class="navbar__link" title="Home">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -63,7 +61,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
           <span class="nav-label">Gallery</span>
         </a>
-        <a href="kitchen.html" class="navbar__link" title="Kitchen">
+        <a href="kitchen.html" class="navbar__link active" title="Kitchen">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
           <span class="nav-label">Kitchen</span>
         </a>
@@ -88,7 +86,6 @@
           <span class="nav-label">Contact</span>
         </a>
       </div>
-
 
       <button class="navbar__toggle" aria-label="Toggle menu">
         <span></span>
@@ -115,7 +112,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
         <span class="mobile-label">Gallery</span>
       </a>
-      <a href="kitchen.html" class="navbar__link" title="Kitchen">
+      <a href="kitchen.html" class="navbar__link active" title="Kitchen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
         <span class="mobile-label">Kitchen</span>
       </a>
@@ -139,263 +136,66 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
         <span class="mobile-label">Contact</span>
       </a>
-      <a href="index.html#contact" class="navbar__link navbar__mobile-cta navbar__cta">Get Free Quote ✨</a>
+      <a href="index.html#contact" class="navbar__cta navbar__mobile-cta">Get Free Quote →</a>
     </div>
   </nav>
 
   <!-- ═══════════════════════════════════════════════════════════
-       MATERIALS HERO
+       MODULAR KITCHEN — IMMERSIVE SCROLL EXPERIENCE
        ═══════════════════════════════════════════════════════════ -->
-    <section class="section materials-hero blueprint-bg" id="materials-hero">
-    <div class="architectural-grid"></div>
-    <div class="animated-glow"></div>
-    <div class="floating-particles"></div>
-    
-    <div class="container materials-container">
-      <div class="section-header materials-header">
-        <span class="text-overline">TRUSTED CONSTRUCTION PARTNERS</span>
-        <h1>Premium Materials &<br><span class="text-gradient-blue">World-Class Brands</span></h1>
-        <div class="divider divider--center"></div>
-        <p class="subtitle">"We build every project using trusted, industry-leading brands to ensure exceptional strength, durability, safety, and long-term performance."</p>
+  <section class="kitchen-experience" id="kitchen-experience">
+
+    <!-- Canvas for frame rendering -->
+    <canvas class="kitchen-experience__canvas"></canvas>
+
+    <!-- Loading indicator -->
+    <div class="kitchen-experience__loader">
+      <div class="kitchen-experience__loader-bar">
+        <div class="kitchen-experience__loader-fill"></div>
       </div>
+      <span class="kitchen-experience__loader-text">Loading Experience</span>
+    </div>
 
-      <!-- Statistics -->
-      <div class="materials-stats">
-        <div class="stat-item">
-          <span class="stat-number" data-target="100">0</span><span class="stat-suffix">+</span>
-          <span class="stat-label">Trusted Partners</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" data-target="100">0</span><span class="stat-suffix">%</span>
-          <span class="stat-label">Genuine Materials</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" data-target="19">0</span><span class="stat-suffix">+</span>
-          <span class="stat-label">Years of Trust</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-number" data-target="80">0</span><span class="stat-suffix">+</span>
-          <span class="stat-label">Projects Built</span>
-        </div>
-      </div>
-
-      <!-- Brands Showcase -->
-      <div class="brands-showcase">
-        <div class="brands-track">
-          
-          <!-- UltraTech -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/ultratech.webp" alt="UltraTech Cement" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/ultratech.webp" alt="UltraTech" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">UltraTech Cement</h4>
-                    <span class="popup-category">Premium Cement</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Engineered for extreme durability and crack resistance. We use OPC 53 Grade for superior structural integrity.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ BIS Certified</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- ACC -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/acc.webp" alt="ACC Cement" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/acc.webp" alt="ACC" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">ACC Cement</h4>
-                    <span class="popup-category">Foundation Cement</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Trusted for over 80 years in India. Provides high early strength for foundation and brickwork.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ ISO 9001</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- JSW -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/jsw.webp" alt="JSW Steel" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/jsw.webp" alt="JSW" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">JSW Steel</h4>
-                    <span class="popup-category">TMT Rebars</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Fe 550D grade TMT bars offering superior earthquake resistance and structural flexibility.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ Earthquake Resistant</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Asian Paints -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/asian_paints.webp" alt="Asian Paints" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/asian_paints.webp" alt="Asian Paints" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">Asian Paints</h4>
-                    <span class="popup-category">Luxury Finishes</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Royale Luxury Emulsion and Apex Ultima for flawless, washable, and weather-proof surfaces.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ Eco-Friendly (Low VOC)</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Kajaria -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/kajaria.png" alt="Kajaria" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/kajaria.png" alt="Kajaria" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">Kajaria Tiles</h4>
-                    <span class="popup-category">Vitrified & Ceramic</span>
-                  </div>
-                </div>
-                <p class="popup-desc">India's No.1 tile company. Scratch-resistant, highly durable, and stunning aesthetics for flooring and walls.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ ISO Certified</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Havells -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/havells.webp" alt="Havells" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/havells.webp" alt="Havells" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">Havells</h4>
-                    <span class="popup-category">Electricals</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Flame-retardant cables and highly responsive MCBs ensuring absolute electrical safety for your home.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ Fire Retardant</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Finolex -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/finolex.webp" alt="Finolex" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/finolex.webp" alt="Finolex" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">Finolex</h4>
-                    <span class="popup-category">Wiring & Cables</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Premium quality copper wiring with high insulation resistance, built for heavy power loads.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ 99.97% Pure Copper</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-                    <!-- Saint Gobain -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/saint_gobain.webp" alt="Saint Gobain" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/saint_gobain.webp" alt="Saint Gobain" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">Saint Gobain</h4>
-                    <span class="popup-category">Premium Glass</span>
-                  </div>
-                </div>
-                <p class="popup-desc">World-class architectural glass and high-performance building materials.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ UV Protection</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Astral Pipes -->
-          <div class="brand-card">
-            <div class="brand-card__inner">
-              <div class="brand-logo-wrapper">
-                <img src="images/logos/astral.jpg" alt="Astral Pipes" class="brand-logo">
-              </div>
-              <div class="brand-info-popup">
-                <div class="popup-header">
-                  <img src="images/logos/astral.jpg" alt="Astral Pipes" class="popup-logo">
-                  <div>
-                    <h4 class="popup-name">Astral Pipes</h4>
-                    <span class="popup-category">CPVC Plumbing</span>
-                  </div>
-                </div>
-                <p class="popup-desc">Lead-free, high-pressure CPVC pipes ensuring hygienic and leak-proof water delivery.</p>
-                <div class="popup-badges">
-                  <span class="qa-badge">✓ Lead-Free</span>
-                  <span class="qa-badge">✓ Premium Material</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+    <!-- Text Overlay: Phase 1 — Title (Frames 1–20) -->
+    <div class="kitchen-experience__overlay">
+      <div class="kitchen-experience__text" data-kitchen-text="phase1">
+        <h1 class="kitchen-experience__title">The Culinary Atelier</h1>
+        <p class="kitchen-experience__subtitle">Where Gastronomy Meets Architectural Perfection</p>
       </div>
     </div>
+
+    <!-- Text Overlay: Phase 2 — Features (Frames 45–75) -->
+    <div class="kitchen-experience__overlay">
+      <div class="kitchen-experience__text" data-kitchen-text="phase2">
+        <ul class="kitchen-experience__features">
+          <li class="kitchen-experience__feature">The Art of Living</li>
+          <li class="kitchen-experience__feature">Bespoke Italian Cabinetry</li>
+          <li class="kitchen-experience__feature">Hand-Selected Calacatta Marble</li>
+          <li class="kitchen-experience__feature">Precision Integrated Appliances</li>
+          <li class="kitchen-experience__feature">Ambient Architectural Lighting</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Text Overlay: Phase 3 — CTA (Frames 90–120) -->
+    <div class="kitchen-experience__overlay">
+      <div class="kitchen-experience__text" data-kitchen-text="phase3">
+        <h2 class="kitchen-experience__cta-title">Craft Your Signature Space</h2>
+        <a href="index.html#contact" class="kitchen-experience__cta-btn">Commission Your Kitchen</a>
+      </div>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="kitchen-experience__scroll">
+      <span class="kitchen-experience__scroll-text">Scroll to Explore</span>
+      <div class="kitchen-experience__scroll-line"></div>
+    </div>
+
   </section>
 
-  <!-- Footer -->
+  <!-- ═══════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════ -->
   <footer class="luxury-footer" id="footer">
     <div class="luxury-footer__container">
       <div class="luxury-footer__top">
@@ -430,18 +230,24 @@
         </div>
         <div class="luxury-footer__copyright">© 2026 SS BUILDERS MVS. All Rights Reserved.</div>
       </div>
-      <div class="luxury-footer__credit-center"><b>Designed by</b> <a href="https://anasbio.vercel.app/" target="_blank" rel="noopener" class="luxury-footer__designer">PIXELMINT STUDIO MVS</a></div>
+      <div class="luxury-footer__credit-center"><b>Designed by</b> <a class="luxury-footer__designer" href="https://anasbio.vercel.app/" target="_blank" rel="noopener">PIXELMINT STUDIO MVS</a></div>
     </div>
   </footer>
 
-  <!-- Scripts -->
+  <!-- ═══════════════════════════════════════════════════════════
+       SCRIPTS
+       ═══════════════════════════════════════════════════════════ -->
+  <!-- Lenis Smooth Scroll -->
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <!-- GSAP + ScrollTrigger -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Application Scripts -->
   <script src="js/main.js"></script>
   <script src="js/animations.js?v=2"></script>
-  <!-- Removed custom cursor -->
   <script src="js/components.js"></script>
   <script src="js/pages.js"></script>
+  <!-- Kitchen Sequence Engine -->
+  <script src="js/kitchen-sequence.js"></script>
 </body>
 </html>

@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
       closeMobileMenu();
     }
 
-    // External page links (e.g., process.html, gallery.html) — let browser navigate
+    // External page links (e.g., kitchen.html, gallery.html) - let browser navigate
     if (!href.startsWith('#')) {
       // Clear any stuck overflow before navigating
       document.body.style.overflow = '';
