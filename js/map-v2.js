@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- City Data ---
   const cities = [
       { id: 'chennai', name: 'Chennai', x: 60, z: -15, isHQ: false, services: 'Premium Residential, Commercial', distance: '120 km', time: '2h 30m', price: '2000' },
-      { id: 'walajah', name: 'Walajah', x: 22, z: -6, isHQ: false, services: 'Residential, Renovation', distance: '30 km', time: '45m', price: '1550' },
-      { id: 'ranipet', name: 'Ranipet', x: 12, z: 10, isHQ: false, services: 'Residential, Commercial', distance: '15 km', time: '20m', price: '1550' },
+      { id: 'walajah', name: 'Walajah', x: 22, z: -6, isHQ: false, services: 'Residential, Renovation', distance: '30 km', time: '45m', price: '1650' },
+      { id: 'ranipet', name: 'Ranipet', x: 12, z: 10, isHQ: false, services: 'Residential, Commercial', distance: '15 km', time: '20m', price: '1650' },
       { id: 'melvisharam', name: 'Melvisharam (HQ)', x: 0, z: 0, isHQ: true, services: 'All Services (Headquarters)', distance: '0 km', time: '0m', price: '1550' },
-      { id: 'arcot', name: 'Arcot', x: -2, z: -12, isHQ: false, services: 'Residential, Architecture', distance: '2 km', time: '5m', price: '1550' },
+      { id: 'arcot', name: 'Arcot', x: -2, z: -12, isHQ: false, services: 'Residential, Architecture', distance: '2 km', time: '5m', price: '1650' },
       { id: 'vellore', name: 'Vellore', x: -16, z: 8, isHQ: false, services: 'Premium Residential, Commercial', distance: '20 km', time: '30m', price: '1750' },
       { id: 'ambur', name: 'Ambur', x: -35, z: -5, isHQ: false, services: 'Residential, Turnkey', distance: '55 km', time: '1h 10m', price: '1750' },
       { id: 'vaniyambadi', name: 'Vaniyambadi', x: -48, z: 12, isHQ: false, services: 'Residential, Architecture', distance: '75 km', time: '1h 30m', price: '1750' },
