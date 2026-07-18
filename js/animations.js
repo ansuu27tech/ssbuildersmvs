@@ -42,7 +42,7 @@ function initGSAPAnimations() {
       .fromTo('.hero__overline', {
         y: 30, opacity: 0
       }, {
-        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
+        y: 0, opacity: 1, clearProps: "all", duration: 0.8, ease: 'power3.out'
       })
       .fromTo('.hero__title .char', {
         transformPerspective: 500,
@@ -52,7 +52,7 @@ function initGSAPAnimations() {
       }, {
         rotateX: 0,
         y: 0,
-        opacity: 1,
+        opacity: 1, clearProps: "all",
         duration: 0.8,
         ease: 'back.out(1.7)',
         stagger: 0.03
@@ -60,34 +60,34 @@ function initGSAPAnimations() {
       .fromTo('.hero__subtitle', {
         y: 30, opacity: 0
       }, {
-        y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
+        y: 0, opacity: 1, clearProps: "all", duration: 0.8, ease: 'power3.out'
       }, '-=0.5')
       .fromTo('.hero__actions .btn', {
         y: 20, opacity: 0
       }, {
-        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
+        y: 0, opacity: 1, clearProps: "all", duration: 0.6, ease: 'power3.out',
         stagger: 0.1
       }, '-=0.4')
       .fromTo('.hero__price-tag', {
         y: 20, opacity: 0
       }, {
-        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out'
+        y: 0, opacity: 1, clearProps: "all", duration: 0.6, ease: 'power3.out'
       }, '-=0.3')
       .fromTo('.hero__stats', {
         x: 60, opacity: 0
       }, {
-        x: 0, opacity: 1, duration: 1, ease: 'power3.out'
+        x: 0, opacity: 1, clearProps: "all", duration: 1, ease: 'power3.out'
       }, '-=0.8')
       .fromTo('.hero__stat', {
         y: 30, opacity: 0
       }, {
-        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out',
+        y: 0, opacity: 1, clearProps: "all", duration: 0.6, ease: 'power3.out',
         stagger: 0.1
       }, '-=0.5')
       .fromTo('.hero__scroll', {
         y: 20, opacity: 0
       }, {
-        y: 0, opacity: 1, duration: 0.6, ease: 'power3.out'
+        y: 0, opacity: 1, clearProps: "all", duration: 0.6, ease: 'power3.out'
       }, '-=0.3');
   }
 
@@ -145,7 +145,7 @@ function initGSAPAnimations() {
         start: 'top 75%',
         once: true
       },
-      x: 0, opacity: 1, duration: 1, ease: 'power3.out'
+      x: 0, opacity: 1, clearProps: "all", duration: 1, ease: 'power3.out'
     });
 
     gsap.fromTo('.story__vision-cards', { x: 60, opacity: 0 }, {
@@ -154,7 +154,7 @@ function initGSAPAnimations() {
         start: 'top 75%',
         once: true
       },
-      x: 0, opacity: 1, duration: 1, ease: 'power3.out', delay: 0.2
+      x: 0, opacity: 1, clearProps: "all", duration: 1, ease: 'power3.out', delay: 0.2
     });
   }
 
@@ -174,8 +174,8 @@ function initGSAPAnimations() {
     });
 
     if (dot) tl.fromTo(dot, { scale: 0 }, { scale: 1, duration: 0.4, ease: 'back.out(2)' });
-    if (year) tl.fromTo(year, { x: direction * 40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, tl.recent() ? '-=0.2' : 0);
-    if (content) tl.fromTo(content, { x: direction * -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6 }, tl.recent() ? '-=0.4' : 0);
+    if (year) tl.fromTo(year, { x: direction * 40, opacity: 0 }, { x: 0, opacity: 1, clearProps: "all", duration: 0.6 }, tl.recent() ? '-=0.2' : 0);
+    if (content) tl.fromTo(content, { x: direction * -40, opacity: 0 }, { x: 0, opacity: 1, clearProps: "all", duration: 0.6 }, tl.recent() ? '-=0.4' : 0);
   });
 
   // ── Services Cards ─────────────────────────────────────────
@@ -187,7 +187,7 @@ function initGSAPAnimations() {
         once: true
       },
       y: 0,
-      opacity: 1,
+      opacity: 1, clearProps: "all",
       duration: 0.8,
       delay: i % 4 * 0.1,
       ease: 'power3.out'
@@ -203,7 +203,7 @@ function initGSAPAnimations() {
         start: 'top 80%',
         once: true
       },
-      scale: 1, opacity: 1, duration: 1, ease: 'power3.out'
+      scale: 1, opacity: 1, clearProps: "all", duration: 1, ease: 'power3.out'
     });
   }
 
@@ -214,7 +214,7 @@ function initGSAPAnimations() {
         start: 'top 90%',
         once: true
       },
-      y: 0, opacity: 1, duration: 0.5, delay: i * 0.05, ease: 'power3.out'
+      y: 0, opacity: 1, clearProps: "all", duration: 0.5, delay: i * 0.05, ease: 'power3.out'
     });
   });
 
@@ -226,7 +226,7 @@ function initGSAPAnimations() {
         start: 'top 85%',
         once: true
       },
-      y: 0, opacity: 1, duration: 0.8, delay: i * 0.1, ease: 'power3.out'
+      y: 0, opacity: 1, clearProps: "all", duration: 0.8, delay: i * 0.1, ease: 'power3.out'
     });
   });
 
@@ -238,7 +238,7 @@ function initGSAPAnimations() {
         start: 'top 85%',
         once: true
       },
-      y: 0, scale: 1, opacity: 1, duration: 0.8, delay: i * 0.15, ease: 'power3.out'
+      y: 0, scale: 1, opacity: 1, clearProps: "all", duration: 0.8, delay: i * 0.15, ease: 'power3.out'
     });
   });
 
@@ -250,7 +250,7 @@ function initGSAPAnimations() {
         start: 'top 90%',
         once: true
       },
-      y: 0, opacity: 1, duration: 0.6, delay: i * 0.06, ease: 'power3.out'
+      y: 0, opacity: 1, clearProps: "all", duration: 0.6, delay: i * 0.06, ease: 'power3.out'
     });
   });
 
@@ -264,7 +264,7 @@ function initGSAPAnimations() {
         start: 'top 75%',
         once: true
       },
-      y: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
+      y: 0, opacity: 1, clearProps: "all", duration: 0.8, ease: 'power3.out'
     });
   }
 
@@ -282,7 +282,7 @@ function initGSAPAnimations() {
           start: 'top 75%',
           once: true
         },
-        x: 0, opacity: 1, duration: 0.8, ease: 'power3.out'
+        x: 0, opacity: 1, clearProps: "all", duration: 0.8, ease: 'power3.out'
       });
     }
 
@@ -295,7 +295,7 @@ function initGSAPAnimations() {
           start: 'top 75%',
           once: true
         },
-        x: 0, opacity: 1, duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
+        x: 0, opacity: 1, clearProps: "all", duration: 0.8, delay: 0.2, stagger: 0.15, ease: 'power3.out'
       });
     }
   }
@@ -331,7 +331,7 @@ function initGSAPAnimations() {
           start: 'top 85%',
           once: true
         },
-        y: 0, opacity: 1,
+        y: 0, opacity: 1, clearProps: "all",
         duration: 0.8,
         ease: 'power3.out'
       });
@@ -362,7 +362,7 @@ function initGSAPAnimations() {
         start: 'top 85%',
         once: true
       },
-      y: 0, opacity: 1, duration: 0.6, stagger: 0.1, ease: 'power3.out'
+      y: 0, opacity: 1, clearProps: "all", duration: 0.6, stagger: 0.1, ease: 'power3.out'
     });
   }
 }

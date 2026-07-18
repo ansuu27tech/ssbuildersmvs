@@ -504,24 +504,24 @@
     const intro = gsap.timeline({ delay: 0.3 });
 
     intro.to('.ch-char', {
-      y: 0, opacity: 1,
+      y: 0, opacity: 1, clearProps: 'all',
       duration: 1.0, ease: 'power4.out', stagger: 0.03,
     }, 0);
 
     intro.to('.ch-overline', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
     }, 0.2);
 
     intro.to('.ch-sub', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
     }, 0.5);
 
     intro.to('.ch-actions', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
     }, 0.7);
 
     intro.to('.ch-price', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
     }, 0.9);
 
     intro.add(() => {
@@ -587,10 +587,11 @@
 
     // Phase 3.5: Reveal SS BUILDERS logo on the side at the end of the frames
     gsap.fromTo('.ch-end-logo', {
+      scale: 0.8,
       opacity: 0,
       x: -30
     }, {
-      opacity: 1,
+      opacity: 1, clearProps: 'all',
       x: 0,
       ease: 'power2.out',
       scrollTrigger: {

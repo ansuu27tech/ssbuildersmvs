@@ -301,7 +301,7 @@
         opacity: 0,
         y: 40,
       }, {
-        opacity: 1,
+        opacity: 1, clearProps: "all",
         y: 0,
         duration: 0.6,
         delay: i * 0.15,
@@ -325,20 +325,20 @@
     if (!cards.length || typeof gsap === 'undefined' || !triggerEl) return;
 
     gsap.fromTo(cards[0], { opacity: 0, x: -60 }, {
-      opacity: 1, x: 0, duration: 0.8, ease: 'power2.out',
+      opacity: 1, clearProps: "all", x: 0, duration: 0.8, ease: 'power2.out',
       scrollTrigger: { trigger: triggerEl, start: 'top 80%', once: true }
     });
 
     if (vsBadge) {
       gsap.fromTo(vsBadge, { opacity: 0, scale: 0 }, {
-        opacity: 1, scale: 1, duration: 0.5, delay: 0.3, ease: 'back.out(1.7)',
+        opacity: 1, clearProps: "all", scale: 1, duration: 0.5, delay: 0.3, ease: 'back.out(1.7)',
         scrollTrigger: { trigger: triggerEl, start: 'top 80%', once: true }
       });
     }
 
     if (cards[1]) {
       gsap.fromTo(cards[1], { opacity: 0, x: 60 }, {
-        opacity: 1, x: 0, duration: 0.8, delay: 0.2, ease: 'power2.out',
+        opacity: 1, clearProps: "all", x: 0, duration: 0.8, delay: 0.2, ease: 'power2.out',
         scrollTrigger: { trigger: triggerEl, start: 'top 80%', once: true }
       });
     }
@@ -357,7 +357,7 @@
         y: 30,
         scale: 0.9
       }, {
-        opacity: 1,
+        opacity: 1, clearProps: "all",
         y: 0,
         scale: 1,
         duration: 0.5,
@@ -388,7 +388,7 @@
           opacity: 0,
           x: -40,
         }, {
-          opacity: 1,
+          opacity: 1, clearProps: "all",
           x: 0,
           duration: 0.6,
           delay: i * 0.1,
@@ -495,7 +495,7 @@
         y: 40,
         scale: 0.95
       }, {
-        opacity: 1,
+        opacity: 1, clearProps: "all",
         y: 0,
         scale: 1,
         duration: 0.6,
@@ -621,7 +621,7 @@
           opacity: 0,
           y: 30,
         }, {
-          opacity: 1,
+          opacity: 1, clearProps: "all",
           y: 0,
           duration: 0.5,
           delay: i * 0.06,

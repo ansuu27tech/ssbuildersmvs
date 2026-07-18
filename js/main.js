@@ -342,4 +342,27 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => ScrollTrigger.refresh(), 1500);
     }
   }
+  window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    // Reset body overflow in case it was locked by loader or modal
+    document.body.style.overflow = '';
+    
+    // Ensure GSAP ticker is awake
+    if (typeof gsap !== 'undefined') {
+      gsap.ticker.wake();
+    }
+
+    // Ensure Lenis is running if we're not on mobile
+    if (typeof lenis !== 'undefined' && lenis) {
+      lenis.start();
+    }
+    
+    // Refresh ScrollTrigger to ensure animations calculate correct positions
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.refresh();
+      // Also force a refresh after a small delay to handle any lazy-loaded layout shifts
+      setTimeout(() => ScrollTrigger.refresh(), 500);
+    }
+  }
+});
 });
