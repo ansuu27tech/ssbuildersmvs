@@ -2,6 +2,19 @@
    SS BUILDERS MVS — Main Application Script
    ═══════════════════════════════════════════════════════════════ */
 
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
+// BFCache handling: refresh GSAP ScrollTrigger to prevent missing/invisible elements
+window.addEventListener('pageshow', (event) => {
+  if (event.persisted) {
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.refresh();
+    }
+  }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   // Declare lenis early so all closures can reference it safely
   let lenis;
@@ -323,6 +336,10 @@ document.addEventListener('DOMContentLoaded', () => {
       initPagesAnimations();
     }
 
-    // (Safety net removed because it conflicts with GSAP ScrollTrigger, causing elements to blink)
+    // Force ScrollTrigger to refresh after a short delay to account for lazy-loaded images
+    if (typeof ScrollTrigger !== 'undefined') {
+      setTimeout(() => ScrollTrigger.refresh(), 500);
+      setTimeout(() => ScrollTrigger.refresh(), 1500);
+    }
   }
 });
