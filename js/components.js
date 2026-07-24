@@ -1,22 +1,40 @@
 /* ═══════════════════════════════════════════════════════════════
    SS BUILDERS MVS — Interactive Components
+   Safe for re-initialization: guards against duplicate listeners
    ═══════════════════════════════════════════════════════════════ */
+
+// Track if components have been initialized to prevent duplicate listeners
+var _componentsInitialized = false;
+var _carouselAutoplayInterval = null;
 
 function initComponents() {
 
   // ══════════════════════════════════════════════════════════════
   // TESTIMONIALS CAROUSEL
   // ══════════════════════════════════════════════════════════════
-  const carousel = document.querySelector('.testimonials__carousel');
+  var carousel = document.querySelector('.testimonials__carousel');
   if (carousel) {
-    const track = carousel.querySelector('.testimonials__track');
-    const slides = track ? track.querySelectorAll('.testimonial-card') : [];
-    const dots = carousel.parentElement.querySelectorAll('.testimonials__dot');
-    const prevBtn = carousel.parentElement.querySelector('.testimonials__btn--prev');
-    const nextBtn = carousel.parentElement.querySelector('.testimonials__btn--next');
-    let currentSlide = 0;
-    let autoplayInterval;
-    const totalSlides = slides.length;
+    var track = carousel.querySelector('.testimonials__track');
+    var slides = track ? track.querySelectorAll('.testimonial-card') : [];
+    var dots = carousel.parentElement.querySelectorAll('.testimonials__dot');
+    var prevBtn = carousel.parentElement.querySelector('.testimonials__btn--prev');
+    var nextBtn = carousel.parentElement.querySelector('.testimonials__btn--next');
+    var currentSlide = 0;
+    var totalSlides = slides.length;
+
+    // Clear any existing autoplay interval to prevent duplicates
+    if (_carouselAutoplayInterval) {
+      clearInterval(_carouselAutoplayInterval);
+      _carouselAutoplayInterval = null;
+    }
+
+    // Reset carousel position
+    if (track) {
+      track.style.transform = 'translateX(0%)';
+    }
+    dots.forEach(function(dot, i) {
+      dot.classList.toggle('active', i === 0);
+    });
 
     function goToSlide(index) {
       if (index < 0) index = totalSlides - 1;
@@ -24,10 +42,10 @@ function initComponents() {
       currentSlide = index;
 
       if (track) {
-        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+        track.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
       }
 
-      dots.forEach((dot, i) => {
+      dots.forEach(function(dot, i) {
         dot.classList.toggle('active', i === currentSlide);
       });
     }
@@ -41,144 +59,153 @@ function initComponents() {
     }
 
     function startAutoplay() {
-      autoplayInterval = setInterval(nextSlide, 5000);
+      if (_carouselAutoplayInterval) clearInterval(_carouselAutoplayInterval);
+      _carouselAutoplayInterval = setInterval(nextSlide, 5000);
     }
 
     function stopAutoplay() {
-      clearInterval(autoplayInterval);
+      if (_carouselAutoplayInterval) {
+        clearInterval(_carouselAutoplayInterval);
+        _carouselAutoplayInterval = null;
+      }
     }
 
-    if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoplay(); nextSlide(); startAutoplay(); });
-    if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoplay(); prevSlide(); startAutoplay(); });
+    // Only add event listeners if not already initialized
+    if (!_componentsInitialized) {
+      if (nextBtn) nextBtn.addEventListener('click', function() { stopAutoplay(); nextSlide(); startAutoplay(); });
+      if (prevBtn) prevBtn.addEventListener('click', function() { stopAutoplay(); prevSlide(); startAutoplay(); });
 
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => { stopAutoplay(); goToSlide(i); startAutoplay(); });
-    });
+      dots.forEach(function(dot, i) {
+        dot.addEventListener('click', function() { stopAutoplay(); goToSlide(i); startAutoplay(); });
+      });
 
-    // Touch support
-    let touchStartX = 0;
-    let touchEndX = 0;
+      // Touch support
+      var touchStartX = 0;
+      var touchEndX = 0;
 
-    if (track) {
-      track.addEventListener('touchstart', (e) => {
-        touchStartX = e.changedTouches[0].screenX;
-        stopAutoplay();
-      }, { passive: true });
+      if (track) {
+        track.addEventListener('touchstart', function(e) {
+          touchStartX = e.changedTouches[0].screenX;
+          stopAutoplay();
+        }, { passive: true });
 
-      track.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        if (touchStartX - touchEndX > 50) nextSlide();
-        else if (touchEndX - touchStartX > 50) prevSlide();
-        startAutoplay();
-      }, { passive: true });
+        track.addEventListener('touchend', function(e) {
+          touchEndX = e.changedTouches[0].screenX;
+          if (touchStartX - touchEndX > 50) nextSlide();
+          else if (touchEndX - touchStartX > 50) prevSlide();
+          startAutoplay();
+        }, { passive: true });
+      }
+
+      // Pause on hover
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', function() { if (totalSlides > 1) startAutoplay(); });
     }
 
-    // Start autoplay
+    // Start autoplay (safe to call on re-init)
     if (totalSlides > 1) startAutoplay();
-
-    // Pause on hover
-    carousel.addEventListener('mouseenter', stopAutoplay);
-    carousel.addEventListener('mouseleave', startAutoplay);
   }
 
   // ══════════════════════════════════════════════════════════════
   // CONTACT FORM
   // ══════════════════════════════════════════════════════════════
-  const contactForm = document.querySelector('#contactForm');
-  if (contactForm) {
-    let isSubmitting = false;
-    contactForm.addEventListener('submit', (e) => {
-      e.preventDefault();
+  if (!_componentsInitialized) {
+    var contactForm = document.querySelector('#contactForm');
+    if (contactForm) {
+      var isSubmitting = false;
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-      // Prevent double-submit
-      if (isSubmitting) return;
+        // Prevent double-submit
+        if (isSubmitting) return;
 
-      const formData = new FormData(contactForm);
-      const data = Object.fromEntries(formData.entries());
+        var formData = new FormData(contactForm);
+        var data = Object.fromEntries(formData.entries());
 
-      // Basic validation
-      let isValid = true;
-      const required = contactForm.querySelectorAll('[required]');
-      required.forEach(field => {
-        if (!field.value.trim()) {
-          field.style.borderColor = '#ef4444';
-          isValid = false;
-          setTimeout(() => {
-            field.style.borderColor = '';
+        // Basic validation
+        var isValid = true;
+        var required = contactForm.querySelectorAll('[required]');
+        required.forEach(function(field) {
+          if (!field.value.trim()) {
+            field.style.borderColor = '#ef4444';
+            isValid = false;
+            setTimeout(function() {
+              field.style.borderColor = '';
+            }, 3000);
+          }
+        });
+
+        if (!isValid) return;
+
+        isSubmitting = true;
+
+        // Show success state
+        var submitBtn = contactForm.querySelector('.btn--primary');
+        if (submitBtn) {
+          var originalText = submitBtn.innerHTML;
+          submitBtn.innerHTML = '✓ Message Sent Successfully!';
+          submitBtn.style.background = '#10b981';
+          submitBtn.disabled = true;
+
+          setTimeout(function() {
+            submitBtn.innerHTML = originalText;
+            submitBtn.style.background = '';
+            submitBtn.disabled = false;
+            contactForm.reset();
+            isSubmitting = false;
           }, 3000);
-        }
-      });
-
-      if (!isValid) return;
-
-      isSubmitting = true;
-
-      // Show success state
-      const submitBtn = contactForm.querySelector('.btn--primary');
-      if (submitBtn) {
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '✓ Message Sent Successfully!';
-        submitBtn.style.background = '#10b981';
-        submitBtn.disabled = true;
-
-        setTimeout(() => {
-          submitBtn.innerHTML = originalText;
-          submitBtn.style.background = '';
-          submitBtn.disabled = false;
-          contactForm.reset();
-          isSubmitting = false;
-        }, 3000);
-      } else {
-        isSubmitting = false;
-      }
-    });
-
-    // Focus effects
-    const inputs = contactForm.querySelectorAll('.form-input, .form-textarea, .form-select');
-    inputs.forEach(input => {
-      input.addEventListener('focus', () => {
-        input.parentElement.classList.add('focused');
-      });
-      input.addEventListener('blur', () => {
-        input.parentElement.classList.remove('focused');
-      });
-    });
-
-    // City-price hint (shows construction cost per sq.ft. for selected city)
-    const citySelect = document.getElementById('city');
-    const priceHint = document.getElementById('city-price-hint');
-    if (citySelect && priceHint) {
-      const prices = {
-        'chennai': '₹2000/sq.ft.',
-        'vellore': '₹1750/sq.ft.',
-        'ranipet': '₹1650/sq.ft.',
-        'walajah': '₹1650/sq.ft.',
-        'arcot': '₹1650/sq.ft.',
-        'bengaluru': '₹2100/sq.ft.'
-      };
-      citySelect.addEventListener('change', function(e) {
-        const selected = e.target.value;
-        if (prices[selected]) {
-          priceHint.innerHTML = `Construction Starts @ <strong>${prices[selected]}</strong>`;
-          priceHint.style.display = 'block';
         } else {
-          priceHint.style.display = 'none';
+          isSubmitting = false;
         }
       });
+
+      // Focus effects
+      var inputs = contactForm.querySelectorAll('.form-input, .form-textarea, .form-select');
+      inputs.forEach(function(input) {
+        input.addEventListener('focus', function() {
+          input.parentElement.classList.add('focused');
+        });
+        input.addEventListener('blur', function() {
+          input.parentElement.classList.remove('focused');
+        });
+      });
+
+      // City-price hint (shows construction cost per sq.ft. for selected city)
+      var citySelect = document.getElementById('city');
+      var priceHint = document.getElementById('city-price-hint');
+      if (citySelect && priceHint) {
+        var prices = {
+          'chennai': '₹2000/sq.ft.',
+          'vellore': '₹1750/sq.ft.',
+          'ranipet': '₹1650/sq.ft.',
+          'walajah': '₹1650/sq.ft.',
+          'arcot': '₹1650/sq.ft.',
+          'bengaluru': '₹2100/sq.ft.'
+        };
+        citySelect.addEventListener('change', function(e) {
+          var selected = e.target.value;
+          if (prices[selected]) {
+            priceHint.innerHTML = 'Construction Starts @ <strong>' + prices[selected] + '</strong>';
+            priceHint.style.display = 'block';
+          } else {
+            priceHint.style.display = 'none';
+          }
+        });
+      }
     }
   }
 
   // ══════════════════════════════════════════════════════════════
   // STAR RATING ANIMATION (Testimonials)
   // ══════════════════════════════════════════════════════════════
-  const starContainers = document.querySelectorAll('.testimonial-card__stars');
+  var starContainers = document.querySelectorAll('.testimonial-card__stars');
   if (starContainers.length > 0 && typeof IntersectionObserver !== 'undefined') {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
         if (entry.isIntersecting) {
-          const stars = entry.target.querySelectorAll('.testimonial-card__star');
-          stars.forEach((star, i) => {
-            star.style.animation = `starFill 0.5s ${i * 0.1}s ease-out forwards`;
+          var stars = entry.target.querySelectorAll('.testimonial-card__star');
+          stars.forEach(function(star, i) {
+            star.style.animation = 'starFill 0.5s ' + (i * 0.1) + 's ease-out forwards';
             star.style.opacity = '0';
           });
           observer.unobserve(entry.target);
@@ -186,36 +213,38 @@ function initComponents() {
       });
     }, { threshold: 0.5 });
 
-    starContainers.forEach(container => observer.observe(container));
+    starContainers.forEach(function(container) { observer.observe(container); });
   }
 
   // ══════════════════════════════════════════════════════════════
   // NAVBAR CTA SCROLL
   // ══════════════════════════════════════════════════════════════
-  const navCTA = document.querySelector('.navbar__cta');
-  if (navCTA) {
-    navCTA.addEventListener('click', (e) => {
-      const target = document.querySelector('#contact');
-      if (target) {
-        // #contact exists on this page — smooth scroll to it
-        e.preventDefault();
-        const offset = document.querySelector('.navbar').offsetHeight;
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
-      } else {
-        // #contact doesn't exist (sub-page) — navigate to index.html#contact
-        e.preventDefault();
-        window.location.href = 'index.html#contact';
-      }
-    });
+  if (!_componentsInitialized) {
+    var navCTA = document.querySelector('.navbar__cta');
+    if (navCTA) {
+      navCTA.addEventListener('click', function(e) {
+        var target = document.querySelector('#contact');
+        if (target) {
+          // #contact exists on this page — smooth scroll to it
+          e.preventDefault();
+          var offset = document.querySelector('.navbar').offsetHeight;
+          var top = target.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
+        } else {
+          // #contact doesn't exist (sub-page) — navigate to index.html#contact
+          e.preventDefault();
+          window.location.href = 'index.html#contact';
+        }
+      });
+    }
   }
 
   // ══════════════════════════════════════════════════════════════
   // INTERSECTION OBSERVER FOR REVEALS
   // ══════════════════════════════════════════════════════════════
   if (typeof IntersectionObserver !== 'undefined' && typeof gsap === 'undefined') {
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('revealed');
           revealObserver.unobserve(entry.target);
@@ -223,15 +252,20 @@ function initComponents() {
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    document.querySelectorAll('.reveal').forEach(function(el) { revealObserver.observe(el); });
   }
 
   // ══════════════════════════════════════════════════════════════
   // CLICK-TO-CALL / WHATSAPP TRACKING
   // ══════════════════════════════════════════════════════════════
-  document.querySelectorAll('a[href^="tel:"], a[href^="https://wa.me"]').forEach(link => {
-    link.addEventListener('click', () => {
-      // TODO: Add Google Analytics / GTM tracking event here for contact interactions
+  if (!_componentsInitialized) {
+    document.querySelectorAll('a[href^="tel:"], a[href^="https://wa.me"]').forEach(function(link) {
+      link.addEventListener('click', function() {
+        // TODO: Add Google Analytics / GTM tracking event here for contact interactions
+      });
     });
-  });
+  }
+
+  // Mark as initialized to prevent duplicate event listeners
+  _componentsInitialized = true;
 }

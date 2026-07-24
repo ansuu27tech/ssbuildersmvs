@@ -6,39 +6,159 @@ if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 
-// ── BFCache Restoration Handler ────────────────────────────────────────────
-// Single comprehensive handler for back/forward cache restoration.
-// Fixes invisible text bug: CSS sets opacity:0 as initial state on hero elements,
-// GSAP intro timeline animates them to visible, but on BFCache restore the IIFE
-// doesn't re-run and scrubbed ScrollTrigger animations bake "faded out" inline
-// styles. ScrollTrigger.refresh() alone does NOT reset inline styles.
-window.addEventListener('pageshow', (event) => {
+// ── BFCache / Back-Navigation Restoration Handler ──────────────
+// Instead of reloading (unreliable), we properly cleanup and re-initialize
+// all animations and components when the page is restored from bfcache.
+window.addEventListener('pageshow', function(event) {
   if (event.persisted) {
-    window.location.reload();
+    // Page was restored from bfcache — reinitialize everything
+    reinitializeEverything();
   }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
+// Also handle the case where user navigates back via history but
+// the page is NOT served from bfcache (normal load from HTTP cache).
+// In this case DOMContentLoaded fires normally, but we still need
+// to ensure animations are properly set up for the current scroll position.
+
+// ── Global reinitialization function ──────────────────────────
+function reinitializeEverything() {
+  // 1. Kill all existing GSAP ScrollTriggers and clear inline styles
+  if (typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.getAll().forEach(function(st) { st.kill(); });
+  }
+
+  // 2. Clear all GSAP-set inline styles from animated elements
+  clearAllAnimationStyles();
+
+  // 3. Re-initialize all animations
+  try { initAnimations(); } catch (e) { console.error('Re-init error:', e); }
+
+  // 4. Force ScrollTrigger refresh
+  if (typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.refresh(true);
+  }
+
+  // 5. Safety net — ensure nothing stays hidden
+  setTimeout(forceRevealHiddenElements, 500);
+  setTimeout(forceRevealHiddenElements, 1500);
+}
+
+// ── Clear inline styles from all animated elements ────────────
+function clearAllAnimationStyles() {
+  var selectors = [
+    '.section-header', '.section-header .text-overline',
+    '.section-header h2', '.section-header h3', '.section-header h4',
+    '.section-header p', '.section-header .divider',
+    '.story__intro-content', '.story__vision-cards',
+    '.story__milestone', '.story__milestone-content',
+    '.story__milestone-year', '.story__milestone-dot',
+    '.service-card',
+    '.coverage__map-container', '.coverage__city-tag',
+    '.project-card',
+    '.leader-card',
+    '.feature-card',
+    '.bento-card',
+    '.testimonials__carousel',
+    '.contact__form-wrapper', '.contact__info',
+    '.contact__stats-grid', '.contact__card',
+    '.why-us__card', '.why-us__vs-badge',
+    '.brand-card',
+    '.workflow__step',
+    '.timeline-step', '.timeline-content',
+    '.luxury-footer__top > *',
+    '.hero__overline', '.hero__title .char',
+    '.hero__subtitle', '.hero__actions .btn',
+    '.hero__price-tag', '.hero__stats', '.hero__stat',
+    '.hero__scroll',
+    // Cinematic hero elements
+    '.ch-overline', '.ch-sub', '.ch-actions', '.ch-price',
+    '.ch-title__word', '.ch-stats', '.ch-stat'
+  ];
+
+  selectors.forEach(function(sel) {
+    document.querySelectorAll(sel).forEach(function(el) {
+      // Remove GSAP inline styles (opacity, transform, visibility)
+      el.style.removeProperty('opacity');
+      el.style.removeProperty('transform');
+      el.style.removeProperty('visibility');
+      el.style.removeProperty('translate');
+      el.style.removeProperty('scale');
+      el.style.removeProperty('rotate');
+    });
+  });
+}
+
+// ── Force-reveal any elements stuck at opacity:0 ──────────────
+function forceRevealHiddenElements() {
+  // Section headers must always be visible
+  document.querySelectorAll('.section-header, .section-header .text-overline, .section-header h2, .section-header h3, .section-header h4, .section-header p, .section-header .divider').forEach(function(el) {
+    var computed = window.getComputedStyle(el);
+    if (computed.opacity === '0' || computed.visibility === 'hidden') {
+      el.style.opacity = '1';
+      el.style.visibility = 'visible';
+      el.style.transform = 'none';
+    }
+  });
+
+  // Contact section — specifically ensure it's visible
+  var contactSection = document.querySelector('#contact');
+  if (contactSection) {
+    contactSection.querySelectorAll('.contact__form-wrapper, .contact__info, .contact__stats-grid, .contact__card, h2, h3, p, .text-overline, .divider').forEach(function(el) {
+      var computed = window.getComputedStyle(el);
+      if (computed.opacity === '0' || computed.visibility === 'hidden') {
+        el.style.opacity = '1';
+        el.style.visibility = 'visible';
+        el.style.transform = 'none';
+      }
+    });
+  }
+
+  // All service cards, project cards, leader cards, brand cards, etc.
+  var criticalSelectors = [
+    '.service-card', '.project-card', '.leader-card',
+    '.feature-card', '.bento-card', '.brand-card',
+    '.why-us__card', '.why-us__vs-badge',
+    '.workflow__step', '.timeline-step', '.timeline-content',
+    '.testimonials__carousel', '.testimonial-card',
+    '.story__milestone', '.story__milestone-content',
+    '.story__intro-content', '.story__vision-cards',
+    '.luxury-footer__top > *'
+  ];
+
+  criticalSelectors.forEach(function(sel) {
+    document.querySelectorAll(sel).forEach(function(el) {
+      var computed = window.getComputedStyle(el);
+      if (computed.opacity === '0') {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      }
+    });
+  });
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
   // ── Accessibility: Mark decorative SVG icons as aria-hidden ──
   document.querySelectorAll('.navbar__link svg, .quick-action__btn svg, .service-card svg, .footer svg, .btn svg, .feature-card svg')
-    .forEach(svg => svg.setAttribute('aria-hidden', 'true'));
+    .forEach(function(svg) { svg.setAttribute('aria-hidden', 'true'); });
 
   // Declare lenis early so all closures can reference it safely
-  let lenis;
+  var lenis;
 
   function handleHashNavigation() {
     if (window.location.hash) {
       try {
-        const target = document.querySelector(window.location.hash);
+        var target = document.querySelector(window.location.hash);
         if (target) {
-          setTimeout(() => {
-            const navbar = document.querySelector('.navbar');
-            const offset = navbar ? navbar.offsetHeight : 80;
+          setTimeout(function() {
+            var navbar = document.querySelector('.navbar');
+            var offset = navbar ? navbar.offsetHeight : 80;
             if (typeof lenis !== 'undefined' && lenis) {
               lenis.scrollTo(target, { offset: -offset, duration: 1.5 });
             } else {
-              const top = target.getBoundingClientRect().top + window.scrollY - offset;
-              window.scrollTo({ top, behavior: 'smooth' });
+              var top = target.getBoundingClientRect().top + window.scrollY - offset;
+              window.scrollTo({ top: top, behavior: 'smooth' });
             }
           }, 100);
         }
@@ -47,38 +167,57 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Page Loader ──────────────────────────────────────────────
-  const loader = document.querySelector('.loader');
+  var loader = document.querySelector('.loader');
   if (loader) {
-    const hideLoader = () => {
+    var hideLoader = function() {
       if (!loader.classList.contains('hidden')) {
         loader.classList.add('hidden');
         document.body.style.overflow = '';
-        try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+        // Ensure GSAP is loaded before initializing
+        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+          try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+        } else {
+          // Wait a bit more for CDN scripts
+          setTimeout(function() {
+            try { initAnimations(); } catch (e) { console.error('Delayed animation init error:', e); }
+          }, 500);
+        }
         try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
+        // Safety net for revealing elements
+        setTimeout(forceRevealHiddenElements, 800);
+        setTimeout(forceRevealHiddenElements, 2000);
       }
     };
 
     if (document.readyState === 'complete') {
       setTimeout(hideLoader, 100);
     } else {
-      window.addEventListener('load', () => setTimeout(hideLoader, 800));
+      window.addEventListener('load', function() { setTimeout(hideLoader, 800); });
     }
 
     // Safety fallback
     setTimeout(hideLoader, 2500);
   } else {
     // If no loader, still handle hash navigation and initialize animations safely
-    try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+    } else {
+      setTimeout(function() {
+        try { initAnimations(); } catch (e) { console.error('Delayed animation init error:', e); }
+      }, 500);
+    }
     try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
+    setTimeout(forceRevealHiddenElements, 800);
+    setTimeout(forceRevealHiddenElements, 2000);
   }
 
   // ── Lenis Smooth Scroll (disabled on mobile to prevent touch conflicts) ──
-  const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
+  var isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
   if (!isMobile) {
     try {
       lenis = new Lenis({
         duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
         orientation: 'vertical',
         smoothWheel: true,
       });
@@ -86,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Sync Lenis with GSAP ScrollTrigger
       if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
         lenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => {
+        gsap.ticker.add(function(time) {
           lenis.raf(time * 1000);
         });
         gsap.ticker.lagSmoothing(0, 0);
@@ -103,11 +242,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Navigation ───────────────────────────────────────────────
-  const navbar = document.querySelector('.navbar');
-  const navLinks = document.querySelectorAll('.navbar__link');
-  const navToggle = document.querySelector('.navbar__toggle');
-  const mobileMenu = document.querySelector('.navbar__mobile-menu');
-  const mobileLinks = mobileMenu ? mobileMenu.querySelectorAll('.navbar__link') : [];
+  var navbar = document.querySelector('.navbar');
+  var navLinks = document.querySelectorAll('.navbar__link');
+  var navToggle = document.querySelector('.navbar__toggle');
+  var mobileMenu = document.querySelector('.navbar__mobile-menu');
+  var mobileLinks = mobileMenu ? mobileMenu.querySelectorAll('.navbar__link') : [];
 
   // Scroll behavior for nav
   function handleNavScroll() {
@@ -120,15 +259,15 @@ document.addEventListener('DOMContentLoaded', () => {
   handleNavScroll();
 
   // Active section highlighting
-  const sections = document.querySelectorAll('section[id]');
+  var sections = document.querySelectorAll('section[id]');
   function highlightNav() {
-    const scrollY = window.scrollY + 200;
-    sections.forEach(section => {
-      const top = section.offsetTop;
-      const height = section.offsetHeight;
-      const id = section.getAttribute('id');
+    var scrollY = window.scrollY + 200;
+    sections.forEach(function(section) {
+      var top = section.offsetTop;
+      var height = section.offsetHeight;
+      var id = section.getAttribute('id');
       if (scrollY >= top && scrollY < top + height) {
-        navLinks.forEach(link => {
+        navLinks.forEach(function(link) {
           link.classList.remove('active');
           if (link.getAttribute('href') === '#' + id) {
             link.classList.add('active');
@@ -140,7 +279,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Smooth scroll to section (handles both anchor links and page links)
   function scrollToSection(e) {
-    const href = this.getAttribute('href');
+    var href = this.getAttribute('href');
     if (!href) return;
 
     // Close mobile menu first if open
@@ -157,24 +296,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Anchor links — smooth scroll
     e.preventDefault();
-    const target = document.querySelector(href);
+    var target = document.querySelector(href);
     if (target) {
-      const offset = navbar.offsetHeight;
+      var offset = navbar.offsetHeight;
       if (lenis) {
         lenis.scrollTo(target, { offset: -offset, duration: 1.5 });
       } else {
-        const top = target.getBoundingClientRect().top + window.scrollY - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
+        var top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top: top, behavior: 'smooth' });
       }
     }
   }
 
-  navLinks.forEach(link => link.addEventListener('click', scrollToSection));
-  mobileLinks.forEach(link => link.addEventListener('click', scrollToSection));
+  navLinks.forEach(function(link) { link.addEventListener('click', scrollToSection); });
+  mobileLinks.forEach(function(link) { link.addEventListener('click', scrollToSection); });
 
   // Mobile CTA buttons (Get Free Quote etc.)
-  const mobileCTAs = mobileMenu ? mobileMenu.querySelectorAll('.navbar__cta') : [];
-  mobileCTAs.forEach(cta => cta.addEventListener('click', scrollToSection));
+  var mobileCTAs = mobileMenu ? mobileMenu.querySelectorAll('.navbar__cta') : [];
+  mobileCTAs.forEach(function(cta) { cta.addEventListener('click', scrollToSection); });
 
   // Mobile menu toggle
   function closeMobileMenu() {
@@ -184,24 +323,24 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (navToggle) {
-    navToggle.addEventListener('click', () => {
-      const isOpen = navToggle.classList.toggle('active');
+    navToggle.addEventListener('click', function() {
+      var isOpen = navToggle.classList.toggle('active');
       mobileMenu.classList.toggle('open');
       document.body.style.overflow = isOpen ? 'hidden' : '';
     });
   }
 
-  const scrollProgress = document.querySelector('.scroll-progress');
+  var scrollProgress = document.querySelector('.scroll-progress');
   function updateScrollProgress() {
     if (!scrollProgress) return;
-    const scrolled = window.scrollY;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = scrolled / maxScroll;
-    scrollProgress.style.transform = `scaleX(${progress})`;
+    var scrolled = window.scrollY;
+    var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    var progress = scrolled / maxScroll;
+    scrollProgress.style.transform = 'scaleX(' + progress + ')';
   }
 
   // ── Back to Top ──────────────────────────────────────────────
-  const backToTop = document.querySelector('.back-to-top');
+  var backToTop = document.querySelector('.back-to-top');
   function updateBackToTop() {
     if (!backToTop) return;
     if (window.scrollY > 600) {
@@ -212,10 +351,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ── Centralized Scroll Listener (rAF) ────────────────────────
-  let isScrolling = false;
-  window.addEventListener('scroll', () => {
+  var isScrolling = false;
+  window.addEventListener('scroll', function() {
     if (!isScrolling) {
-      window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(function() {
         handleNavScroll();
         highlightNav();
         updateScrollProgress();
@@ -227,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   if (backToTop) {
-    backToTop.addEventListener('click', () => {
+    backToTop.addEventListener('click', function() {
       if (lenis) {
         lenis.scrollTo(0, { duration: 2 });
       } else {
@@ -236,61 +375,59 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // (Mouse glow effect removed)
-
   // ── Magnetic Buttons ─────────────────────────────────────────
-  const magneticBtns = document.querySelectorAll('.magnetic-wrap');
-  magneticBtns.forEach(wrap => {
-    const btn = wrap.querySelector('.btn');
+  var magneticBtns = document.querySelectorAll('.magnetic-wrap');
+  magneticBtns.forEach(function(wrap) {
+    var btn = wrap.querySelector('.btn');
     if (!btn || window.innerWidth <= 768) return;
 
-    wrap.addEventListener('mousemove', (e) => {
-      const rect = wrap.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-      btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+    wrap.addEventListener('mousemove', function(e) {
+      var rect = wrap.getBoundingClientRect();
+      var x = e.clientX - rect.left - rect.width / 2;
+      var y = e.clientY - rect.top - rect.height / 2;
+      btn.style.transform = 'translate(' + (x * 0.3) + 'px, ' + (y * 0.3) + 'px)';
     });
 
-    wrap.addEventListener('mouseleave', () => {
+    wrap.addEventListener('mouseleave', function() {
       btn.style.transform = 'translate(0, 0)';
       btn.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
-      setTimeout(() => {
+      setTimeout(function() {
         btn.style.transition = '';
       }, 400);
     });
   });
 
   // ── Service Card Mouse Glow ──────────────────────────────────
-  const serviceCards = document.querySelectorAll('.service-card');
-  serviceCards.forEach(card => {
-    const glow = card.querySelector('.service-card__glow');
+  var serviceCards = document.querySelectorAll('.service-card');
+  serviceCards.forEach(function(card) {
+    var glow = card.querySelector('.service-card__glow');
     if (!glow) return;
 
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
       glow.style.left = (e.clientX - rect.left) + 'px';
       glow.style.top = (e.clientY - rect.top) + 'px';
     });
   });
 
   // ── 3D Card Tilt Effect ──────────────────────────────────────
-  const tiltCards = document.querySelectorAll('.feature-card, .leader-card');
-  tiltCards.forEach(card => {
+  var tiltCards = document.querySelectorAll('.feature-card, .leader-card');
+  tiltCards.forEach(function(card) {
     if (window.innerWidth <= 768) return;
 
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-      const tiltX = (y - 0.5) * 8;
-      const tiltY = (x - 0.5) * -8;
-      card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-4px)`;
+    card.addEventListener('mousemove', function(e) {
+      var rect = card.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width;
+      var y = (e.clientY - rect.top) / rect.height;
+      var tiltX = (y - 0.5) * 8;
+      var tiltY = (x - 0.5) * -8;
+      card.style.transform = 'perspective(1000px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) translateY(-4px)';
     });
 
-    card.addEventListener('mouseleave', () => {
+    card.addEventListener('mouseleave', function() {
       card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
       card.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-      setTimeout(() => {
+      setTimeout(function() {
         card.style.transition = '';
       }, 600);
     });
@@ -298,33 +435,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ── Blueprint SVG Overlay (Hero) ─────────────────────────────
   function createBlueprintGrid() {
-    const container = document.querySelector('.hero__blueprint');
+    var container = document.querySelector('.hero__blueprint');
     if (!container) return;
 
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     svg.setAttribute('viewBox', '0 0 1920 1080');
     svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
 
     // Horizontal lines
-    for (let i = 0; i < 20; i++) {
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    for (var i = 0; i < 20; i++) {
+      var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
       line.setAttribute('x1', '0');
       line.setAttribute('y1', i * 60);
       line.setAttribute('x2', '1920');
       line.setAttribute('y2', i * 60);
-      line.style.animationDelay = `${i * 0.15}s`;
+      line.style.animationDelay = (i * 0.15) + 's';
       svg.appendChild(line);
     }
 
     // Vertical lines
-    for (let i = 0; i < 35; i++) {
-      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-      line.setAttribute('x1', i * 60);
-      line.setAttribute('y1', '0');
-      line.setAttribute('x2', i * 60);
-      line.setAttribute('y2', '1080');
-      line.style.animationDelay = `${i * 0.1 + 0.5}s`;
-      svg.appendChild(line);
+    for (var j = 0; j < 35; j++) {
+      var vline = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      vline.setAttribute('x1', j * 60);
+      vline.setAttribute('y1', '0');
+      vline.setAttribute('x2', j * 60);
+      vline.setAttribute('y2', '1080');
+      vline.style.animationDelay = (j * 0.1 + 0.5) + 's';
+      svg.appendChild(vline);
     }
 
     container.appendChild(svg);
@@ -332,7 +469,13 @@ document.addEventListener('DOMContentLoaded', () => {
   createBlueprintGrid();
 
   // ── Initialize animations (called after loader) ──────────────
-  function initAnimations() {
+  // This is the global initAnimations function, safe to call multiple times
+  window.initAnimations = function initAnimations() {
+    // Kill all existing ScrollTriggers before re-creating
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.getAll().forEach(function(st) { st.kill(); });
+    }
+
     if (typeof initGSAPAnimations === 'function') {
       initGSAPAnimations();
     }
@@ -345,14 +488,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Force ScrollTrigger to refresh after a short delay to account for lazy-loaded images
     if (typeof ScrollTrigger !== 'undefined') {
-      setTimeout(() => ScrollTrigger.refresh(), 500);
-      setTimeout(() => ScrollTrigger.refresh(), 1500);
+      setTimeout(function() { ScrollTrigger.refresh(true); }, 500);
+      setTimeout(function() { ScrollTrigger.refresh(true); }, 1500);
     }
-  }
-  // Lenis restart is handled in the global pageshow handler above,
-  // but we need access to the closure-scoped `lenis` variable.
-  // Listen for the same event and handle Lenis specifically here.
-  window.addEventListener('pageshow', (event) => {
+  };
+
+  // Make initAnimations available globally for the first call from hideLoader
+  // (the function is already assigned to window above)
+
+  // ── Visibility Change Handler ────────────────────────────────
+  // When user tabs back to the page, refresh ScrollTrigger positions
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden && typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.refresh(true);
+      // Safety net
+      setTimeout(forceRevealHiddenElements, 300);
+    }
+  });
+
+  // Lenis restart on pageshow
+  window.addEventListener('pageshow', function(event) {
     if (event.persisted && typeof lenis !== 'undefined' && lenis) {
       lenis.start();
     }

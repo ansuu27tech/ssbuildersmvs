@@ -1,12 +1,19 @@
 /* ═══════════════════════════════════════════════════════════════
    SS BUILDERS MVS — GSAP ScrollTrigger Animations
+   Safe for re-initialization: all ScrollTriggers use once:true
+   and clearProps:'all' to guarantee final visible state.
    ═══════════════════════════════════════════════════════════════ */
 
 function initGSAPAnimations() {
   // Check GSAP availability
   if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
     console.warn('GSAP or ScrollTrigger not loaded, using CSS fallback');
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'));
+    document.querySelectorAll('.reveal').forEach(function(el) { el.classList.add('revealed'); });
+    // Force all section headers visible as fallback
+    document.querySelectorAll('.section-header, .section-header *').forEach(function(el) {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
     return;
   }
 
@@ -14,14 +21,14 @@ function initGSAPAnimations() {
 
   // ── Helper: Split Text into Characters for Flip Effect ──────
   function splitTextToChars(selector) {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach(el => {
+    var elements = document.querySelectorAll(selector);
+    elements.forEach(function(el) {
       if (el.classList.contains('split-done')) return;
-      const text = el.textContent;
+      var text = el.textContent;
       el.textContent = '';
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const span = document.createElement('span');
+      for (var i = 0; i < text.length; i++) {
+        var char = text[i];
+        var span = document.createElement('span');
         span.innerHTML = char === ' ' ? '&nbsp;' : char;
         span.style.display = 'inline-block';
         span.classList.add('char');
@@ -36,7 +43,7 @@ function initGSAPAnimations() {
     splitTextToChars('.hero__title-word');
 
     // ── Hero Animations ────────────────────────────────────────
-    const heroTl = gsap.timeline({ delay: 0.3 });
+    var heroTl = gsap.timeline({ delay: 0.3 });
 
     heroTl
       .fromTo('.hero__overline', {
@@ -92,17 +99,20 @@ function initGSAPAnimations() {
   }
 
   // ── Counter Animation ──────────────────────────────────────
-  const counters = document.querySelectorAll('.hero__stat-number, .counter-val, .ch-stat__num');
-  counters.forEach(counter => {
-    const target = parseFloat(counter.getAttribute('data-target'));
-    const suffix = counter.getAttribute('data-suffix') || '';
+  var counters = document.querySelectorAll('.hero__stat-number, .counter-val, .ch-stat__num');
+  counters.forEach(function(counter) {
+    var target = parseFloat(counter.getAttribute('data-target'));
+    var suffix = counter.getAttribute('data-suffix') || '';
+
+    // Reset counter to 0 for re-init
+    counter.textContent = '0';
 
     ScrollTrigger.create({
       trigger: counter,
       start: 'top 90%',
       once: true,
-      onEnter: () => {
-        const counterObj = { val: 0 };
+      onEnter: function() {
+        var counterObj = { val: 0 };
         gsap.to(counterObj, {
           val: target,
           duration: 2,
@@ -116,8 +126,9 @@ function initGSAPAnimations() {
   });
 
   // ── Section Header Reveals ─────────────────────────────────
-  gsap.utils.toArray('.section-header').forEach(header => {
-    const tl = gsap.timeline({
+  // CRITICAL FIX: Use onComplete to force final visible state
+  gsap.utils.toArray('.section-header').forEach(function(header) {
+    var tl = gsap.timeline({
       scrollTrigger: {
         trigger: header,
         start: 'top 90%',
@@ -125,10 +136,10 @@ function initGSAPAnimations() {
       }
     });
 
-    const overline = header.querySelector('.text-overline');
-    const heading = header.querySelector('h1, h2, h3, h4');
-    const p = header.querySelector('p');
-    const divider = header.querySelector('.divider');
+    var overline = header.querySelector('.text-overline');
+    var heading = header.querySelector('h1, h2, h3, h4');
+    var p = header.querySelector('p');
+    var divider = header.querySelector('.divider');
 
     if (overline) tl.fromTo(overline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, clearProps: 'all' });
     if (heading) tl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' }, tl.duration() > 0 ? '-=0.3' : 0);
@@ -137,7 +148,7 @@ function initGSAPAnimations() {
   });
 
   // ── Story Section ──────────────────────────────────────────
-  const storyIntro = document.querySelector('.story__intro');
+  var storyIntro = document.querySelector('.story__intro');
   if (storyIntro) {
     gsap.fromTo('.story__intro-content', { x: -60, opacity: 0 }, {
       scrollTrigger: {
@@ -159,13 +170,13 @@ function initGSAPAnimations() {
   }
 
   // Timeline milestones
-  gsap.utils.toArray('.story__milestone').forEach((milestone, i) => {
-    const direction = i % 2 === 0 ? -1 : 1;
-    const content = milestone.querySelector('.story__milestone-content');
-    const year = milestone.querySelector('.story__milestone-year');
-    const dot = milestone.querySelector('.story__milestone-dot');
+  gsap.utils.toArray('.story__milestone').forEach(function(milestone, i) {
+    var direction = i % 2 === 0 ? -1 : 1;
+    var content = milestone.querySelector('.story__milestone-content');
+    var year = milestone.querySelector('.story__milestone-year');
+    var dot = milestone.querySelector('.story__milestone-dot');
 
-    const tl = gsap.timeline({
+    var tl = gsap.timeline({
       scrollTrigger: {
         trigger: milestone,
         start: 'top 80%',
@@ -179,7 +190,7 @@ function initGSAPAnimations() {
   });
 
   // ── Services Cards ─────────────────────────────────────────
-  gsap.utils.toArray('.service-card').forEach((card, i) => {
+  gsap.utils.toArray('.service-card').forEach(function(card, i) {
     gsap.fromTo(card, { y: 60, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
@@ -195,7 +206,7 @@ function initGSAPAnimations() {
   });
 
   // ── Coverage Section ───────────────────────────────────────
-  const coverageMap = document.querySelector('.coverage__map-container');
+  var coverageMap = document.querySelector('.coverage__map-container');
   if (coverageMap) {
     gsap.fromTo(coverageMap, { scale: 0.9, opacity: 0 }, {
       scrollTrigger: {
@@ -207,7 +218,7 @@ function initGSAPAnimations() {
     });
   }
 
-  gsap.utils.toArray('.coverage__city-tag').forEach((tag, i) => {
+  gsap.utils.toArray('.coverage__city-tag').forEach(function(tag, i) {
     gsap.fromTo(tag, { y: 20, opacity: 0 }, {
       scrollTrigger: {
         trigger: tag,
@@ -219,7 +230,7 @@ function initGSAPAnimations() {
   });
 
   // ── Project Cards ──────────────────────────────────────────
-  gsap.utils.toArray('.project-card').forEach((card, i) => {
+  gsap.utils.toArray('.project-card').forEach(function(card, i) {
     gsap.fromTo(card, { y: 50, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
@@ -231,7 +242,7 @@ function initGSAPAnimations() {
   });
 
   // ── Leadership Cards ───────────────────────────────────────
-  gsap.utils.toArray('.leader-card').forEach((card, i) => {
+  gsap.utils.toArray('.leader-card').forEach(function(card, i) {
     gsap.fromTo(card, { y: 50, scale: 0.95, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
@@ -243,7 +254,7 @@ function initGSAPAnimations() {
   });
 
   // ── Feature Cards ──────────────────────────────────────────
-  gsap.utils.toArray('.feature-card').forEach((card, i) => {
+  gsap.utils.toArray('.feature-card').forEach(function(card, i) {
     gsap.fromTo(card, { y: 40, opacity: 0 }, {
       scrollTrigger: {
         trigger: card,
@@ -255,8 +266,8 @@ function initGSAPAnimations() {
   });
 
   // ── Testimonial ────────────────────────────────────────────
-  const testimonialSection = document.querySelector('.testimonials');
-  const carousel = document.querySelector('.testimonials__carousel');
+  var testimonialSection = document.querySelector('.testimonials');
+  var carousel = document.querySelector('.testimonials__carousel');
   if (testimonialSection && carousel) {
     gsap.fromTo(carousel, { y: 40, opacity: 0 }, {
       scrollTrigger: {
@@ -269,9 +280,11 @@ function initGSAPAnimations() {
   }
 
   // ── Contact Section ────────────────────────────────────────
-  const contactSection = document.querySelector('.contact, .luxury-contact');
-  const formWrapper = document.querySelector('.contact__form-wrapper, .luxury-contact__panel');
-  const infoGrid = document.querySelector('.contact__info, .luxury-contact__info-grid > div');
+  // CRITICAL: This is the section where "Start Your Dream Home Journey" disappears.
+  // We must ensure the section header and all children are always revealed.
+  var contactSection = document.querySelector('.contact, .luxury-contact');
+  var formWrapper = document.querySelector('.contact__form-wrapper, .luxury-contact__panel');
+  var infoGrid = document.querySelector('.contact__info, .luxury-contact__info-grid > div');
   if (contactSection) {
     if (formWrapper) {
       gsap.fromTo(formWrapper, {
@@ -301,9 +314,9 @@ function initGSAPAnimations() {
   }
 
   // ── Parallax Effects ───────────────────────────────────────
-  const heroShapes = gsap.utils.toArray('.hero__shape');
+  var heroShapes = gsap.utils.toArray('.hero__shape');
   if (heroShapes.length > 0) {
-    heroShapes.forEach((shape, i) => {
+    heroShapes.forEach(function(shape, i) {
       gsap.to(shape, {
         scrollTrigger: {
           trigger: '.hero',
@@ -319,29 +332,32 @@ function initGSAPAnimations() {
   }
 
   // ── Process Timeline Animation ─────────────────────────────
-  const timelineSteps = gsap.utils.toArray('.timeline-step');
+  var timelineSteps = gsap.utils.toArray('.timeline-step');
   if (timelineSteps.length > 0) {
-    timelineSteps.forEach((step, i) => {
+    timelineSteps.forEach(function(step, i) {
       // 1. Fade up the step content
-      gsap.fromTo(step.querySelector('.timeline-content'), {
-        y: 40, opacity: 0
-      }, {
-        scrollTrigger: {
-          trigger: step,
-          start: 'top 85%',
-          once: true
-        },
-        y: 0, opacity: 1, clearProps: "all",
-        duration: 0.8,
-        ease: 'power3.out'
-      });
+      var timelineContent = step.querySelector('.timeline-content');
+      if (timelineContent) {
+        gsap.fromTo(timelineContent, {
+          y: 40, opacity: 0
+        }, {
+          scrollTrigger: {
+            trigger: step,
+            start: 'top 85%',
+            once: true
+          },
+          y: 0, opacity: 1, clearProps: "all",
+          duration: 0.8,
+          ease: 'power3.out'
+        });
+      }
 
       // 2. Animate the node and connecting line
       ScrollTrigger.create({
         trigger: step,
         start: 'top 75%',
         once: true,
-        onEnter: () => {
+        onEnter: function() {
           step.classList.add('is-active');
           if (i < timelineSteps.length - 1) {
             step.classList.add('is-line-active');
@@ -351,8 +367,23 @@ function initGSAPAnimations() {
     });
   }
 
+  // ── Bento Cards ────────────────────────────────────────────
+  gsap.utils.toArray('.bento-card').forEach(function(card, i) {
+    gsap.fromTo(card, { y: 40, opacity: 0, scale: 0.96 }, {
+      scrollTrigger: {
+        trigger: card,
+        start: 'top 90%',
+        once: true
+      },
+      y: 0, opacity: 1, scale: 1, clearProps: "all",
+      duration: 0.7,
+      delay: i * 0.06,
+      ease: 'power3.out'
+    });
+  });
+
   // ── Footer Animation ───────────────────────────────────────
-  const footer = document.querySelector('.luxury-footer');
+  var footer = document.querySelector('.luxury-footer');
   if (footer) {
     gsap.fromTo('.luxury-footer__top > *', {
       y: 30, opacity: 0

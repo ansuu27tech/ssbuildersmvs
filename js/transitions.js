@@ -2,6 +2,9 @@
  * SS BUILDERS MVS — Section Entrance Animations
  * Safe reveal pattern: uses fromTo with once:true to guarantee
  * sections always end at opacity:1 and y:0, even on fast scroll.
+ *
+ * NOTE: This file's ScrollTriggers are killed and recreated by
+ * main.js's reinitializeEverything(), so no explicit cleanup is needed here.
  */
 
 (function() {
@@ -15,7 +18,7 @@
   // and to avoid breaking ScrollTrigger calculations by animating the parent section's Y position.
 
   // ─── PARALLAX BACKGROUNDS ──────────────────────────────────────
-  document.querySelectorAll('.blueprint-bg').forEach(el => {
+  document.querySelectorAll('.blueprint-bg').forEach(function(el) {
     gsap.to(el, {
       backgroundPositionY: '30%',
       ease: 'none',

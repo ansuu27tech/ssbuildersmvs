@@ -1,14 +1,21 @@
 /* ═══════════════════════════════════════════════════════════════
    SS BUILDERS MVS — Extended Pages & Sections Scripts
+   Safe for re-initialization: guards against duplicate listeners
    ═══════════════════════════════════════════════════════════════ */
 
 (function() {
   'use strict';
 
-  document.addEventListener('DOMContentLoaded', () => {
-    initQuickActions();
-    initConstructionCalculator();
-    initProjectModals();
+  var _pagesInitialized = false;
+  var _pagesAnimationsInitialized = false;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!_pagesInitialized) {
+      initQuickActions();
+      initConstructionCalculator();
+      initProjectModals();
+      _pagesInitialized = true;
+    }
   });
 
   window.initPagesAnimations = function() {
@@ -26,29 +33,31 @@
     if (document.querySelector('.gallery__masonry')) {
       initGalleryPage();
     }
+
+    _pagesAnimationsInitialized = true;
   };
 
   // ══════════════════════════════════════════════════════════════
   // FLOATING QUICK ACTIONS
   // ══════════════════════════════════════════════════════════════
   function initQuickActions() {
-    const quickActions = document.querySelector('.quick-actions');
+    var quickActions = document.querySelector('.quick-actions');
     if (!quickActions) return;
 
     // Also hide the old back-to-top button if quick actions exist
-    const oldBackToTop = document.querySelector('.back-to-top');
+    var oldBackToTop = document.querySelector('.back-to-top');
     if (oldBackToTop) oldBackToTop.style.display = 'none';
 
-    let isQuickActionsScrolling = false;
+    var isQuickActionsScrolling = false;
     // On sub-pages without the pinned cinematic hero, use a low threshold
-    const hasHero = !!document.querySelector('#hero .ch-canvas, .ch');
-    window.addEventListener('scroll', () => {
+    var hasHero = !!document.querySelector('#hero .ch-canvas, .ch');
+    window.addEventListener('scroll', function() {
       if (!isQuickActionsScrolling) {
-        window.requestAnimationFrame(() => {
-          let threshold;
+        window.requestAnimationFrame(function() {
+          var threshold;
           if (hasHero) {
             // Hero is pinned for 500%/250% on desktop/mobile. Quick actions appear after.
-            const heroMultiplier = window.innerWidth <= 768 ? 2.8 : 5.5;
+            var heroMultiplier = window.innerWidth <= 768 ? 2.8 : 5.5;
             threshold = window.innerHeight * heroMultiplier;
           } else {
             // Sub-pages: show after scrolling 300px
@@ -66,31 +75,32 @@
     }, { passive: true });
 
     // Scroll to top
-    const topBtn = quickActions.querySelector('.quick-action--top');
+    var topBtn = quickActions.querySelector('.quick-action--top');
     if (topBtn) {
-      topBtn.addEventListener('click', () => {
+      topBtn.addEventListener('click', function() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
 
     // Book consultation — scroll to contact
-    const consultBtn = quickActions.querySelector('.quick-action--consult');
+    var consultBtn = quickActions.querySelector('.quick-action--consult');
     if (consultBtn) {
-      consultBtn.addEventListener('click', () => {
-        const contact = document.querySelector('#contact');
+      consultBtn.addEventListener('click', function() {
+        var contact = document.querySelector('#contact');
         if (contact) {
-          const offset = document.querySelector('.navbar')?.offsetHeight || 80;
-          const top = contact.getBoundingClientRect().top + window.scrollY - offset;
-          window.scrollTo({ top, behavior: 'smooth' });
+          var navbar = document.querySelector('.navbar');
+          var offset = navbar ? navbar.offsetHeight : 80;
+          var top = contact.getBoundingClientRect().top + window.scrollY - offset;
+          window.scrollTo({ top: top, behavior: 'smooth' });
         }
       });
     }
 
     // Calculator toggle
-    const calcBtn = quickActions.querySelector('.quick-action--calc');
+    var calcBtn = quickActions.querySelector('.quick-action--calc');
     if (calcBtn) {
-      calcBtn.addEventListener('click', () => {
-        const panel = document.querySelector('.calc-panel');
+      calcBtn.addEventListener('click', function() {
+        var panel = document.querySelector('.calc-panel');
         if (panel) panel.classList.toggle('open');
       });
     }
@@ -100,38 +110,38 @@
   // CONSTRUCTION CALCULATOR
   // ══════════════════════════════════════════════════════════════
   function initConstructionCalculator() {
-    const panel = document.querySelector('.calc-panel');
+    var panel = document.querySelector('.calc-panel');
     if (!panel) return;
 
-    const closeBtn = panel.querySelector('.calc-panel__close');
+    var closeBtn = panel.querySelector('.calc-panel__close');
     if (closeBtn) {
-      closeBtn.addEventListener('click', () => panel.classList.remove('open'));
+      closeBtn.addEventListener('click', function() { panel.classList.remove('open'); });
     }
 
     // Close on ESC
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && panel.classList.contains('open')) {
         panel.classList.remove('open');
       }
     });
 
     // Calculate
-    const areaInput = panel.querySelector('#calc-area');
-    const typeSelect = panel.querySelector('#calc-type');
-    const interiorCheck = panel.querySelector('#calc-interior');
-    const exteriorCheck = panel.querySelector('#calc-exterior');
-    const resultValue = panel.querySelector('.calc-result__value');
+    var areaInput = panel.querySelector('#calc-area');
+    var typeSelect = panel.querySelector('#calc-type');
+    var interiorCheck = panel.querySelector('#calc-interior');
+    var exteriorCheck = panel.querySelector('#calc-exterior');
+    var resultValue = panel.querySelector('.calc-result__value');
 
     function calculate() {
       if (!areaInput || !resultValue) return;
-      const area = parseFloat(areaInput.value) || 0;
+      var area = parseFloat(areaInput.value) || 0;
       if (area <= 0) {
         resultValue.textContent = '₹0';
         return;
       }
 
-      let rate = 1550; // base rate per sq.ft.
-      const type = typeSelect ? typeSelect.value : 'residential';
+      var rate = 1550; // base rate per sq.ft.
+      var type = typeSelect ? typeSelect.value : 'residential';
 
       switch(type) {
         case 'commercial': rate = 1750; break;
@@ -143,8 +153,8 @@
       if (interiorCheck && interiorCheck.checked) rate += 350;
       if (exteriorCheck && exteriorCheck.checked) rate += 200;
 
-      const total = area * rate;
-      const formatted = new Intl.NumberFormat('en-IN', {
+      var total = area * rate;
+      var formatted = new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
         maximumFractionDigits: 0
@@ -163,14 +173,14 @@
   // PROJECT DETAIL MODALS
   // ══════════════════════════════════════════════════════════════
   function initProjectModals() {
-    const overlay = document.querySelector('.project-modal-overlay');
+    var overlay = document.querySelector('.project-modal-overlay');
     if (!overlay) return;
 
-    const modal = overlay.querySelector('.project-modal');
-    const closeBtn = overlay.querySelector('.project-modal__close');
+    var modal = overlay.querySelector('.project-modal');
+    var closeBtn = overlay.querySelector('.project-modal__close');
 
     // Project data
-    const projectData = {
+    var projectData = {
       'luxury-villa': {
         type: 'Luxury Villa',
         title: 'Luxury Villa Project',
@@ -218,16 +228,16 @@
     };
 
     function openModal(projectKey) {
-      const data = projectData[projectKey];
+      var data = projectData[projectKey];
       if (!data) return;
 
       // Populate modal
-      const typeEl = modal.querySelector('.project-modal__type');
-      const titleEl = modal.querySelector('.project-modal__title');
-      const details = modal.querySelectorAll('.project-modal__detail-value');
-      const tagsContainer = modal.querySelector('.project-modal__material-tags');
-      const reviewText = modal.querySelector('.project-modal__review-text');
-      const reviewAuthor = modal.querySelector('.project-modal__review-author');
+      var typeEl = modal.querySelector('.project-modal__type');
+      var titleEl = modal.querySelector('.project-modal__title');
+      var details = modal.querySelectorAll('.project-modal__detail-value');
+      var tagsContainer = modal.querySelector('.project-modal__material-tags');
+      var reviewText = modal.querySelector('.project-modal__review-text');
+      var reviewAuthor = modal.querySelector('.project-modal__review-author');
 
       if (typeEl) typeEl.textContent = data.type;
       if (titleEl) titleEl.textContent = data.title;
@@ -237,9 +247,9 @@
       if (details[3]) details[3].textContent = data.timeline;
 
       if (tagsContainer) {
-        tagsContainer.innerHTML = data.materials.map(m =>
-          `<span class="project-modal__material-tag">${m}</span>`
-        ).join('');
+        tagsContainer.innerHTML = data.materials.map(function(m) {
+          return '<span class="project-modal__material-tag">' + m + '</span>';
+        }).join('');
       }
 
       if (reviewText) reviewText.textContent = data.review;
@@ -254,31 +264,31 @@
       document.body.style.overflow = '';
     }
 
-    // Bind click on project cards (the cards themselves, not detail buttons)
-    document.querySelectorAll('.project-card[data-modal-target]').forEach(card => {
+    // Bind click on project cards
+    document.querySelectorAll('.project-card[data-modal-target]').forEach(function(card) {
       card.style.cursor = 'pointer';
-      card.addEventListener('click', () => {
-        const typeEl = card.querySelector('.project-card__type');
+      card.addEventListener('click', function() {
+        var typeEl = card.querySelector('.project-card__type');
         if (!typeEl) return;
-        const typeText = typeEl.textContent.trim().toLowerCase();
+        var typeText = typeEl.textContent.trim().toLowerCase();
         // Map display text to data key
-        const keyMap = {
+        var keyMap = {
           'luxury villa': 'luxury-villa',
           'commercial': 'commercial',
           'interior design': 'interior',
           'exterior design': 'exterior'
         };
-        const key = keyMap[typeText] || typeText.replace(/\s+/g, '-');
+        var key = keyMap[typeText] || typeText.replace(/\s+/g, '-');
         if (key) openModal(key);
       });
     });
 
     // Close handlers
     if (closeBtn) closeBtn.addEventListener('click', closeModal);
-    overlay.addEventListener('click', (e) => {
+    overlay.addEventListener('click', function(e) {
       if (e.target === overlay) closeModal();
     });
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && overlay.classList.contains('open')) {
         closeModal();
       }
@@ -289,14 +299,14 @@
   // WORKFLOW ANIMATIONS (GSAP)
   // ══════════════════════════════════════════════════════════════
   function initWorkflowAnimations() {
-    const steps = document.querySelectorAll('.workflow__step');
+    var steps = document.querySelectorAll('.workflow__step');
     if (!steps.length || typeof gsap === 'undefined') {
       // Fallback: just reveal them
-      steps.forEach(s => s.classList.add('revealed'));
+      steps.forEach(function(s) { s.classList.add('revealed'); });
       return;
     }
 
-    steps.forEach((step, i) => {
+    steps.forEach(function(step, i) {
       gsap.fromTo(step, {
         opacity: 0,
         y: 40,
@@ -324,9 +334,9 @@
   // WHY US ANIMATIONS
   // ══════════════════════════════════════════════════════════════
   function initWhyUsAnimations() {
-    const cards = document.querySelectorAll('.why-us__card');
-    const vsBadge = document.querySelector('.why-us__vs-badge');
-    const triggerEl = document.querySelector('.why-us__versus');
+    var cards = document.querySelectorAll('.why-us__card');
+    var vsBadge = document.querySelector('.why-us__vs-badge');
+    var triggerEl = document.querySelector('.why-us__versus');
     if (!cards.length || typeof gsap === 'undefined' || !triggerEl) return;
 
     gsap.fromTo(cards[0], { opacity: 0, x: -60 }, {
@@ -353,10 +363,10 @@
   // BRANDS ANIMATIONS
   // ══════════════════════════════════════════════════════════════
   function initBrandsAnimations() {
-    const brandCards = document.querySelectorAll('.brand-card');
+    var brandCards = document.querySelectorAll('.brand-card');
     if (!brandCards.length || typeof gsap === 'undefined') return;
 
-    brandCards.forEach((card, i) => {
+    brandCards.forEach(function(card, i) {
       gsap.fromTo(card, {
         opacity: 0,
         y: 30,
@@ -381,14 +391,14 @@
   // PROCESS PAGE
   // ══════════════════════════════════════════════════════════════
   function initProcessPage() {
-    const timeline = document.querySelector('.process-timeline');
-    const progressBar = timeline?.querySelector('.process-timeline__progress');
-    const steps = timeline?.querySelectorAll('.process-step');
-    if (!steps?.length) return;
+    var timeline = document.querySelector('.process-timeline');
+    var progressBar = timeline ? timeline.querySelector('.process-timeline__progress') : null;
+    var steps = timeline ? timeline.querySelectorAll('.process-step') : [];
+    if (!steps.length) return;
 
     // GSAP stagger entrance
     if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      steps.forEach((step, i) => {
+      steps.forEach(function(step, i) {
         gsap.fromTo(step, {
           opacity: 0,
           x: -40,
@@ -421,21 +431,24 @@
       });
     }
 
-    // Expand on click (mobile-friendly)
-    steps.forEach(step => {
-      const content = step.querySelector('.process-step__content');
-      if (content) {
-        content.addEventListener('click', () => {
-          // Close others
-          steps.forEach(s => {
-            if (s !== step) {
-              s.querySelector('.process-step__content')?.classList.remove('expanded');
-            }
+    // Expand on click (mobile-friendly) - Guarded for re-initialization
+    if (!_pagesAnimationsInitialized) {
+      steps.forEach(function(step) {
+        var content = step.querySelector('.process-step__content');
+        if (content) {
+          content.addEventListener('click', function() {
+            // Close others
+            steps.forEach(function(s) {
+              if (s !== step) {
+                var otherContent = s.querySelector('.process-step__content');
+                if (otherContent) otherContent.classList.remove('expanded');
+              }
+            });
+            content.classList.toggle('expanded');
           });
-          content.classList.toggle('expanded');
-        });
-      }
-    });
+        }
+      });
+    }
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -443,57 +456,57 @@
   // ══════════════════════════════════════════════════════════════
   function initMaterialsPage() {
     // 1. Statistics Counter Animation
-    const statNumbers = document.querySelectorAll('.stat-number');
+    var statNumbers = document.querySelectorAll('.stat-number');
     if (statNumbers.length && typeof gsap !== 'undefined') {
-      statNumbers.forEach(stat => {
-        const targetValue = parseInt(stat.getAttribute('data-target'), 10) || parseInt(stat.getAttribute('data-count'), 10) || parseInt(stat.textContent, 10);
+      statNumbers.forEach(function(stat) {
+        var targetValue = parseInt(stat.getAttribute('data-target'), 10) || parseInt(stat.getAttribute('data-count'), 10) || parseInt(stat.textContent, 10);
         stat.textContent = '0';
         
-          const statsTrigger = document.querySelector('.materials-stats');
-          if (statsTrigger) {
-            gsap.to(stat, {
-              textContent: targetValue,
-              duration: 2.5,
-              ease: 'power3.out',
-              snap: { textContent: 1 },
-              scrollTrigger: {
-                trigger: statsTrigger,
-                start: 'top 85%',
-                once: true
-              }
-            });
-          }
+        var statsTrigger = document.querySelector('.materials-stats');
+        if (statsTrigger) {
+          gsap.to(stat, {
+            textContent: targetValue,
+            duration: 2.5,
+            ease: 'power3.out',
+            snap: { textContent: 1 },
+            scrollTrigger: {
+              trigger: statsTrigger,
+              start: 'top 85%',
+              once: true
+            }
+          });
+        }
       });
     }
 
-    // 2. 3D Tilt effect for brand cards
-    const brandCards = document.querySelectorAll('.brand-card');
-    if (brandCards.length && window.innerWidth > 768) {
-      brandCards.forEach(card => {
-        const inner = card.querySelector('.brand-card__inner');
+    // 2. 3D Tilt effect for brand cards - Guarded for re-init
+    var brandCards = document.querySelectorAll('.brand-card');
+    if (brandCards.length && window.innerWidth > 768 && !_pagesAnimationsInitialized) {
+      brandCards.forEach(function(card) {
+        var inner = card.querySelector('.brand-card__inner');
         if (!inner) return;
 
-        card.addEventListener('mousemove', (e) => {
-          const rect = card.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width;
-          const y = (e.clientY - rect.top) / rect.height;
+        card.addEventListener('mousemove', function(e) {
+          var rect = card.getBoundingClientRect();
+          var x = (e.clientX - rect.left) / rect.width;
+          var y = (e.clientY - rect.top) / rect.height;
           // Stronger tilt for luxury feel
-          const tiltX = (y - 0.5) * 15;
-          const tiltY = (x - 0.5) * -15;
+          var tiltX = (y - 0.5) * 15;
+          var tiltY = (x - 0.5) * -15;
           
-          inner.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-8px)`;
+          inner.style.transform = 'perspective(1000px) rotateX(' + tiltX + 'deg) rotateY(' + tiltY + 'deg) translateY(-8px)';
         });
 
-        card.addEventListener('mouseleave', () => {
+        card.addEventListener('mouseleave', function() {
           inner.style.transform = '';
           inner.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-          setTimeout(() => { inner.style.transition = ''; }, 600);
+          setTimeout(function() { inner.style.transition = ''; }, 600);
         });
       });
     }
 
     // 3. Stagger animation for brand cards
-    const brandsTrigger = document.querySelector('.brands-showcase');
+    var brandsTrigger = document.querySelector('.brands-showcase');
     if (brandCards.length && typeof gsap !== 'undefined' && brandsTrigger) {
       gsap.fromTo(brandCards, {
         opacity: 0,
@@ -514,13 +527,13 @@
       });
     }
 
-    // 4. Mobile infinite carousel duplication
-    const track = document.querySelector('.brands-track');
-    if (track && window.innerWidth <= 768) {
+    // 4. Mobile infinite carousel duplication - Guarded for re-init
+    var track = document.querySelector('.brands-track');
+    if (track && window.innerWidth <= 768 && !_pagesAnimationsInitialized) {
       // Clone cards for infinite scroll seamless looping
-      const cards = track.querySelectorAll('.brand-card');
-      cards.forEach(card => {
-        const clone = card.cloneNode(true);
+      var cards = track.querySelectorAll('.brand-card');
+      cards.forEach(function(card) {
+        var clone = card.cloneNode(true);
         track.appendChild(clone);
       });
     }
@@ -530,98 +543,102 @@
   // GALLERY PAGE
   // ══════════════════════════════════════════════════════════════
   function initGalleryPage() {
-    const filters = document.querySelectorAll('.gallery__filter');
-    const items = document.querySelectorAll('.gallery__item');
-    const masonry = document.querySelector('.gallery__masonry');
-    const lightboxOverlay = document.querySelector('.lightbox-overlay');
+    var filters = document.querySelectorAll('.gallery__filter');
+    var items = document.querySelectorAll('.gallery__item');
+    var masonry = document.querySelector('.gallery__masonry');
+    var lightboxOverlay = document.querySelector('.lightbox-overlay');
 
-    // Filtering
-    filters.forEach(filter => {
-      filter.addEventListener('click', () => {
-        const category = filter.getAttribute('data-filter');
+    // Filtering - Guarded for re-init
+    if (!_pagesAnimationsInitialized) {
+      filters.forEach(function(filter) {
+        filter.addEventListener('click', function() {
+          var category = filter.getAttribute('data-filter');
 
-        filters.forEach(f => f.classList.remove('active'));
-        filter.classList.add('active');
+          filters.forEach(function(f) { f.classList.remove('active'); });
+          filter.classList.add('active');
 
-        if (masonry) masonry.classList.add('filtering');
-        
-        setTimeout(() => {
-          items.forEach(item => {
-            if (category === 'all' || item.getAttribute('data-category') === category) {
-              item.classList.remove('hidden');
-            } else {
-              item.classList.add('hidden');
-            }
-          });
+          if (masonry) masonry.classList.add('filtering');
           
-          if (masonry) masonry.classList.remove('filtering');
-        }, 300);
-      });
-    });
-
-    // Lightbox
-    if (lightboxOverlay) {
-      const lightboxTitle = lightboxOverlay.querySelector('.lightbox__title');
-      const lightboxCategory = lightboxOverlay.querySelector('.lightbox__category');
-      const lightboxClose = lightboxOverlay.querySelector('.lightbox__close');
-      const lightboxPlaceholder = lightboxOverlay.querySelector('.lightbox__placeholder-large');
-      const lightboxImg = lightboxOverlay.querySelector('.lightbox__img');
-      const lightboxLocation = lightboxOverlay.querySelector('.lightbox__location');
-      const lightboxLocationText = lightboxOverlay.querySelector('.lightbox__location-text');
-
-      items.forEach(item => {
-        item.addEventListener('click', () => {
-          const title = item.querySelector('.gallery__placeholder-text, .gallery__img-title')?.textContent || '';
-          const category = item.querySelector('.gallery__category-badge')?.textContent || '';
-          const location = item.getAttribute('data-location') || '';
-          const imgElement = item.querySelector('img.gallery__img');
-
-          if (lightboxTitle) lightboxTitle.textContent = title;
-          if (lightboxCategory) lightboxCategory.textContent = category;
-          
-          if (lightboxLocation && lightboxLocationText) {
-            if (location) {
-              lightboxLocationText.textContent = location;
-              lightboxLocation.style.display = 'block';
-            } else {
-              lightboxLocation.style.display = 'none';
-            }
-          }
-
-          if (imgElement && lightboxImg && lightboxPlaceholder) {
-            lightboxImg.src = imgElement.src;
-            lightboxImg.style.display = 'block';
-            lightboxPlaceholder.style.display = 'none';
-          } else if (lightboxImg && lightboxPlaceholder) {
-            lightboxImg.style.display = 'none';
-            lightboxImg.src = '';
-            lightboxPlaceholder.style.display = 'flex';
-          }
-
-          lightboxOverlay.classList.add('open');
-          document.body.style.overflow = 'hidden';
+          setTimeout(function() {
+            items.forEach(function(item) {
+              if (category === 'all' || item.getAttribute('data-category') === category) {
+                item.classList.remove('hidden');
+              } else {
+                item.classList.add('hidden');
+              }
+            });
+            
+            if (masonry) masonry.classList.remove('filtering');
+          }, 300);
         });
       });
 
-      function closeLightbox() {
-        lightboxOverlay.classList.remove('open');
-        document.body.style.overflow = '';
-      }
+      // Lightbox
+      if (lightboxOverlay) {
+        var lightboxTitle = lightboxOverlay.querySelector('.lightbox__title');
+        var lightboxCategory = lightboxOverlay.querySelector('.lightbox__category');
+        var lightboxClose = lightboxOverlay.querySelector('.lightbox__close');
+        var lightboxPlaceholder = lightboxOverlay.querySelector('.lightbox__placeholder-large');
+        var lightboxImg = lightboxOverlay.querySelector('.lightbox__img');
+        var lightboxLocation = lightboxOverlay.querySelector('.lightbox__location');
+        var lightboxLocationText = lightboxOverlay.querySelector('.lightbox__location-text');
 
-      if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
-      lightboxOverlay.addEventListener('click', (e) => {
-        if (e.target === lightboxOverlay) closeLightbox();
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && lightboxOverlay.classList.contains('open')) {
-          closeLightbox();
+        items.forEach(function(item) {
+          item.addEventListener('click', function() {
+            var titleEl = item.querySelector('.gallery__placeholder-text, .gallery__img-title');
+            var title = titleEl ? titleEl.textContent : '';
+            var categoryEl = item.querySelector('.gallery__category-badge');
+            var category = categoryEl ? categoryEl.textContent : '';
+            var location = item.getAttribute('data-location') || '';
+            var imgElement = item.querySelector('img.gallery__img');
+
+            if (lightboxTitle) lightboxTitle.textContent = title;
+            if (lightboxCategory) lightboxCategory.textContent = category;
+            
+            if (lightboxLocation && lightboxLocationText) {
+              if (location) {
+                lightboxLocationText.textContent = location;
+                lightboxLocation.style.display = 'block';
+              } else {
+                lightboxLocation.style.display = 'none';
+              }
+            }
+
+            if (imgElement && lightboxImg && lightboxPlaceholder) {
+              lightboxImg.src = imgElement.src;
+              lightboxImg.style.display = 'block';
+              lightboxPlaceholder.style.display = 'none';
+            } else if (lightboxImg && lightboxPlaceholder) {
+              lightboxImg.style.display = 'none';
+              lightboxImg.src = '';
+              lightboxPlaceholder.style.display = 'flex';
+            }
+
+            lightboxOverlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+          });
+        });
+
+        function closeLightbox() {
+          lightboxOverlay.classList.remove('open');
+          document.body.style.overflow = '';
         }
-      });
+
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        lightboxOverlay.addEventListener('click', function(e) {
+          if (e.target === lightboxOverlay) closeLightbox();
+        });
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && lightboxOverlay.classList.contains('open')) {
+            closeLightbox();
+          }
+        });
+      }
     }
 
-    // Stagger entrance
+    // Stagger entrance (Safe to re-run because it uses GSAP fromTo with once: true)
     if (typeof gsap !== 'undefined') {
-      items.forEach((item, i) => {
+      items.forEach(function(item, i) {
         gsap.fromTo(item, {
           opacity: 0,
           y: 30,
