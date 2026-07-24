@@ -131,9 +131,9 @@ function initGSAPAnimations() {
     const divider = header.querySelector('.divider');
 
     if (overline) tl.fromTo(overline, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, clearProps: 'all' });
-    if (heading) tl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' }, tl.recent() ? '-=0.3' : 0);
-    if (divider) tl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.out', clearProps: 'all' }, tl.recent() ? '-=0.4' : 0);
-    if (p) tl.fromTo(p, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, clearProps: 'all' }, tl.recent() ? '-=0.3' : 0);
+    if (heading) tl.fromTo(heading, { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', clearProps: 'all' }, tl.duration() > 0 ? '-=0.3' : 0);
+    if (divider) tl.fromTo(divider, { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: 'power3.out', clearProps: 'all' }, tl.duration() > 0 ? '-=0.4' : 0);
+    if (p) tl.fromTo(p, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, clearProps: 'all' }, tl.duration() > 0 ? '-=0.3' : 0);
   });
 
   // ── Story Section ──────────────────────────────────────────

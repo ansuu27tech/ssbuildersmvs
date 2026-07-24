@@ -2689,7 +2689,7 @@
 
   .contact__wrapper {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--space-2xl);
     margin-top: var(--space-xl);
   }
@@ -2708,6 +2708,8 @@
     border: 1px solid var(--glass-border);
     position: relative;
     overflow: visible;
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
   .contact__form-header {
@@ -2887,6 +2889,8 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
   .contact__stats-grid {
@@ -2896,6 +2900,8 @@
     padding: var(--space-md);
     border-radius: var(--border-radius-lg);
     text-align: center;
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
   @media (max-width: 768px) {
@@ -2934,6 +2940,8 @@
     padding: var(--space-lg);
     border-radius: var(--border-radius-lg);
     transition: transform var(--duration) var(--ease-out);
+    box-sizing: border-box;
+    max-width: 100%;
   }
 
   .contact__card:hover {

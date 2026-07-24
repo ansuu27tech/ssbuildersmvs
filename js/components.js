@@ -86,8 +86,12 @@ function initComponents() {
   // ══════════════════════════════════════════════════════════════
   const contactForm = document.querySelector('#contactForm');
   if (contactForm) {
+    let isSubmitting = false;
     contactForm.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      // Prevent double-submit
+      if (isSubmitting) return;
 
       const formData = new FormData(contactForm);
       const data = Object.fromEntries(formData.entries());
@@ -107,6 +111,8 @@ function initComponents() {
 
       if (!isValid) return;
 
+      isSubmitting = true;
+
       // Show success state
       const submitBtn = contactForm.querySelector('.btn--primary');
       if (submitBtn) {
@@ -120,7 +126,10 @@ function initComponents() {
           submitBtn.style.background = '';
           submitBtn.disabled = false;
           contactForm.reset();
+          isSubmitting = false;
         }, 3000);
+      } else {
+        isSubmitting = false;
       }
     });
 
@@ -134,6 +143,29 @@ function initComponents() {
         input.parentElement.classList.remove('focused');
       });
     });
+
+    // City-price hint (shows construction cost per sq.ft. for selected city)
+    const citySelect = document.getElementById('city');
+    const priceHint = document.getElementById('city-price-hint');
+    if (citySelect && priceHint) {
+      const prices = {
+        'chennai': '₹2000/sq.ft.',
+        'vellore': '₹1750/sq.ft.',
+        'ranipet': '₹1650/sq.ft.',
+        'walajah': '₹1650/sq.ft.',
+        'arcot': '₹1650/sq.ft.',
+        'bengaluru': '₹2100/sq.ft.'
+      };
+      citySelect.addEventListener('change', function(e) {
+        const selected = e.target.value;
+        if (prices[selected]) {
+          priceHint.innerHTML = `Construction Starts @ <strong>${prices[selected]}</strong>`;
+          priceHint.style.display = 'block';
+        } else {
+          priceHint.style.display = 'none';
+        }
+      });
+    }
   }
 
   // ══════════════════════════════════════════════════════════════

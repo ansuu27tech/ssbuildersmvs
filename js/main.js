@@ -6,16 +6,23 @@ if ('scrollRestoration' in history) {
   history.scrollRestoration = 'manual';
 }
 
-// BFCache handling: refresh GSAP ScrollTrigger to prevent missing/invisible elements
+// ── BFCache Restoration Handler ────────────────────────────────────────────
+// Single comprehensive handler for back/forward cache restoration.
+// Fixes invisible text bug: CSS sets opacity:0 as initial state on hero elements,
+// GSAP intro timeline animates them to visible, but on BFCache restore the IIFE
+// doesn't re-run and scrubbed ScrollTrigger animations bake "faded out" inline
+// styles. ScrollTrigger.refresh() alone does NOT reset inline styles.
 window.addEventListener('pageshow', (event) => {
   if (event.persisted) {
-    if (typeof ScrollTrigger !== 'undefined') {
-      ScrollTrigger.refresh();
-    }
+    window.location.reload();
   }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+  // ── Accessibility: Mark decorative SVG icons as aria-hidden ──
+  document.querySelectorAll('.navbar__link svg, .quick-action__btn svg, .service-card svg, .footer svg, .btn svg, .feature-card svg')
+    .forEach(svg => svg.setAttribute('aria-hidden', 'true'));
+
   // Declare lenis early so all closures can reference it safely
   let lenis;
 
@@ -342,27 +349,12 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => ScrollTrigger.refresh(), 1500);
     }
   }
+  // Lenis restart is handled in the global pageshow handler above,
+  // but we need access to the closure-scoped `lenis` variable.
+  // Listen for the same event and handle Lenis specifically here.
   window.addEventListener('pageshow', (event) => {
-  if (event.persisted) {
-    // Reset body overflow in case it was locked by loader or modal
-    document.body.style.overflow = '';
-    
-    // Ensure GSAP ticker is awake
-    if (typeof gsap !== 'undefined') {
-      gsap.ticker.wake();
-    }
-
-    // Ensure Lenis is running if we're not on mobile
-    if (typeof lenis !== 'undefined' && lenis) {
+    if (event.persisted && typeof lenis !== 'undefined' && lenis) {
       lenis.start();
     }
-    
-    // Refresh ScrollTrigger to ensure animations calculate correct positions
-    if (typeof ScrollTrigger !== 'undefined') {
-      ScrollTrigger.refresh();
-      // Also force a refresh after a small delay to handle any lazy-loaded layout shifts
-      setTimeout(() => ScrollTrigger.refresh(), 500);
-    }
-  }
-});
+  });
 });

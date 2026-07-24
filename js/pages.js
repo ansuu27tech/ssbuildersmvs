@@ -301,7 +301,7 @@
         opacity: 0,
         y: 40,
       }, {
-        opacity: 1, clearProps: "all",
+        opacity: 1,
         y: 0,
         duration: 0.6,
         delay: i * 0.15,
@@ -310,6 +310,11 @@
           trigger: step,
           start: 'top 85%',
           once: true
+        },
+        onComplete: function() {
+          // Add CSS class to maintain visibility, then safely clear inline styles
+          step.classList.add('revealed');
+          gsap.set(step, { clearProps: 'all' });
         }
       });
     });

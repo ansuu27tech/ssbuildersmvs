@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>document.documentElement.classList.add('js-loaded');</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="SS BUILDERS MVS delivers premium residential, commercial, luxury interiors, renovations, and turnkey construction projects across South India since 2007. Engineering excellence, transparency, and timeless design.">
@@ -59,7 +60,25 @@
   <!-- Preconnect -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Preload critical font CSS -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" as="style">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Preconnect to CDN resources -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+  <!-- No-JS fallback: make hero content visible when JavaScript is disabled -->
+  <noscript>
+    <style>
+      .ch-overline, .ch-sub, .ch-actions, .ch-price, .ch-title__word {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .loader { display: none !important; }
+    </style>
+  </noscript>
 </head>
 <body>
   <a href="#hero" class="skip-link">Skip to main content</a>
@@ -925,7 +944,7 @@
         <div class="leader-card leader-card--founder glass">
           <div class="leader-card__badge">Building Since 2007</div>
           <div class="leader-card__portrait">
-            <img src="images/team%20members/sarfaraz%20founder.png" alt="Sarfaraz Ahmed H" class="leader-card__img" />
+            <img src="images/team%20members/sarfaraz%20founder.png" alt="Sarfaraz Ahmed H" class="leader-card__img" loading="lazy" />
           </div>
           <h3 class="leader-card__name">Sarfaraz Ahmed H</h3>
           <span class="leader-card__role">Founder, Chairman & Managing Director</span>
@@ -937,7 +956,7 @@
           <!-- COO -->
           <div class="leader-card glass">
             <div class="leader-card__portrait">
-              <img src="images/team%20members/Mohamed%20Valiullah.png" alt="Mohamed Valiullah" class="leader-card__img" />
+              <img src="images/team%20members/Mohamed%20Valiullah.png" alt="Mohamed Valiullah" class="leader-card__img" loading="lazy" />
             </div>
             <h3 class="leader-card__name">Mohamed Valiullah</h3>
             <span class="leader-card__role">Chief Operating Officer (COO)</span>
@@ -947,7 +966,7 @@
           <!-- Lead Design Consultant (NEW) -->
           <div class="leader-card glass">
             <div class="leader-card__portrait">
-              <img src="images/team%20members/Nawab.jpeg" alt="NAWAB" class="leader-card__img" style="object-position: center;" />
+              <img src="images/team%20members/Nawab.jpeg" alt="NAWAB" class="leader-card__img" loading="lazy" style="object-position: center;" />
             </div>
             <h3 class="leader-card__name">NAWAB</h3>
             <span class="leader-card__role">Registered Construction Engineer & Lead Design Consultant</span>
@@ -957,7 +976,7 @@
           <!-- CFO -->
           <div class="leader-card glass">
             <div class="leader-card__portrait">
-              <img src="images/team%20members/Mohamed%20Rehan.png" alt="Mohamed Rehan" class="leader-card__img" />
+              <img src="images/team%20members/Mohamed%20Rehan.png" alt="Mohamed Rehan" class="leader-card__img" loading="lazy" />
             </div>
             <h3 class="leader-card__name">Mohamed Rehan</h3>
             <span class="leader-card__role">Chief Financial Officer (CFO)</span>
@@ -992,7 +1011,7 @@
               <p>Premium quality construction starting from ₹1550/sq.ft without compromising standards.</p>
             </div>
             <div class="bento-media">
-              <img src="images/bento_commercial.png" alt="Commercial Building">
+              <img src="images/bento_commercial.png" alt="Commercial Building" loading="lazy">
             </div>
           </div>
         </div>
@@ -1000,7 +1019,7 @@
         <!-- 02: Large -->
         <div class="bento-card bento-large accent-purple no-padding">
           <div class="bento-media-top">
-            <img src="images/bento_luxury_interior.png" alt="Luxury Interior">
+            <img src="images/bento_luxury_interior.png" alt="Luxury Interior" loading="lazy">
           </div>
           <div class="bento-content">
             <span class="bento-badge">World-Class</span>
@@ -1110,7 +1129,7 @@
               </ul>
             </div>
             <div class="bento-media">
-              <img src="images/bento_satisfaction.png" alt="Customer Satisfaction">
+              <img src="images/bento_satisfaction.png" alt="Customer Satisfaction" loading="lazy">
             </div>
           </div>
         </div>
@@ -1413,7 +1432,10 @@
             <h3 class="contact__form-title">SEND US A <span class="text-gradient">MESSAGE</span></h3>
             <p class="contact__form-subtitle">Discuss your project with our architectural experts.</p>
           </div>
-          <form id="contactForm" class="contact__form">
+          <form id="contactForm" action="https://formsubmit.co/ssbuilders1113@gmail.com" method="POST" class="contact__form">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_subject" value="New Project Inquiry - SS BUILDERS MVS">
+            <input type="hidden" name="_template" value="table">
             <div class="form-row">
               <div class="form-group">
                 <input type="text" id="fullName" name="fullName" class="form-input" placeholder=" " required>
@@ -1487,27 +1509,6 @@
                 </div>
                 <div id="city-price-hint" class="city-price-hint" style="display: none; font-size: 0.85rem; color: #cbd5e1; margin-top: 0.5rem; text-align: right; width: 100%; position: absolute; bottom: -20px; right: 0;"></div>
               </div>
-              
-              <script>
-                document.getElementById('city').addEventListener('change', function(e) {
-                  const prices = {
-                    'chennai': '₹2000/sq.ft.',
-                    'vellore': '₹1750/sq.ft.',
-                    'ranipet': '₹1650/sq.ft.',
-                    'walajah': '₹1650/sq.ft.',
-                    'arcot': '₹1650/sq.ft.',
-                    'bengaluru': '₹2100/sq.ft.'
-                  };
-                  const hint = document.getElementById('city-price-hint');
-                  const selected = e.target.value;
-                  if (prices[selected]) {
-                    hint.innerHTML = `Construction Starts @ <strong>${prices[selected]}</strong>`;
-                    hint.style.display = 'block';
-                  } else {
-                    hint.style.display = 'none';
-                  }
-                });
-              </script>
             </div>
 
             <div class="form-group">

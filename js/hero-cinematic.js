@@ -509,19 +509,19 @@
     }, 0);
 
     intro.to('.ch-overline', {
-      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
     }, 0.2);
 
     intro.to('.ch-sub', {
-      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
     }, 0.5);
 
     intro.to('.ch-actions', {
-      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
     }, 0.7);
 
     intro.to('.ch-price', {
-      y: 0, opacity: 1, clearProps: 'all', duration: 1, ease: 'power3.out',
+      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
     }, 0.9);
 
     intro.add(() => {
@@ -546,7 +546,7 @@
     });
 
     /* ── Phase 1: Scroll-driven text fade-out (delayed for readability) ── */
-    gsap.to('.ch-content', {
+    gsap.to(['.ch-overline', '.ch-title', '.ch-sub'], {
       y: -40, // Less vertical movement, more elegant fade
       opacity: 0,
       ease: 'power1.inOut',
@@ -585,22 +585,7 @@
 
     const pinVal = parseInt(CFG.pinDuration); // Extracts 500 or 250
 
-    // Phase 3.5: Reveal SS BUILDERS logo on the side at the end of the frames
-    gsap.fromTo('.ch-end-logo', {
-      scale: 0.8,
-      opacity: 0,
-      x: -30
-    }, {
-      opacity: 1, clearProps: 'all',
-      x: 0,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: hero,
-        start: `top -${pinVal * 0.75}%`, // e.g. -375% for 500vh pin
-        end: `top -${pinVal * 0.85}%`,   // e.g. -425%
-        scrub: true,
-      }
-    });
+    // Removed Phase 3.5 logo reveal to prevent overlap with CTA buttons
 
     // Phase 4: Smooth transition out. Fade the entire camera wrapper to black at the very end of the pin
     gsap.to('.ch-camera', {
@@ -629,7 +614,7 @@
     state.countersStarted = true;
 
     document.querySelectorAll('.ch-stat__num').forEach(el => {
-      const target = parseFloat(el.dataset.count);
+      const target = parseFloat(el.dataset.target);
       const isFloat = target % 1 !== 0;
       const dur = 2000;
       const start = performance.now();
@@ -715,6 +700,23 @@
     // GSAP after a tick
     requestAnimationFrame(() => initGSAP());
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     15. BFCACHE RESET — Called from main.js pageshow handler
+     ═══════════════════════════════════════════════════════════ */
+  // Expose a global reset function for the BFCache handler.
+  // On back-navigation, the IIFE doesn't re-run but the scrubbed
+  // ScrollTriggers have stale progress values. This rebuilds them.
+  window.__ssbHeroCinematicReset = function() {
+    // Reset scroll progress state
+    state.progress = 0;
+    state.frameProgress = 0;
+    state.currentPhase = -1;
+
+    // Re-initialize GSAP ScrollTriggers for the hero
+    // (the old ones were killed by the main.js pageshow handler)
+    requestAnimationFrame(() => initGSAP());
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
