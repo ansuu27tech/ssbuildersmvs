@@ -485,6 +485,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof initPagesAnimations === 'function') {
       initPagesAnimations();
     }
+    
+    // Re-initialize the cinematic hero (fixes initial load and back-nav)
+    if (typeof window.__ssbHeroCinematicReset === 'function') {
+      window.__ssbHeroCinematicReset();
+    }
 
     // Force ScrollTrigger to refresh after a short delay to account for lazy-loaded images
     if (typeof ScrollTrigger !== 'undefined') {
