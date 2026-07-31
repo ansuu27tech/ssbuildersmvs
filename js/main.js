@@ -492,8 +492,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Re-initialize the cinematic hero (fixes initial load and back-nav)
-    if (typeof window.__ssbHeroCinematicReset === 'function') {
-      window.__ssbHeroCinematicReset();
+    if (typeof window.initHeroCinematicGSAP === 'function') {
+      window.initHeroCinematicGSAP();
     }
 
     // Re-initialize kitchen scroll sequence if present

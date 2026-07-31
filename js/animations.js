@@ -99,7 +99,7 @@ function initGSAPAnimations() {
   }
 
   // ── Counter Animation ──────────────────────────────────────
-  var counters = document.querySelectorAll('.hero__stat-number, .counter-val, .ch-stat__num');
+  var counters = document.querySelectorAll('.hero__stat-number, .counter-val');
   counters.forEach(function(counter) {
     var target = parseFloat(counter.getAttribute('data-target'));
     var suffix = counter.getAttribute('data-suffix') || '';

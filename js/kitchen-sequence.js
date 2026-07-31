@@ -255,6 +255,7 @@
   }
 
   /* ── GSAP ScrollTrigger Setup ───────────────────────────────── */
+  let kitchenTl = null;
   function initScrollTrigger() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       console.warn('[KitchenSequence] GSAP or ScrollTrigger not found. Falling back to static mode.');
@@ -264,8 +265,10 @@
 
     gsap.registerPlugin(ScrollTrigger);
 
+    if (kitchenTl) kitchenTl.kill();
+
     // Create a scroll-driven animation
-    const tl = gsap.timeline({
+    kitchenTl = gsap.timeline({
       scrollTrigger: {
         trigger: state.section,
         start: 'top top',
@@ -295,7 +298,7 @@
     });
 
     // Dummy tween to give the timeline a duration
-    tl.to({}, { duration: 1 });
+    kitchenTl.to({}, { duration: 1 });
   }
 
   function showStaticFallback() {

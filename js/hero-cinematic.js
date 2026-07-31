@@ -471,6 +471,7 @@
   }
 
   let _gsapInitialized = false;
+  let introTl = null;
 
   function initGSAP() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
@@ -516,46 +517,47 @@
     /* ── Initial entrance animation (non-scroll) ── */
     // Kill any existing tweens to prevent double-flicker race condition
     gsap.killTweensOf('.ch-char, .ch-overline, .ch-sub, .ch-actions, .ch-price');
+    if (introTl) introTl.kill();
 
-    const intro = gsap.timeline({ delay: 0.3 });
+    introTl = gsap.timeline({ delay: 0.3 });
 
-    intro.fromTo('.ch-char', 
+    introTl.fromTo('.ch-char', 
       { y: 100, opacity: 0 },
       { y: 0, opacity: 1, clearProps: 'opacity,transform', duration: 1.0, ease: 'power4.out', stagger: 0.03 }, 
       0
     );
 
-    intro.fromTo('.ch-overline', 
+    introTl.fromTo('.ch-overline', 
       { y: 20, opacity: 0, visibility: 'hidden' },
       { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
       0.2
     );
 
-    intro.fromTo('.ch-sub', 
+    introTl.fromTo('.ch-sub', 
       { y: 20, opacity: 0, visibility: 'hidden' },
       { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
       0.5
     );
 
-    intro.fromTo('.ch-actions', 
+    introTl.fromTo('.ch-actions', 
       { y: 20, opacity: 0, visibility: 'hidden' },
       { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
       0.7
     );
 
-    intro.fromTo('.ch-price', 
+    introTl.fromTo('.ch-price', 
       { y: 20, opacity: 0, visibility: 'hidden' },
       { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
       0.9
     );
 
-    intro.add(() => {
+    introTl.add(() => {
       if (phaseEl) phaseEl.classList.add('visible');
       if (statsEl) statsEl.classList.add('visible');
       if (scrollCue) scrollCue.classList.add('visible');
     }, 1.2);
 
-    intro.add(() => startCounters(), 1.4);
+    introTl.add(() => startCounters(), 1.4);
 
     /* ── Master ScrollTrigger — pins the hero ── */
     ScrollTrigger.create({
@@ -721,18 +723,17 @@
 
     // Start render loop
     requestAnimationFrame(render);
+    
+    // GSAP is strictly initialized by main.js to prevent duplicate timelines
 
-    // GSAP after a tick
-    requestAnimationFrame(() => initGSAP());
   }
 
   /* ═══════════════════════════════════════════════════════════
-     15. BFCACHE RESET — Called from main.js pageshow handler
+     15. GSAP INITIALIZATION & BFCACHE RESET
      ═══════════════════════════════════════════════════════════ */
-  // Expose a global reset function for the BFCache handler.
-  // On back-navigation, the IIFE doesn't re-run but the scrubbed
-  // ScrollTriggers have stale progress values. This rebuilds them.
-  window.__ssbHeroCinematicReset = function() {
+  // Expose a global init function for main.js to call safely.
+  // This prevents double-initialization bugs during load and on back-navigation.
+  window.initHeroCinematicGSAP = function() {
     // Reset scroll progress state
     state.progress = 0;
     state.frameProgress = 0;
