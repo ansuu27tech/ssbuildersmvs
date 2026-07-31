@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "css": "^3.0.0",
-    "puppeteer-core": "^25.2.1"
+    "puppeteer-core": "^25.2.1",
+    "sharp": "^0.35.3"
   },
   "name": "ss-builders-mvs",
   "version": "1.0.0",

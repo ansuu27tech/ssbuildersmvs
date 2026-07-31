@@ -330,6 +330,7 @@
   margin-bottom: 20px;
   opacity: 0;
   transform: translateY(24px);
+  visibility: hidden;
 }
 .ch-overline__bar {
   width: 32px;
@@ -366,6 +367,13 @@
   opacity: 0;
   transform: translateY(100%);
   margin-right: 0.15em;
+  visibility: hidden;
+}
+
+/* GSAP-generated character spans for letter-by-letter reveal */
+.ch-char {
+  display: inline-block;
+  will-change: opacity, transform;
 }
 .ch-title__accent {
   color: var(--electric-blue-dark);
@@ -397,6 +405,7 @@
   margin: 0 0 24px 0;
   opacity: 0;
   transform: translateY(24px);
+  visibility: hidden;
 }
 
 /* Actions */
@@ -406,6 +415,7 @@
   margin-bottom: 24px;
   opacity: 0;
   transform: translateY(24px);
+  visibility: hidden;
 }
 
 /* Buttons - Dynamic & Vibrant */
@@ -493,6 +503,7 @@
   opacity: 0;
   transform: translateY(24px);
   margin-top: 10px;
+  visibility: hidden;
 }
 .ch-price__inner {
   display: inline-flex;
@@ -699,4 +710,5 @@ html:not(.js-loaded) .ch-actions,
 html:not(.js-loaded) .ch-price {
   opacity: 1 !important;
   transform: none !important;
+  visibility: visible !important;
 }

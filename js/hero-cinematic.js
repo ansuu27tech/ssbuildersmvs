@@ -470,59 +470,84 @@
     }
   }
 
-  /* ═══════════════════════════════════════════════════════════
-     9. GSAP — INITIAL TEXT REVEAL + SCROLLTRIGGER PIN
-     ═══════════════════════════════════════════════════════════ */
+  let _gsapInitialized = false;
+
   function initGSAP() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
-      console.warn('GSAP or ScrollTrigger not loaded');
+      // Fallback: make everything visible if GSAP fails
+      document.querySelectorAll('.ch-overline, .ch-sub, .ch-actions, .ch-price, .ch-title__word').forEach(el => {
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+        el.style.visibility = 'visible';
+      });
       return;
     }
+
+    // Prevent duplicate initialization on same page load
+    if (_gsapInitialized) return;
+    _gsapInitialized = true;
 
     gsap.registerPlugin(ScrollTrigger);
 
     // Split text into characters for premium letter-by-letter reveal
+    // Guard: only split once (check for 'split-done' class)
     document.querySelectorAll('.ch-title__word').forEach(word => {
+      if (word.classList.contains('split-done')) return;
+
       const text = word.textContent.trim();
       word.textContent = '';
+      // Keep parent visible but let children handle opacity
+      word.style.visibility = 'visible';
       word.style.opacity = '1';
       word.style.transform = 'none';
       
       for (let i = 0; i < text.length; i++) {
         const span = document.createElement('span');
         span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
-        span.style.display = 'inline-block';
         span.classList.add('ch-char');
-        // Initial state for GSAP
+        // Initial state: hidden — GSAP will reveal
         span.style.opacity = '0';
         span.style.transform = 'translateY(100%)';
         word.appendChild(span);
       }
+      word.classList.add('split-done');
     });
 
     /* ── Initial entrance animation (non-scroll) ── */
+    // Kill any existing tweens to prevent double-flicker race condition
+    gsap.killTweensOf('.ch-char, .ch-overline, .ch-sub, .ch-actions, .ch-price');
+
     const intro = gsap.timeline({ delay: 0.3 });
 
-    intro.to('.ch-char', {
-      y: 0, opacity: 1, clearProps: 'all',
-      duration: 1.0, ease: 'power4.out', stagger: 0.03,
-    }, 0);
+    intro.fromTo('.ch-char', 
+      { y: 100, opacity: 0 },
+      { y: 0, opacity: 1, clearProps: 'opacity,transform', duration: 1.0, ease: 'power4.out', stagger: 0.03 }, 
+      0
+    );
 
-    intro.to('.ch-overline', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
-    }, 0.2);
+    intro.fromTo('.ch-overline', 
+      { y: 20, opacity: 0, visibility: 'hidden' },
+      { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
+      0.2
+    );
 
-    intro.to('.ch-sub', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
-    }, 0.5);
+    intro.fromTo('.ch-sub', 
+      { y: 20, opacity: 0, visibility: 'hidden' },
+      { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
+      0.5
+    );
 
-    intro.to('.ch-actions', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
-    }, 0.7);
+    intro.fromTo('.ch-actions', 
+      { y: 20, opacity: 0, visibility: 'hidden' },
+      { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
+      0.7
+    );
 
-    intro.to('.ch-price', {
-      y: 0, opacity: 1, duration: 1, ease: 'power3.out',
-    }, 0.9);
+    intro.fromTo('.ch-price', 
+      { y: 20, opacity: 0, visibility: 'hidden' },
+      { y: 0, opacity: 1, visibility: 'visible', duration: 1, ease: 'power3.out' }, 
+      0.9
+    );
 
     intro.add(() => {
       if (phaseEl) phaseEl.classList.add('visible');
@@ -713,8 +738,10 @@
     state.frameProgress = 0;
     state.currentPhase = -1;
 
+    // Allow re-initialization
+    _gsapInitialized = false;
+
     // Re-initialize GSAP ScrollTriggers for the hero
-    // (the old ones were killed by the main.js pageshow handler)
     requestAnimationFrame(() => initGSAP());
   };
 

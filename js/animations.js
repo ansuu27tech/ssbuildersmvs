@@ -39,7 +39,7 @@ function initGSAPAnimations() {
   }
 
   // Split the hero title words into characters
-  if (document.querySelector('.hero')) {
+  if (document.querySelector('.hero') && !document.querySelector('.ch')) {
     splitTextToChars('.hero__title-word');
 
     // ── Hero Animations ────────────────────────────────────────

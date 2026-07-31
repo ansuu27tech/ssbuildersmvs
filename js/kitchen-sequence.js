@@ -371,6 +371,13 @@
     }
   }
 
+  // Expose globally to allow re-initialization from main.js (preventing ScrollTrigger.kill() issues)
+  window.initKitchenSequence = function() {
+    if (state.isReady && !state.destroyed) {
+      initScrollTrigger();
+    }
+  };
+
   /* ── Boot ────────────────────────────────────────────────────── */
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

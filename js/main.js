@@ -70,15 +70,13 @@ function clearAllAnimationStyles() {
     '.hero__overline', '.hero__title .char',
     '.hero__subtitle', '.hero__actions .btn',
     '.hero__price-tag', '.hero__stats', '.hero__stat',
-    '.hero__scroll',
-    // Cinematic hero elements
-    '.ch-overline', '.ch-sub', '.ch-actions', '.ch-price',
-    '.ch-title__word', '.ch-stats', '.ch-stat'
+    '.hero__scroll'
+    // NOTE: Cinematic hero elements (.ch-*) are NOT cleared here.
+    // They are exclusively managed by hero-cinematic.js to prevent flickering.
   ];
 
   selectors.forEach(function(sel) {
     document.querySelectorAll(sel).forEach(function(el) {
-      // Remove GSAP inline styles (opacity, transform, visibility)
       el.style.removeProperty('opacity');
       el.style.removeProperty('transform');
       el.style.removeProperty('visibility');
@@ -168,24 +166,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // ── Page Loader ──────────────────────────────────────────────
   var loader = document.querySelector('.loader');
+  var _animationsInitCalled = false;
   if (loader) {
     var hideLoader = function() {
       if (!loader.classList.contains('hidden')) {
         loader.classList.add('hidden');
         document.body.style.overflow = '';
-        // Ensure GSAP is loaded before initializing
-        if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-          try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
-        } else {
-          // Wait a bit more for CDN scripts
-          setTimeout(function() {
-            try { initAnimations(); } catch (e) { console.error('Delayed animation init error:', e); }
-          }, 500);
+        if (!_animationsInitCalled) {
+          _animationsInitCalled = true;
+          // Ensure GSAP is loaded before initializing
+          if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+            try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+          } else {
+            // Wait a bit more for CDN scripts
+            setTimeout(function() {
+              try { initAnimations(); } catch (e) { console.error('Delayed animation init error:', e); }
+            }, 500);
+          }
         }
         try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
         // Safety net for revealing elements
-        setTimeout(forceRevealHiddenElements, 800);
-        setTimeout(forceRevealHiddenElements, 2000);
+        setTimeout(forceRevealHiddenElements, 1500);
       }
     };
 
@@ -199,16 +200,18 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(hideLoader, 2500);
   } else {
     // If no loader, still handle hash navigation and initialize animations safely
-    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-      try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
-    } else {
-      setTimeout(function() {
-        try { initAnimations(); } catch (e) { console.error('Delayed animation init error:', e); }
-      }, 500);
+    if (!_animationsInitCalled) {
+      _animationsInitCalled = true;
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        try { initAnimations(); } catch (e) { console.error('Animation init error:', e); }
+      } else {
+        setTimeout(function() {
+          try { initAnimations(); } catch (e) { console.error('Delayed animation init error:', e); }
+        }, 500);
+      }
     }
     try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
-    setTimeout(forceRevealHiddenElements, 800);
-    setTimeout(forceRevealHiddenElements, 2000);
+    setTimeout(forceRevealHiddenElements, 1500);
   }
 
   // ── Lenis Smooth Scroll (disabled on mobile to prevent touch conflicts) ──
@@ -327,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
       var isOpen = navToggle.classList.toggle('active');
       mobileMenu.classList.toggle('open');
       document.body.style.overflow = isOpen ? 'hidden' : '';
+      navToggle.setAttribute('aria-expanded', isOpen.toString());
     });
   }
 
@@ -489,6 +493,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Re-initialize the cinematic hero (fixes initial load and back-nav)
     if (typeof window.__ssbHeroCinematicReset === 'function') {
       window.__ssbHeroCinematicReset();
+    }
+
+    // Re-initialize kitchen scroll sequence if present
+    if (typeof window.initKitchenSequence === 'function') {
+      window.initKitchenSequence();
     }
 
     // Force ScrollTrigger to refresh after a short delay to account for lazy-loaded images
