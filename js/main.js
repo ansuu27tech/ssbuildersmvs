@@ -193,7 +193,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.readyState === 'complete') {
       setTimeout(hideLoader, 100);
     } else {
-      window.addEventListener('load', function() { setTimeout(hideLoader, 800); });
+      var loaderDelay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 100 : 800;
+      window.addEventListener('load', function() { setTimeout(hideLoader, loaderDelay); });
     }
 
     // Safety fallback
