@@ -936,6 +936,7 @@ p {
   transform: translateY(40px);
   transition: opacity var(--duration-slower) var(--ease-out),
               transform var(--duration-slower) var(--ease-out);
+  will-change: transform, opacity;
 }
 
 .reveal.revealed {

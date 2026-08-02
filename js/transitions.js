@@ -3,8 +3,8 @@
  * Safe reveal pattern: uses fromTo with once:true to guarantee
  * sections always end at opacity:1 and y:0, even on fast scroll.
  *
- * NOTE: This file's ScrollTriggers are killed and recreated by
- * main.js's reinitializeEverything(), so no explicit cleanup is needed here.
+ * NOTE: These ScrollTriggers persist across bfcache restores.
+ * main.js calls ScrollTrigger.refresh(true) on pageshow to recalculate positions.
  */
 
 (function() {

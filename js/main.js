@@ -7,133 +7,14 @@ if ('scrollRestoration' in history) {
 }
 
 // ── BFCache / Back-Navigation Restoration Handler ──────────────
-// Instead of reloading (unreliable), we properly cleanup and re-initialize
-// all animations and components when the page is restored from bfcache.
+// On bfcache restore, just refresh ScrollTrigger positions.
+// Do NOT re-create animations — once:true must stay respected.
 window.addEventListener('pageshow', function(event) {
-  if (event.persisted) {
-    // Page was restored from bfcache — reinitialize everything
-    reinitializeEverything();
+  if (event.persisted && typeof ScrollTrigger !== 'undefined') {
+    ScrollTrigger.refresh(true);
   }
 });
 
-// Also handle the case where user navigates back via history but
-// the page is NOT served from bfcache (normal load from HTTP cache).
-// In this case DOMContentLoaded fires normally, but we still need
-// to ensure animations are properly set up for the current scroll position.
-
-// ── Global reinitialization function ──────────────────────────
-function reinitializeEverything() {
-  // 1. Kill all existing GSAP ScrollTriggers and clear inline styles
-  if (typeof ScrollTrigger !== 'undefined') {
-    ScrollTrigger.getAll().forEach(function(st) { st.kill(); });
-  }
-
-  // 2. Clear all GSAP-set inline styles from animated elements
-  clearAllAnimationStyles();
-
-  // 3. Re-initialize all animations
-  try { initAnimations(); } catch (e) { console.error('Re-init error:', e); }
-
-  // 4. Force ScrollTrigger refresh
-  if (typeof ScrollTrigger !== 'undefined') {
-    ScrollTrigger.refresh(true);
-  }
-
-  // 5. Safety net — ensure nothing stays hidden
-  setTimeout(forceRevealHiddenElements, 500);
-  setTimeout(forceRevealHiddenElements, 1500);
-}
-
-// ── Clear inline styles from all animated elements ────────────
-function clearAllAnimationStyles() {
-  var selectors = [
-    '.section-header', '.section-header .text-overline',
-    '.section-header h2', '.section-header h3', '.section-header h4',
-    '.section-header p', '.section-header .divider',
-    '.story__intro-content', '.story__vision-cards',
-    '.story__milestone', '.story__milestone-content',
-    '.story__milestone-year', '.story__milestone-dot',
-    '.service-card',
-    '.coverage__map-container', '.coverage__city-tag',
-    '.project-card',
-    '.leader-card',
-    '.feature-card',
-    '.bento-card',
-    '.testimonials__carousel',
-    '.contact__form-wrapper', '.contact__info',
-    '.contact__stats-grid', '.contact__card',
-    '.why-us__card', '.why-us__vs-badge',
-    '.brand-card',
-    '.workflow__step',
-    '.timeline-step', '.timeline-content',
-    '.luxury-footer__top > *',
-    '.hero__overline', '.hero__title .char',
-    '.hero__subtitle', '.hero__actions .btn',
-    '.hero__price-tag', '.hero__stats', '.hero__stat',
-    '.hero__scroll'
-    // NOTE: Cinematic hero elements (.ch-*) are NOT cleared here.
-    // They are exclusively managed by hero-cinematic.js to prevent flickering.
-  ];
-
-  selectors.forEach(function(sel) {
-    document.querySelectorAll(sel).forEach(function(el) {
-      el.style.removeProperty('opacity');
-      el.style.removeProperty('transform');
-      el.style.removeProperty('visibility');
-      el.style.removeProperty('translate');
-      el.style.removeProperty('scale');
-      el.style.removeProperty('rotate');
-    });
-  });
-}
-
-// ── Force-reveal any elements stuck at opacity:0 ──────────────
-function forceRevealHiddenElements() {
-  // Section headers must always be visible
-  document.querySelectorAll('.section-header, .section-header .text-overline, .section-header h2, .section-header h3, .section-header h4, .section-header p, .section-header .divider').forEach(function(el) {
-    var computed = window.getComputedStyle(el);
-    if (computed.opacity === '0' || computed.visibility === 'hidden') {
-      el.style.opacity = '1';
-      el.style.visibility = 'visible';
-      el.style.transform = 'none';
-    }
-  });
-
-  // Contact section — specifically ensure it's visible
-  var contactSection = document.querySelector('#contact');
-  if (contactSection) {
-    contactSection.querySelectorAll('.contact__form-wrapper, .contact__info, .contact__stats-grid, .contact__card, h2, h3, p, .text-overline, .divider').forEach(function(el) {
-      var computed = window.getComputedStyle(el);
-      if (computed.opacity === '0' || computed.visibility === 'hidden') {
-        el.style.opacity = '1';
-        el.style.visibility = 'visible';
-        el.style.transform = 'none';
-      }
-    });
-  }
-
-  // All service cards, project cards, leader cards, brand cards, etc.
-  var criticalSelectors = [
-    '.service-card', '.project-card', '.leader-card',
-    '.feature-card', '.bento-card', '.brand-card',
-    '.why-us__card', '.why-us__vs-badge',
-    '.workflow__step', '.timeline-step', '.timeline-content',
-    '.testimonials__carousel', '.testimonial-card',
-    '.story__milestone', '.story__milestone-content',
-    '.story__intro-content', '.story__vision-cards',
-    '.luxury-footer__top > *'
-  ];
-
-  criticalSelectors.forEach(function(sel) {
-    document.querySelectorAll(sel).forEach(function(el) {
-      var computed = window.getComputedStyle(el);
-      if (computed.opacity === '0') {
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-      }
-    });
-  });
-}
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -185,8 +66,6 @@ document.addEventListener('DOMContentLoaded', function() {
           }
         }
         try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
-        // Safety net for revealing elements
-        setTimeout(forceRevealHiddenElements, 1500);
       }
     };
 
@@ -212,7 +91,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     try { handleHashNavigation(); } catch (e) { console.error('Hash nav error:', e); }
-    setTimeout(forceRevealHiddenElements, 1500);
   }
 
   // ── Lenis Smooth Scroll (disabled on mobile to prevent touch conflicts) ──
@@ -516,8 +394,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden && typeof ScrollTrigger !== 'undefined') {
       ScrollTrigger.refresh(true);
-      // Safety net
-      setTimeout(forceRevealHiddenElements, 300);
     }
   });
 

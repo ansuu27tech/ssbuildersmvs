@@ -389,8 +389,7 @@
   text-align: center;
   position: relative;
   padding: 0 var(--space-sm);
-  opacity: 0;
-  transform: translateY(30px);
+  will-change: transform, opacity;
 }
 
 .workflow__step.revealed {

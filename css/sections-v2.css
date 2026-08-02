@@ -236,8 +236,7 @@
 .hero__stats,
 .hero__stat,
 .hero__scroll {
-  opacity: 0;
-  visibility: hidden;
+  will-change: transform, opacity;
 }
 
 .hero__overline {
@@ -743,6 +742,7 @@
   transition: all var(--duration-slow) var(--ease-out);
   display: flex;
   flex-direction: column;
+  will-change: transform, opacity;
 }
 
 .service-card::before {
@@ -1897,6 +1897,7 @@
     aspect-ratio: 4/3;
     cursor: pointer;
     transition: all var(--duration-slow) var(--ease-out);
+    will-change: transform, opacity;
   }
 
   .project-card:hover {
@@ -2150,6 +2151,7 @@
     border-radius: var(--border-radius-xl);
     transition: all var(--duration-slow) var(--ease-out);
     overflow: hidden;
+    will-change: transform, opacity;
   }
 
   .leader-card::before {
@@ -2284,6 +2286,7 @@
     transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.5s ease, border-color 0.5s ease;
     z-index: 1;
     cursor: default;
+    will-change: transform, opacity;
     /* Default accent color */
     --accent: 46, 144, 250; /* rgb for electric blue */
   }

@@ -31,7 +31,6 @@ function initGSAPAnimations() {
         var span = document.createElement('span');
         span.innerHTML = char === ' ' ? '&nbsp;' : char;
         span.style.display = 'inline-block';
-        span.style.opacity = '0'; // Prevent flicker before GSAP kicks in
         span.classList.add('char');
         el.appendChild(span);
       }

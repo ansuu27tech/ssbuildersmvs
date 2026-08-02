@@ -505,9 +505,7 @@
         const span = document.createElement('span');
         span.innerHTML = text[i] === ' ' ? '&nbsp;' : text[i];
         span.classList.add('ch-char');
-        // Initial state: hidden — GSAP will reveal
-        span.style.opacity = '0';
-        span.style.transform = 'translateY(100%)';
+        // GSAP fromTo handles initial state — no inline hiding needed
         word.appendChild(span);
       }
       word.classList.add('split-done');
@@ -730,19 +728,12 @@
   /* ═══════════════════════════════════════════════════════════
      15. GSAP INITIALIZATION & BFCACHE RESET
      ═══════════════════════════════════════════════════════════ */
-  // Expose a global init function for main.js to call safely.
-  // This prevents double-initialization bugs during load and on back-navigation.
+  // Expose a global function for bfcache restore.
+  // Only refreshes positions — does NOT re-create animations (prevents replay).
   window.initHeroCinematicGSAP = function() {
-    // Reset scroll progress state
-    state.progress = 0;
-    state.frameProgress = 0;
-    state.currentPhase = -1;
-
-    // Allow re-initialization
-    _gsapInitialized = false;
-
-    // Re-initialize GSAP ScrollTriggers for the hero
-    requestAnimationFrame(() => initGSAP());
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.refresh(true);
+    }
   };
 
   if (document.readyState === 'loading') {

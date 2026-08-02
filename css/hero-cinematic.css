@@ -320,6 +320,7 @@
   max-width: 480px;
   z-index: 15;
   will-change: transform, opacity;
+  /* Content is visible by default; GSAP fromTo handles animation start state */
 }
 
 /* Overline */
@@ -328,9 +329,7 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
-  opacity: 0;
-  transform: translateY(24px);
-  visibility: hidden;
+  will-change: transform, opacity;
 }
 .ch-overline__bar {
   width: 32px;
@@ -364,10 +363,8 @@
 }
 .ch-title__word {
   display: inline-block;
-  opacity: 0;
-  transform: translateY(100%);
   margin-right: 0.15em;
-  visibility: hidden;
+  will-change: transform, opacity;
 }
 
 /* GSAP-generated character spans for letter-by-letter reveal */
@@ -403,9 +400,7 @@
   line-height: 1.8;
   color: var(--text-secondary);
   margin: 0 0 24px 0;
-  opacity: 0;
-  transform: translateY(24px);
-  visibility: hidden;
+  will-change: transform, opacity;
 }
 
 /* Actions */
@@ -413,9 +408,7 @@
   display: flex;
   gap: 16px;
   margin-bottom: 24px;
-  opacity: 0;
-  transform: translateY(24px);
-  visibility: hidden;
+  will-change: transform, opacity;
 }
 
 /* Buttons - Dynamic & Vibrant */
@@ -500,10 +493,8 @@
 /* Unique Price Badge */
 .ch-price {
   display: inline-block;
-  opacity: 0;
-  transform: translateY(24px);
   margin-top: 10px;
-  visibility: hidden;
+  will-change: transform, opacity;
 }
 .ch-price__inner {
   display: inline-flex;
