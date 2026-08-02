@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /node_modules/
+Disallow: /.vercel/
+Disallow: /.git/
+Disallow: /1000205568_frames/
+Disallow: /1000211928_frames/
 
 Sitemap: https://www.ssbuildersmvs.com/sitemap.xml

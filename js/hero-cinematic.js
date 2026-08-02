@@ -610,7 +610,7 @@
       }
     });
 
-    const pinVal = parseInt(CFG.pinDuration); // Extracts 500 or 250
+    const pinVal = parseInt(CFG.pinDuration.replace(/\D/g, ''), 10) || 2000;
 
     // Removed Phase 3.5 logo reveal to prevent overlap with CTA buttons
 

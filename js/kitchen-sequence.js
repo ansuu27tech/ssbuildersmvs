@@ -230,13 +230,14 @@
       // Fade out
       else {
         const fadeOutProgress = (progress - (fadeEnd - 0.06)) / 0.06;
-        opacity = clamp(1 - fadeOutProgress, 0, 1);
-        translateY = lerp(0, -16, fadeOutProgress);
+        opacity = Math.max(0, Math.min(1 - fadeOutProgress, 1));
+        translateY = -24 * (1 - opacity);
       }
     }
 
     el.style.opacity = opacity;
     el.style.transform = `translateY(${translateY}px)`;
+    el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none';
   }
 
   /* ── Premium Effects ────────────────────────────────────────── */
@@ -331,11 +332,16 @@
     };
 
     // Initial canvas sizing
+    let lastWidth = window.innerWidth;
     resizeCanvas();
 
     // Resize handler (debounced)
     let resizeTimer;
     window.addEventListener('resize', () => {
+      // Ignore height-only resize on mobile to prevent scrolling flicker
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         resizeCanvas();
@@ -364,6 +370,11 @@
     if (els.scrollIndicator) {
       els.scrollIndicator.classList.add('is-visible');
     }
+
+    // Force initial text overlay state to completely hidden before GSAP kicks in
+    if (els.textPhase1) els.textPhase1.style.opacity = '0';
+    if (els.textPhase2) els.textPhase2.style.opacity = '0';
+    if (els.textPhase3) els.textPhase3.style.opacity = '0';
 
     // Start preloading
     await preloadFrames();
