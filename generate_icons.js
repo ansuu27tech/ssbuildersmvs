@@ -2,7 +2,7 @@ const sharp = require('sharp');
 const fs = require('fs');
 
 async function generateIcons() {
-    const inputFile = 'SS BUILDERS LOGO.jpeg';
+    const inputFile = 'ss-builders-logo.jpeg';
     
     if (!fs.existsSync(inputFile)) {
         console.error(`Input file ${inputFile} not found!`);
