@@ -170,7 +170,6 @@
 
     const w = mainCanvas.width;
     const h = mainCanvas.height;
-    ctx.clearRect(0, 0, w, h);
 
     // Base frame
     ctx.globalAlpha = 1;

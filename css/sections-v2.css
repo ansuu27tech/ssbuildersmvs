@@ -228,6 +228,18 @@
   padding: var(--space-xl) 0;
 }
 
+.hero__overline,
+.hero__title .char,
+.hero__subtitle,
+.hero__actions .btn,
+.hero__price-tag,
+.hero__stats,
+.hero__stat,
+.hero__scroll {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .hero__overline {
   display: inline-flex;
   align-items: center;

@@ -700,15 +700,4 @@
   .ch-title__accent { animation: none !important; }
 }
 
-/* ── No-JS Fallback ──────────────────────────────────────────── */
-/* When JavaScript fails to load or is disabled, ensure hero      */
-/* content is still visible. JS adds .js-loaded to <html>.        */
-html:not(.js-loaded) .ch-overline,
-html:not(.js-loaded) .ch-title__word,
-html:not(.js-loaded) .ch-sub,
-html:not(.js-loaded) .ch-actions,
-html:not(.js-loaded) .ch-price {
-  opacity: 1 !important;
-  transform: none !important;
-  visibility: visible !important;
-}
+
