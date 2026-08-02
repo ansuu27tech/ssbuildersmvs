@@ -117,17 +117,19 @@
       hideLoader();
     }
 
-    // Load remaining in batches
+    // Load remaining in batches in the background (DO NOT AWAIT)
     const remaining = [];
     for (let i = CONFIG.priorityFrames; i < CONFIG.frameCount; i++) {
       remaining.push(i);
     }
 
-    for (let b = 0; b < remaining.length; b += CONFIG.preloadBatchSize) {
-      if (state.destroyed) return;
-      const batch = remaining.slice(b, b + CONFIG.preloadBatchSize);
-      await Promise.all(batch.map(loadImage));
-    }
+    (async () => {
+      for (let b = 0; b < remaining.length; b += CONFIG.preloadBatchSize) {
+        if (state.destroyed) return;
+        const batch = remaining.slice(b, b + CONFIG.preloadBatchSize);
+        await Promise.all(batch.map(loadImage));
+      }
+    })();
   }
 
   function hideLoader() {
@@ -229,9 +231,14 @@
       }
       // Fade out
       else {
-        const fadeOutProgress = (progress - (fadeEnd - 0.06)) / 0.06;
-        opacity = Math.max(0, Math.min(1 - fadeOutProgress, 1));
-        translateY = -24 * (1 - opacity);
+        if (fadeEnd >= 1.0) {
+          opacity = 1;
+          translateY = 0;
+        } else {
+          const fadeOutProgress = (progress - (fadeEnd - 0.06)) / 0.06;
+          opacity = Math.max(0, Math.min(1 - fadeOutProgress, 1));
+          translateY = -24 * (1 - opacity);
+        }
       }
     }
 
