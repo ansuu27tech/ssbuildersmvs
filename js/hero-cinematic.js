@@ -721,19 +721,17 @@
     // Start render loop
     requestAnimationFrame(render);
     
-    // GSAP is strictly initialized by main.js to prevent duplicate timelines
-
+    // Initialize GSAP scroll-driven pin & entrance animation
+    initGSAP();
   }
 
   /* ═══════════════════════════════════════════════════════════
      15. GSAP INITIALIZATION & BFCACHE RESET
      ═══════════════════════════════════════════════════════════ */
-  // Expose a global function for bfcache restore.
-  // Only refreshes positions — does NOT re-create animations (prevents replay).
+  // Expose a global function for main.js and bfcache restore.
   window.initHeroCinematicGSAP = function() {
-    if (typeof ScrollTrigger !== 'undefined') {
-      ScrollTrigger.refresh(true);
-    }
+    _gsapInitialized = false;
+    initGSAP();
   };
 
   if (document.readyState === 'loading') {

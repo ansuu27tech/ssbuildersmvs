@@ -87,6 +87,39 @@
           "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
           "opens": "09:00",
           "closes": "18:00"
+        },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Construction Services",
+          "itemListElement": [
+            {
+              "@type": "OfferCatalog",
+              "name": "Residential Construction",
+              "itemListElement": [
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "New Home Construction"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Luxury Villa Construction"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Turnkey Projects"}}
+              ]
+            },
+            {
+              "@type": "OfferCatalog",
+              "name": "Design & Renovation",
+              "itemListElement": [
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Interior Design"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Exterior Design"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Renovation & Remodeling"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Modular Kitchen Design"}}
+              ]
+            },
+            {
+              "@type": "OfferCatalog",
+              "name": "Commercial & Structural",
+              "itemListElement": [
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Commercial Construction"}},
+                {"@type": "Offer", "itemOffered": {"@type": "Service", "name": "Structural Planning & Engineering"}}
+              ]
+            }
+          ]
         }
       },
       {
@@ -178,7 +211,7 @@
        PAGE LOADER
        ═══════════════════════════════════════════════════════════ -->
   <div class="loader" id="pageLoader">
-    <img loading="eager" src="ss-builders-logo.jpeg" alt="SS BUILDERS MVS" class="loader__logo">
+    <img loading="eager" fetchpriority="high" src="ss-builders-logo.jpeg" alt="SS BUILDERS MVS" class="loader__logo">
     <div class="loader__bar"><div class="loader__bar-fill"></div></div>
     <span class="loader__text">Loading Experience</span>
   </div>
@@ -295,7 +328,7 @@
     </div>
   </nav>
 
-  <main>
+  <main id="main-content" tabindex="-1">
 
   <!-- ═══════════════════════════════════════════════════════════
        CINEMATIC HERO — Awwwards-caliber immersive experience
@@ -306,7 +339,7 @@
     <div class="ch-base"></div>
 
     <!-- Layer 1: Cinematic fog depth -->
-    <div class="ch-fog">
+    <div class="ch-fog" aria-hidden="true">
       <div class="ch-fog__near"></div>
       <div class="ch-fog__mid"></div>
       <div class="ch-fog__far"></div>
@@ -322,15 +355,15 @@
     <div class="ch-rays" id="chRays"></div>
 
     <!-- Layer 5: Bloom + lens flare -->
-    <div class="ch-bloom" id="chBloom"></div>
-    <div class="ch-flare" id="chFlare"></div>
-    <div class="ch-shadow" id="chShadow"></div>
+    <div class="ch-bloom" id="chBloom" aria-hidden="true"></div>
+    <div class="ch-flare" id="chFlare" aria-hidden="true"></div>
+    <div class="ch-shadow" id="chShadow" aria-hidden="true"></div>
 
     <!-- Layer 6: Glossy floor reflection -->
-    <div class="ch-reflection" id="chReflection"></div>
+    <div class="ch-reflection" id="chReflection" aria-hidden="true"></div>
 
     <!-- Layer 7: Floating dust particles (CSS) -->
-    <div class="ch-dust" id="chDust"></div>
+    <div class="ch-dust" id="chDust" aria-hidden="true"></div>
 
     <!-- Layer 8: Camera wrapper — all content moves with cinematic float -->
     <div class="ch-camera" id="chCamera">

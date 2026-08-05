@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://formsubmit.co https://www.google.com https://maps.googleapis.com; connect-src 'self' https://formsubmit.co; frame-src https://www.google.com https://www.google.com/maps;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Modular Kitchen Design Experience | SS BUILDERS MVS</title>
   <meta name="description" content="Experience SS BUILDERS MVS premium modular kitchen design — an immersive cinematic walkthrough of luxury marble, sage cabinetry, and bespoke craftsmanship.">
@@ -93,7 +94,7 @@
 
   <!-- Page Loader -->
   <div class="loader" id="pageLoader">
-    <img src="ss-builders-logo.jpeg" alt="SS BUILDERS MVS" class="loader__logo">
+    <img src="ss-builders-logo.jpeg" alt="SS BUILDERS MVS" class="loader__logo" loading="eager" fetchpriority="high" decoding="async">
     <div class="loader__bar"><div class="loader__bar-fill"></div></div>
     <span class="loader__text">Loading Experience</span>
   </div>
@@ -104,10 +105,10 @@
   <!-- ═══════════════════════════════════════════════════════════
        NAVIGATION
        ═══════════════════════════════════════════════════════════ -->
-  <nav class="navbar" id="navbar">
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
     <div class="navbar__inner">
       <a class="navbar__logo" href="/">
-        <img alt="SS BUILDERS MVS Logo" class="navbar__logo-img" src="ss-builders-logo.jpeg">
+        <img alt="SS BUILDERS MVS Logo" class="navbar__logo-img" loading="eager" fetchpriority="high" decoding="async" src="ss-builders-logo.jpeg">
         <span class="navbar__logo-text">SS BUILDERS <span>MVS</span></span>
       </a>
       <div class="navbar__links">
@@ -206,6 +207,7 @@
     </div>
   </nav>
 
+  <main id="main-content" tabindex="-1">
   <!-- ═══════════════════════════════════════════════════════════
        MODULAR KITCHEN — IMMERSIVE SCROLL EXPERIENCE
        ═══════════════════════════════════════════════════════════ -->
@@ -269,7 +271,7 @@
           <div class="luxury-footer__brand-layout">
             <div class="luxury-footer__logo-col">
               <div class="luxury-footer__logo-wrapper">
-                <img src="ss-builders-logo.jpeg" alt="SS BUILDERS MVS Logo" class="luxury-footer__logo" loading="lazy">
+                <img src="ss-builders-logo.jpeg" alt="SS BUILDERS MVS Logo" class="luxury-footer__logo" loading="lazy" decoding="async">
               </div>
             </div>
             <div class="luxury-footer__text-col">
@@ -299,6 +301,7 @@
       <div class="luxury-footer__credit-center"><b>Designed by</b> <a class="luxury-footer__designer" href="https://anasbio.vercel.app/" target="_blank" rel="noopener noreferrer">PIXELMINT STUDIO MVS</a></div>
     </div>
   </footer>
+  </main>
 
   <!-- ═══════════════════════════════════════════════════════════
        SCRIPTS

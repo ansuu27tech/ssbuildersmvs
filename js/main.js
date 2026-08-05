@@ -123,15 +123,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // ── Navigation ───────────────────────────────────────────────
+  // ── Navbar ───────────────────────────────────────────────────
   var navbar = document.querySelector('.navbar');
-  var navLinks = document.querySelectorAll('.navbar__link');
   var navToggle = document.querySelector('.navbar__toggle');
   var mobileMenu = document.querySelector('.navbar__mobile-menu');
+  var navLinks = document.querySelectorAll('.navbar__link');
   var mobileLinks = mobileMenu ? mobileMenu.querySelectorAll('.navbar__link') : [];
+  var logo = document.querySelector('.navbar__logo');
+  var skipLink = document.querySelector('.skip-link');
 
-  // Scroll behavior for nav
+  // Navbar scroll background change
   function handleNavScroll() {
+    if (!navbar) return;
     if (window.scrollY > 50) {
       navbar.classList.add('scrolled');
     } else {
@@ -140,23 +143,30 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   handleNavScroll();
 
-  // Active section highlighting
+  // Active section highlighting (accounts for pinned containers)
   var sections = document.querySelectorAll('section[id]');
   function highlightNav() {
     var scrollY = window.scrollY + 200;
+    var currentId = '';
+
     sections.forEach(function(section) {
-      var top = section.offsetTop;
-      var height = section.offsetHeight;
-      var id = section.getAttribute('id');
+      var el = section.closest('.pin-spacer') || section;
+      var top = el.offsetTop;
+      var height = el.offsetHeight;
       if (scrollY >= top && scrollY < top + height) {
-        navLinks.forEach(function(link) {
-          link.classList.remove('active');
-          if (link.getAttribute('href') === '#' + id) {
-            link.classList.add('active');
-          }
-        });
+        currentId = section.getAttribute('id');
       }
     });
+
+    if (currentId) {
+      navLinks.forEach(function(link) {
+        if (link.getAttribute('href') === '#' + currentId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    }
   }
 
   // Smooth scroll to section (handles both anchor links and page links)
@@ -171,20 +181,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // External page links (e.g., kitchen.html, gallery.html) - let browser navigate
     if (!href.startsWith('#')) {
-      // Clear any stuck overflow before navigating
       document.body.style.overflow = '';
-      return; // Don't preventDefault — allow normal navigation
+      return;
     }
 
-    // Anchor links — smooth scroll
     e.preventDefault();
+
+    // Direct scroll to top / hero
+    if (href === '#hero' || href === '#top') {
+      if (typeof lenis !== 'undefined' && lenis) {
+        lenis.scrollTo(0, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      return;
+    }
+
     var target = document.querySelector(href);
     if (target) {
-      var offset = navbar.offsetHeight;
-      if (lenis) {
-        lenis.scrollTo(target, { offset: -offset, duration: 1.5 });
+      var offset = navbar ? navbar.offsetHeight : 80;
+      var top = target.getBoundingClientRect().top + window.scrollY - offset;
+      if (typeof lenis !== 'undefined' && lenis) {
+        lenis.scrollTo(top, { duration: 1.5 });
       } else {
-        var top = target.getBoundingClientRect().top + window.scrollY - offset;
         window.scrollTo({ top: top, behavior: 'smooth' });
       }
     }

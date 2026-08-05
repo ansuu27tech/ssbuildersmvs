@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https://formsubmit.co https://www.google.com https://maps.googleapis.com; connect-src 'self' https://formsubmit.co; frame-src https://www.google.com https://www.google.com/maps;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Completed Construction Projects | SS BUILDERS MVS</title>
 <meta name="description" content="Explore SS BUILDERS MVS project gallery — residential homes, commercial buildings, luxury villas, interiors, and construction progress across South India.">
@@ -90,17 +91,17 @@
 <a href="#main-content" class="skip-link">Skip to main content</a>
 <!-- Page Loader -->
 <div class="loader" id="pageLoader">
-<img alt="SS BUILDERS MVS" class="loader__logo" src="ss-builders-logo.jpeg"/>
+<img alt="SS BUILDERS MVS" class="loader__logo" loading="eager" fetchpriority="high" decoding="async" src="ss-builders-logo.jpeg"/>
 <div class="loader__bar"><div class="loader__bar-fill"></div></div>
 <span class="loader__text">Loading Experience</span>
 </div>
 <!-- Scroll Progress -->
 <div class="scroll-progress"></div>
 <!-- Navigation -->
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
 <div class="navbar__inner">
 <a class="navbar__logo" href="/">
-<img alt="SS BUILDERS MVS Logo" class="navbar__logo-img" src="ss-builders-logo.jpeg"/>
+<img alt="SS BUILDERS MVS Logo" class="navbar__logo-img" loading="eager" fetchpriority="high" decoding="async" src="ss-builders-logo.jpeg"/>
 <span class="navbar__logo-text">SS BUILDERS <span>MVS</span></span>
 </a>
 <div class="navbar__links">
@@ -192,10 +193,12 @@
 <a class="navbar__cta navbar__mobile-cta" href="index.html#contact">Get Free Quote →</a>
 </div>
 </nav>
+
+<main id="main-content" tabindex="-1">
 <!-- ═══════════════════════════════════════════════════════════
        GALLERY
        ═══════════════════════════════════════════════════════════ -->
-<section class="section gallery-hero blueprint-bg" id="main-content">
+<section class="section gallery-hero blueprint-bg">
 <div class="container">
 <div class="section-header">
 <span class="text-overline">Our Portfolio</span>
@@ -217,105 +220,105 @@
 <!-- Masonry Grid -->
 <div class="gallery__masonry">
 <div class="gallery__item" data-category="residential" data-location="Jameelabad 6th Cross, Melvisharam, Tamil Nadu. An elegant modern residence showcasing exceptional exterior lighting and architectural brilliance.">
-<img alt="Jameelabad Residence" class="gallery__img" src="images/Gallery%20image/jameelabad-house.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/5; object-fit: cover;"/>
+<img alt="Jameelabad Residence" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/jameelabad-house.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/5; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Jameelabad Residence</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Jameelabad 6th Cross, Melvisharam, Tamil Nadu. An elegant modern residence showcasing exceptional exterior lighting and architectural brilliance.</span></div>
 <span class="gallery__category-badge">Residential</span>
 </div>
 <div class="gallery__item" data-category="exteriors" data-location="F.M School street, Melvisharam, Tamil Nadu.">
-<img alt="A.S Manzil Exterior" class="gallery__img" src="images/Gallery%20image/as-manzil-exterior.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/5; object-fit: cover;"/>
+<img alt="A.S Manzil Exterior" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/as-manzil-exterior.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/5; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">A.S Manzil Exterior</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>F.M School street, Melvisharam, Tamil Nadu.</span></div>
 <span class="gallery__category-badge">Exteriors</span>
 </div>
 <div class="gallery__item" data-category="commercial" data-location="Opp to C. Abdul Hakeem College, Melvisharam, Tamil Nadu. A state-of-the-art commercial space featuring expansive glass facades and premium retail layouts.">
-<img alt="Commercial Complex" class="gallery__img" src="images/Gallery%20image/commercial.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Commercial Complex" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/commercial.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Commercial Complex</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Opp to C. Abdul Hakeem College, Melvisharam, Tamil Nadu. A state-of-the-art commercial space featuring expansive glass facades and premium retail layouts.</span></div>
 <span class="gallery__category-badge">Commercial</span>
 </div>
 <div class="gallery__item" data-category="commercial" data-location="Bengaluru, Karnataka. A contemporary office building designed for productivity and aesthetic appeal.">
-<img alt="Modern Office Space" class="gallery__img" src="images/Gallery%20image/commercial-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Modern Office Space" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/commercial-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Modern Office Space</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Bengaluru, Karnataka. A contemporary office building designed for productivity and aesthetic appeal.</span></div>
 <span class="gallery__category-badge">Commercial</span>
 </div>
 <div class="gallery__item" data-category="progress" data-location="Sathuvachari, Vellore, Tamil Nadu. Ongoing foundation and structural work for a premium residential development.">
-<img alt="Site Construction" class="gallery__img" src="images/Gallery%20image/construction-in-progress.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover;"/>
+<img alt="Site Construction" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/construction-in-progress.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Site Construction</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Sathuvachari, Vellore, Tamil Nadu. Ongoing foundation and structural work for a premium residential development.</span></div>
 <span class="gallery__category-badge">Progress</span>
 </div>
 <div class="gallery__item" data-category="drone" data-location="Aerial perspective of a large-scale project highlighting the overall layout and scale.">
-<img alt="Drone View 1" class="gallery__img" src="images/Gallery%20image/drone-view-1.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Drone View 1" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/drone-view-1.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Drone View 1</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Aerial perspective of a large-scale project highlighting the overall layout and scale.</span></div>
 <span class="gallery__category-badge">Drone Views</span>
 </div>
 <div class="gallery__item" data-category="drone" data-location="Top-down aerial view showcasing the roofing structure and site boundaries.">
-<img alt="Drone View 2" class="gallery__img" src="images/Gallery%20image/drone-view-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Drone View 2" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/drone-view-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Drone View 2</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Top-down aerial view showcasing the roofing structure and site boundaries.</span></div>
 <span class="gallery__category-badge">Drone Views</span>
 </div>
 <div class="gallery__item" data-category="exteriors" data-location="Jameelabad 7th Cross, Melvisharam, Tamil Nadu. Striking modern elevation showcasing layered lighting and premium façade finishes.">
-<img alt="Contemporary Home Exterior" class="gallery__img" src="images/Gallery%20image/exteriors2.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Contemporary Home Exterior" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/exteriors2.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Contemporary Home Exterior</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Jameelabad 7th Cross, Melvisharam, Tamil Nadu. Striking modern elevation showcasing layered lighting and premium façade finishes.</span></div>
 <span class="gallery__category-badge">Exteriors</span>
 </div>
 <div class="gallery__item" data-category="interiors" data-location="Gandhi Nagar, Vellore, Tamil Nadu. High-end interior finishes with custom lighting and premium materials.">
-<img alt="Luxury Living Room" class="gallery__img" src="images/Gallery%20image/interior.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Luxury Living Room" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/interior.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Luxury Living Room</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Gandhi Nagar, Vellore, Tamil Nadu. High-end interior finishes with custom lighting and premium materials.</span></div>
 <span class="gallery__category-badge">Interiors</span>
 </div>
 <div class="gallery__item" data-category="interiors" data-location="Chennai, Tamil Nadu. A relaxing bedroom design featuring bespoke woodwork and plush interiors.">
-<img alt="Living Room" class="gallery__img" src="images/Gallery%20image/interior2.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover;"/>
+<img alt="Living Room" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/interior2.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Living Room</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Chennai, Tamil Nadu. A relaxing bedroom design featuring bespoke woodwork and plush interiors.</span></div>
 <span class="gallery__category-badge">Interiors</span>
 </div>
 <div class="gallery__item" data-category="interiors" data-location="Sathuvachari, Vellore, Tamil Nadu. Elegant dining space with sophisticated ambient lighting.">
-<img alt="Premium Dining Area" class="gallery__img" src="images/Gallery%20image/intirior-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Premium Dining Area" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/intirior-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Premium Dining Area</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Sathuvachari, Vellore, Tamil Nadu. Elegant dining space with sophisticated ambient lighting.</span></div>
 <span class="gallery__category-badge">Interiors</span>
 </div>
 <div class="gallery__item" data-category="interiors" data-location="vaniyambadi, Tamil Nadu. A relaxing bedroom design featuring bespoke woodwork and plush interiors.">
-<img alt="Cozy Bedroom" class="gallery__img" src="images/Gallery%20image/intiror-3.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Cozy Bedroom" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/intiror-3.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Cozy Bedroom</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>vaniyambadi, Tamil Nadu. A relaxing bedroom design featuring bespoke woodwork and plush interiors.</span></div>
 <span class="gallery__category-badge">Interiors</span>
 </div>
 <div class="gallery__item" data-category="luxury-villas" data-location="Mangalore, Karnataka. A breathtaking luxury villa showcasing exceptional craftsmanship.">
-<img alt="Premium Villa" class="gallery__img" src="images/Gallery%20image/luxury-villa.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
+<img alt="Premium Villa" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/luxury-villa.jpg" style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Premium Villa</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Mangalore, Karnataka. A breathtaking luxury villa showcasing exceptional craftsmanship.</span></div>
 <span class="gallery__category-badge">Luxury Villas</span>
 </div>
 <div class="gallery__item" data-category="luxury-villas" data-location="chennai, Tamil Nadu. A stunning villa with a modern design and luxurious amenities.">
-<img alt="Modern Luxury Villa" class="gallery__img" src="images/Gallery%20image/luxury-villa-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover;"/>
+<img alt="Modern Luxury Villa" class="gallery__img" loading="lazy" decoding="async" src="images/Gallery%20image/luxury-villa-2.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/3; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Modern Luxury Villa</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>chennai, Tamil Nadu. A stunning villa with a modern design and luxurious amenities.</span></div>
 <span class="gallery__category-badge">Luxury Villas</span>
 </div>
 <div class="gallery__item" data-category="exteriors" data-location="Chennai, Tamil Nadu. A modern commercial complex that blends design with functional elegance.">
-<img alt="Commercial Complex" class="gallery__img" src="images/coverage%20images/commercial%20complex.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/5; object-fit: cover;"/>
+<img alt="Commercial Complex" class="gallery__img" loading="lazy" decoding="async" src="images/coverage%20images/commercial%20complex.jpeg" style="width: 100%; height: auto; display: block; aspect-ratio: 4/5; object-fit: cover;"/>
 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1rem; padding-top: 2.5rem; background: linear-gradient(transparent, rgba(0,0,0,0.95)); pointer-events: none;">
 <span class="gallery__img-title" style="color: white; font-weight: 600; font-size: 1.1rem; display: block; margin-bottom: 0.35rem;">Commercial Complex</span>
 <span class="gallery__img-location" style="color: rgba(255,255,255,0.85); font-size: 0.85rem; display: block; line-height: 1.4;"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" style="width:12px;height:12px;display:inline-block;vertical-align:-2px;margin-right:4px;" viewbox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Chennai, Tamil Nadu. A modern commercial complex that blends design with functional elegance.</span></div>
@@ -360,7 +363,7 @@
 <div class="luxury-footer__brand-layout">
 <div class="luxury-footer__logo-col">
 <div class="luxury-footer__logo-wrapper">
-<img alt="SS BUILDERS MVS Logo" class="luxury-footer__logo" loading="lazy" src="ss-builders-logo.jpeg"/>
+<img alt="SS BUILDERS MVS Logo" class="luxury-footer__logo" loading="lazy" decoding="async" src="ss-builders-logo.jpeg"/>
 </div>
 </div>
 <div class="luxury-footer__text-col">
@@ -390,6 +393,7 @@
 <div class="luxury-footer__credit-center"><b>Designed by</b> <a class="luxury-footer__designer" href="https://anasbio.vercel.app/" rel="noopener noreferrer" target="_blank">PIXELMINT STUDIO MVS</a></div>
 </div>
 </footer>
+</main>
 <!-- Scripts -->
 <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>

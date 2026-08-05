@@ -5,5 +5,9 @@ Disallow: /.vercel/
 Disallow: /.git/
 Disallow: /1000205568_frames/
 Disallow: /1000211928_frames/
+Disallow: /assets/hero-frames/
+Disallow: /generate_icons.js
+Disallow: /push_log.txt
 
+Host: https://www.ssbuildersmvs.com
 Sitemap: https://www.ssbuildersmvs.com/sitemap.xml
