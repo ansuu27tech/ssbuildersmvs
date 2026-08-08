@@ -640,6 +640,7 @@
     document.querySelectorAll('.ch-stat__num').forEach(el => {
       const target = parseFloat(el.dataset.target);
       const isFloat = target % 1 !== 0;
+      el.textContent = '0'; // Reset to 0 for visual count-up animation
       const dur = 2000;
       const start = performance.now();
       const tick = now => {
