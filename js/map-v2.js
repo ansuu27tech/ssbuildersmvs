@@ -10,6 +10,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!container || !canvas || !uiLayer) return;
 
+  const IS_MOBILE = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+
+  // Mobile: lazy-initialize 3D scene only when scrolled into view
+  if (IS_MOBILE) {
+    const lazyObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        lazyObserver.disconnect();
+        initMap3D();
+      }
+    }, { rootMargin: '200px' });
+    lazyObserver.observe(container);
+  } else {
+    initMap3D();
+  }
+
+  function initMap3D() {
+
   // --- City Data ---
   const cities = [
       { id: 'chennai', name: 'Chennai', x: 60, z: -15, isHQ: false, services: 'Premium Residential, Commercial', distance: '120 km', time: '2h 30m', price: '2000' },
@@ -65,11 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
     camera.position.set(0, 120, 100); // Start high for cinematic drop
 
     // Renderer
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: !IS_MOBILE, alpha: true, powerPreference: IS_MOBILE ? 'low-power' : 'high-performance' });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(IS_MOBILE ? 1 : Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = !IS_MOBILE;
+    if (!IS_MOBILE) renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     // Controls
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -107,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createPhysicalRoute();
     createRadar();
     createBridges();
-    createBirds();
+    if (!IS_MOBILE) createBirds(); // Skip animated birds on mobile
 
     // Camera Fly-in Intro
     gsap.to(camera.position, {
@@ -265,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === 3. Glowing energy orbs that flow through the full path ===
-    const ENERGY_COUNT = 5; // Number of energy orbs flowing simultaneously
+    const ENERGY_COUNT = IS_MOBILE ? 2 : 5; // Fewer energy orbs on mobile
     for (let i = 0; i < ENERGY_COUNT; i++) {
       // Main energy orb (bright core)
       const coreGeo = new THREE.SphereGeometry(0.35, 12, 12);
@@ -293,9 +310,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Trail particles (small spheres that fade behind the orb)
       const trail = [];
-      const TRAIL_LENGTH = 12;
+      const TRAIL_LENGTH = IS_MOBILE ? 4 : 12;
       for (let t = 0; t < TRAIL_LENGTH; t++) {
-        const trailGeo = new THREE.SphereGeometry(0.15 - t * 0.01, 6, 6);
+        const trailGeo = new THREE.SphereGeometry(0.15 - t * (0.15 / TRAIL_LENGTH), 6, 6);
         const trailMat = new THREE.MeshBasicMaterial({
           color: 0xF58F7C,
           transparent: true,
@@ -788,4 +805,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+  
+  } // End of initMap3D function
 });

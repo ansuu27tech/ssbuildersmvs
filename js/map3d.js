@@ -9,6 +9,10 @@
 
   if (typeof THREE === 'undefined') return;
 
+  // Skip 3D overlay on mobile — the main map-v2.js handles interaction
+  const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+  if (isMobile) return;
+
   const section = document.getElementById('coverage');
   if (!section) return;
 

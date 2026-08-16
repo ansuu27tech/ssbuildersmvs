@@ -19,23 +19,40 @@
   'use strict';
 
   /* ── CONFIG ─────────────────────────────────────────────── */
+  const IS_MOBILE = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
   const CFG = {
     framePath: 'assets/hero-frames/frame_',
     frameExt: '.jpg',
     frameNumbers: [],
     totalFrames: 0,
-    pinDuration: window.innerWidth <= 768 ? '250%' : '500%',
-    dpr: Math.min(window.devicePixelRatio || 1, 2.5),
-    particleCount: window.innerWidth <= 768 ? 12 : 28,
-    sparkCount: window.innerWidth <= 768 ? 6 : 12,
-    dustMoteCount: window.innerWidth <= 768 ? 8 : 20,
+    pinDuration: IS_MOBILE ? '200%' : '500%',
+    dpr: IS_MOBILE ? 1 : Math.min(window.devicePixelRatio || 1, 2.5),
+    particleCount: IS_MOBILE ? 4 : 28,
+    sparkCount: IS_MOBILE ? 2 : 12,
+    dustMoteCount: IS_MOBILE ? 0 : 20,
+    isMobile: IS_MOBILE,
   };
 
-  // Build frame number list (1–145 + 182–202 + sparse)
-  for (let i = 1; i <= 145; i++) CFG.frameNumbers.push(i);
-  for (let i = 182; i <= 202; i++) CFG.frameNumbers.push(i);
-  [216, 223, 231, 232, 234, 235, 236, 237, 238].forEach(n => CFG.frameNumbers.push(n));
-  CFG.totalFrames = CFG.frameNumbers.length; // 175
+  // Build frame number list
+  // Desktop: all 175 frames for smooth animation
+  // Mobile: every 6th frame (~30 frames) to reduce ~10MB → ~1.8MB transfer
+  const allFrameNumbers = [];
+  for (let i = 1; i <= 145; i++) allFrameNumbers.push(i);
+  for (let i = 182; i <= 202; i++) allFrameNumbers.push(i);
+  [216, 223, 231, 232, 234, 235, 236, 237, 238].forEach(n => allFrameNumbers.push(n));
+
+  if (IS_MOBILE) {
+    // Take every 6th frame for mobile, always include first and last
+    for (let i = 0; i < allFrameNumbers.length; i += 6) {
+      CFG.frameNumbers.push(allFrameNumbers[i]);
+    }
+    if (CFG.frameNumbers[CFG.frameNumbers.length - 1] !== allFrameNumbers[allFrameNumbers.length - 1]) {
+      CFG.frameNumbers.push(allFrameNumbers[allFrameNumbers.length - 1]);
+    }
+  } else {
+    CFG.frameNumbers = allFrameNumbers;
+  }
+  CFG.totalFrames = CFG.frameNumbers.length;
 
   const PHASES = [
     { at: 0.00, label: 'RAW FOUNDATION' },
@@ -416,21 +433,23 @@
     ectx.scale(CFG.dpr, CFG.dpr);
     particles.forEach(p => { p.update(time); p.draw(ectx); });
 
-    // Energy streaks between orbs
-    const orbs = particles.filter(p => p.type === 'orb');
-    ectx.lineWidth = 0.5;
-    for (let i = 0; i < orbs.length; i++) {
-      for (let j = i + 1; j < orbs.length; j++) {
-        const dx = orbs[i].x - orbs[j].x;
-        const dy = orbs[i].y - orbs[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 140) {
-          ectx.globalAlpha = (1 - dist / 140) * 0.12 * state.frameProgress;
-          ectx.strokeStyle = 'rgba(212,175,85,0.08)';
-          ectx.beginPath();
-          ectx.moveTo(orbs[i].x, orbs[i].y);
-          ectx.lineTo(orbs[j].x, orbs[j].y);
-          ectx.stroke();
+    // Energy streaks between orbs (skip on mobile — O(n²) too expensive)
+    if (!CFG.isMobile) {
+      const orbs = particles.filter(p => p.type === 'orb');
+      ectx.lineWidth = 0.5;
+      for (let i = 0; i < orbs.length; i++) {
+        for (let j = i + 1; j < orbs.length; j++) {
+          const dx = orbs[i].x - orbs[j].x;
+          const dy = orbs[i].y - orbs[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 140) {
+            ectx.globalAlpha = (1 - dist / 140) * 0.12 * state.frameProgress;
+            ectx.strokeStyle = 'rgba(212,175,85,0.08)';
+            ectx.beginPath();
+            ectx.moveTo(orbs[i].x, orbs[i].y);
+            ectx.lineTo(orbs[j].x, orbs[j].y);
+            ectx.stroke();
+          }
         }
       }
     }
@@ -441,7 +460,7 @@
      8. DUST MOTES (CSS)
      ═══════════════════════════════════════════════════════════ */
   function createDust() {
-    if (!dustEl) return;
+    if (!dustEl || CFG.isMobile) return; // Skip on mobile — 0 dust motes
     const style = document.createElement('style');
     style.id = 'ch-dust-kf';
     style.textContent = `

@@ -9,6 +9,10 @@
   const section = document.getElementById('story');
   if (!section || typeof THREE === 'undefined') return;
 
+  // Skip 3D effects on mobile — too expensive for touch devices
+  const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+  if (isMobile) return;
+
   // Create canvas container
   const container = document.createElement('div');
   container.id = 'about-3d';

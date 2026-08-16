@@ -217,18 +217,35 @@ document.addEventListener('DOMContentLoaded', function() {
   mobileCTAs.forEach(function(cta) { cta.addEventListener('click', scrollToSection); });
 
   // Mobile menu toggle
+  var mobileOverlay = document.querySelector('.navbar__mobile-overlay');
+
   function closeMobileMenu() {
-    if (navToggle) navToggle.classList.remove('active');
+    if (navToggle) {
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
     if (mobileMenu) mobileMenu.classList.remove('open');
+    if (mobileOverlay) mobileOverlay.classList.remove('open');
     document.body.style.overflow = '';
+  }
+
+  if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', closeMobileMenu);
   }
 
   if (navToggle) {
     navToggle.addEventListener('click', function() {
       var isOpen = navToggle.classList.toggle('active');
-      mobileMenu.classList.toggle('open');
+      if (mobileMenu) mobileMenu.classList.toggle('open');
+      if (mobileOverlay) mobileOverlay.classList.toggle('open');
       document.body.style.overflow = isOpen ? 'hidden' : '';
       navToggle.setAttribute('aria-expanded', isOpen.toString());
+      
+      // Focus trap basic setup
+      if (isOpen && mobileMenu) {
+        var firstLink = mobileMenu.querySelector('a');
+        if (firstLink) firstLink.focus();
+      }
     });
   }
 

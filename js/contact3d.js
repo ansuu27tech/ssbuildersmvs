@@ -8,6 +8,10 @@
 
   if (typeof THREE === 'undefined') return;
 
+  // Skip 3D effects on mobile — too expensive for touch devices
+  const isMobile = window.innerWidth <= 768 || ('ontouchstart' in window && window.innerWidth <= 1024);
+  if (isMobile) return;
+
   // Find the contact info panel
   const contactInfo = document.querySelector('.contact__info');
   if (!contactInfo) return;
