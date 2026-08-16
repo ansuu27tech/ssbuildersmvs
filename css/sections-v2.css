@@ -690,7 +690,7 @@
   font-family: var(--font-display);
   font-size: 4rem;
   font-weight: 800;
-  color: rgba(245, 143, 124, 0.15);
+  color: rgba(245, 143, 124, 0.4); /* Increased opacity for better visibility */
   text-align: right;
   padding-right: var(--space-xl);
 }
